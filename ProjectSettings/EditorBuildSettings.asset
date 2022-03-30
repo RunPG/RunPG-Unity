@@ -4,5 +4,8 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/SampleScene_eliott.unity
+    guid: c8ed7b2d255947740aca1effd9be1e7a
   m_configObjects: {}

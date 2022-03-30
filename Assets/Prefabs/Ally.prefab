@@ -677,7 +677,7 @@ GameObject:
   - component: {fileID: 1802962816451714975}
   - component: {fileID: 8151790803656501736}
   - component: {fileID: 7364279347016559192}
-  - component: {fileID: 4067975391714479302}
+  - component: {fileID: 1170248791628540465}
   m_Layer: 0
   m_Name: Ally
   m_TagString: Untagged
@@ -762,7 +762,7 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &4067975391714479302
+--- !u!114 &1170248791628540465
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -771,7 +771,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 8414553266818434553}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f7d81b1452bd446458385b11d89515fa, type: 3}
+  m_Script: {fileID: 11500000, guid: 5ba80979d948ea341ba8f8c56823a9f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 100
