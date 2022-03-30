@@ -15,12 +15,18 @@ namespace RunPG.Multi
 
         [Tooltip("The UI Label to inform the user that the loading is in progress")]
         [SerializeField]
-        private GameObject loadingCanvas;
-        [SerializeField]
         byte maxPlayersPerRoom = 4;
         private AsyncOperation _loadingOperation;
         [SerializeField]
         private Slider _progressSilder;
+        [SerializeField]
+        private InputField _username;
+        [SerializeField]
+        private Button _connexionButton;
+        [SerializeField]
+        private GameObject _connexionPannel;
+        [SerializeField]
+        private GameObject _authentificationPannel;
         /// <summary>
         /// The maximum number of players per room. When a room is full, it can't be joined by new players, and so new room will be created.
         /// </summary>
@@ -47,7 +53,21 @@ namespace RunPG.Multi
 
         #region MonoBehaviour CallBacks
 
+        private void Start()
+        {
+            _connexionButton.onClick.AddListener(GoToMainMenu);
+        }
 
+        private void GoToMainMenu()
+        {
+            if (isConnecting)
+                return;
+            _authentificationPannel.SetActive(false);
+            _connexionPannel.SetActive(true);
+            PhotonNetwork.NickName = _username.text;
+            PhotonNetwork.JoinLobby();
+            _loadingOperation = SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().buildIndex + 1);
+        }
         /// <summary>
         /// MonoBehaviour method called on GameObject by Unity during early initialization phase.
         /// </summary>
@@ -113,8 +133,7 @@ namespace RunPG.Multi
 
             Debug.Log("PUN Basics Tutorial/Launcher: OnConnectedToMaster() was called by PUN");
             isConnecting = false;
-            PhotonNetwork.JoinLobby();
-            _loadingOperation = SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().buildIndex + 1);
+            
 
         }
 
@@ -128,8 +147,6 @@ namespace RunPG.Multi
         }
         public override void OnDisconnected(DisconnectCause cause)
         {
-            loadingCanvas.SetActive(true);
-
             Debug.LogWarningFormat("PUN Basics Tutorial/Launcher: OnDisconnected() was called by PUN with reason {0}", cause);
             isConnecting = false;
         }
