@@ -24,6 +24,9 @@ public class PlayerCharacter : Character
     private bool isSelected = false;
     private CombatAction selectedAction = null;
 
+    [SerializeField]
+    private Image background;
+
     void Awake()
     {
         AddConsumable("Health Potion", 1);
@@ -65,6 +68,7 @@ public class PlayerCharacter : Character
                     if (CombatManager.Instance.VerifyTarget(selectedAction))
                     {
                         isSelected = false;
+                        ShowSelected(false);
                         ResetInterface();
                         CombatManager.Instance.HidePossibleTarget();
                         CombatManager.Instance.AddAction(selectedAction);
@@ -91,6 +95,7 @@ public class PlayerCharacter : Character
         actionGroup.blocksRaycasts = true;
 
         isSelected = true;
+        ShowSelected(true);
         selectedAction = null;
 
         buttonSkill1.onClick.AddListener(() =>
@@ -209,5 +214,13 @@ public class PlayerCharacter : Character
         objectGroup.alpha = 0;
         objectGroup.interactable = false;
         objectGroup.blocksRaycasts = false;
+    }
+
+    private void ShowSelected(bool status)
+    {
+        if (!status)
+            background.color = new Color(1f, 1f, 1f);
+        else
+            background.color = new Color(0.5f, 0.7f, 1f);
     }
 }

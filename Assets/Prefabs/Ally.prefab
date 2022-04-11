@@ -852,4 +852,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 100
   healthBar: {fileID: 8075372988648493400}
+  background: {fileID: 2979259791193073182}
   selector: {fileID: 2385086901357316692}
