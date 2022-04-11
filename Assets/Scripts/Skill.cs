@@ -7,7 +7,8 @@ public abstract class Skill : CombatAction { }
 
 public class LightAttack : Skill
 {
-    public override string Name { get { return "Light Attack"; } }
+    public override string name { get { return "Light Attack"; } }
+    public override PossibleTarget possibleTarget { get { return PossibleTarget.Enemy; } }
 
     public override void doAction()
     {
@@ -17,7 +18,8 @@ public class LightAttack : Skill
 
 public class HeavyAttack : Skill
 {
-    public override string Name { get { return "Heavy Attack"; } }
+    public override string name { get { return "Heavy Attack"; } }
+    public override PossibleTarget possibleTarget { get{ return PossibleTarget.Enemy; } }
 
     public override void doAction()
     {

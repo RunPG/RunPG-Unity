@@ -45,6 +45,7 @@ public class CombatManager : MonoBehaviour
         queue.Add(action);
     }
 
+    /*
     public List<Character> GetMyAllies(Character myCharacter)
     {
         List<Character> allies = new List<Character>();
@@ -65,6 +66,44 @@ public class CombatManager : MonoBehaviour
                 enemies.Add(character);
         }
         return enemies;
+    }*/
+
+    public List<Character> GetPossibleTargets(Character caster, CombatAction.PossibleTarget possibleTarget)
+    {
+        List<Character> targets = new List<Character>();
+        switch (possibleTarget)
+        {
+            case CombatAction.PossibleTarget.Self:
+                targets.Add(caster);
+                return targets;
+            case CombatAction.PossibleTarget.Enemy:
+                foreach (var character in characters)
+                {
+                    if (!character.CompareTag(caster.tag) && character.isAlive())
+                        targets.Add(character);
+                }
+                return targets;
+            case CombatAction.PossibleTarget.Ally:
+                foreach (var character in characters)
+                {
+                    if (character != caster && character.CompareTag(caster.tag) && character.isAlive())
+                        targets.Add(character);
+                }
+                return targets;
+            case CombatAction.PossibleTarget.AllyOrSelf:
+                foreach (var character in characters)
+                {
+                    if (character.CompareTag(caster.tag) && character.isAlive())
+                        targets.Add(character);
+                }
+                return targets;
+            case CombatAction.PossibleTarget.All:
+                foreach (var character in characters)
+                    targets.Add(character);
+                return targets;
+            default:
+                throw new Exception("Error on possible target");
+        }
     }
 
     public CombatAction GetCombatAction(string name)
@@ -86,11 +125,16 @@ public class CombatManager : MonoBehaviour
             }
             foreach (var action in queue)
             {
-                if (action == null || !action.caster.isAlive())
+                // Later some spell may target dead characters (revive)
+                if (action == null || !action.caster.isAlive() || !action.target.isAlive())
                     continue;
-                logger.Log("resolving action " + action.Name);
+
+                if (!VerifyTarget(action))
+                    throw new Exception("Error wrong target");
+
+                logger.Log("resolving action " + action.name);
                 if (action as Consumable != null)
-                    action.caster.UseConsumable(action.Name);
+                    action.caster.UseConsumable(action.name);
                 action.doAction();
                 yield return new WaitForSeconds(1);
             }
@@ -103,6 +147,21 @@ public class CombatManager : MonoBehaviour
         logger.Log("end");
     }
 
+    public bool VerifyTarget(CombatAction action)
+    {
+        return GetPossibleTargets(action.caster, action.possibleTarget).Find(character => character == action.target) != null;
+    }
+
+    public void ShowPossibleTarget(Character caster, CombatAction.PossibleTarget possibleTarget)
+    {
+        GetPossibleTargets(caster, possibleTarget).ForEach(target => target.ShowSelector(true));
+    }
+
+    public void HidePossibleTarget()
+    {
+        characters.ForEach(target => target.ShowSelector(false));
+    }
+
     private void RegisterCombatAction<T>(string name) where T : CombatAction, new()
     {
         combatActions.Add(name, () =>
@@ -111,143 +170,3 @@ public class CombatManager : MonoBehaviour
         });
     }
 }
-
-    /*
-  [SerializeField]
-  private GameObject Allies;
-  [SerializeField]
-  private GameObject Ennemies;
-  [SerializeField]
-  private GameObject ActionSelection;
-  [SerializeField]
-  private GameObject AttackSelection;
-
-  private int damages = -1;
-  private Button attackButton;
-  private Queue<GameObject> turnQueue = new Queue<GameObject>();
-  private GameObject entityInAction;
-
-
-  private List<GameObject> AlliesList = new List<GameObject>();
-  private List<GameObject> EnnemiesList = new List<GameObject>();
-
-  // Start is called before the first frame update
-
-  void Start()
-  {
-      if (Allies != null)
-      {
-          for (int i = 0; i < Allies.transform.childCount; i++)
-              AlliesList.Add(Allies.transform.GetChild(i).gameObject);
-      }
-      if (Ennemies != null)
-      {
-          for (int i = 0; i < Ennemies.transform.childCount; i++)
-              EnnemiesList.Add(Ennemies.transform.GetChild(i).gameObject);
-      }
-  }
-
-  private void Update()
-  {
-      if (entityInAction == null)
-      {
-          setEntityInAction();
-      }
-
-      if (entityInAction.CompareTag("Ennemy"))
-      {
-          EnnemieAttack();
-      }
-
-      else if (damages > 0 && (Input.touchCount == 1) && (Input.GetTouch(0).phase == TouchPhase.Began))
-      {
-          Ray raycast = Camera.main.ScreenPointToRay(Input.GetTouch(0).position);
-          RaycastHit raycastHit;
-          if (Physics.Raycast(raycast, out raycastHit))
-          {
-              if (raycastHit.collider.CompareTag("Ennemy"))
-              {
-                  Attack(raycastHit.collider.gameObject, damages);
-                  resetEntityInAction();
-              }
-          }
-          resetUserSelection();
-      }
-  }
-
-  private void setEntityInAction()
-  {
-      if (turnQueue.Count == 0)
-          resetQueue();
-      entityInAction = turnQueue.Dequeue();
-      if (entityInAction.TryGetComponent(out EntityManager entity))
-      {
-          entity.setSelected(true);
-      }
-  }
-
-  private void resetUserSelection()
-  {
-      damages = -1;
-      attackButton.interactable = true;
-      attackButton = null;
-  }
-
-  private void resetEntityInAction()
-  {
-      if (entityInAction && entityInAction.TryGetComponent(out EntityManager entity))
-      {
-          entity.setSelected(false);
-      }
-      entityInAction = null;
-  }
-
-  private void resetQueue()
-  {
-      AlliesList.ForEach(x => turnQueue.Enqueue(x));
-      EnnemiesList.ForEach(x => turnQueue.Enqueue(x));
-  }
-  public void SetAttackButton(Button button)
-  {
-      attackButton = button;
-  }
-
-  public void SetDamages(int damages)
-  {
-      this.damages = damages;
-  }
-
-  public List<GameObject> GetAllies()
-  {
-      return AlliesList;
-  }
-
-  public List<GameObject> GetEnnemies()
-  {
-      return EnnemiesList;
-  }
-
-  public void EnnemieAttack()
-  {
-      Random rand = new Random();
-      GameObject target = AlliesList[rand.Next(AlliesList.Count)];
-      Attack(target, 10);
-      resetEntityInAction();
-  }
-
-  public void Attack(GameObject target, int damages)
-  {
-      if (target == null)
-      {
-          logger.LogError("Attack", "Target is null");
-      } else if (target.TryGetComponent(out EntityManager entity))
-      {
-          entity.TakeDamage(damages);
-          AttackSelection.SetActive(false);
-          ActionSelection.SetActive(true);
-      } else
-      {
-          logger.LogError("Attack", "Cannot get EntityManager from target", target);
-      }
-  }*/
-

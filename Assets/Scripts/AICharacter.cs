@@ -38,9 +38,9 @@ public class AICharacter : Character
                 int pickSkill = Random.Range(0, skills.Length);
                 CombatAction action = CombatManager.Instance.GetCombatAction(skills[pickSkill]);
                 action.caster = this;
-                List<Character> enemies = CombatManager.Instance.GetMyEnemies(this);
-                int pickTarget = Random.Range(0, enemies.Count);
-                action.target = enemies[pickTarget];
+                List<Character> targets = CombatManager.Instance.GetPossibleTargets(this, action.possibleTarget);
+                int pickTarget = Random.Range(0, targets.Count);
+                action.target = targets[pickTarget];
                 CombatManager.Instance.AddAction(action);
             }
 

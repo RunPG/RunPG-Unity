@@ -13,6 +13,9 @@ public abstract class Character : MonoBehaviour
     [SerializeField]
     protected HealthBar healthBar;
 
+    [SerializeField]
+    protected Image selector;
+
     protected Dictionary<string, int> inventory = new Dictionary<string, int>();
 
     public bool isAlive()
@@ -39,8 +42,6 @@ public abstract class Character : MonoBehaviour
         Mathf.Clamp(currentHealth, 0, maxHealth);
         healthBar.SetHealth(currentHealth);
     }
-
-    
 
     public void AddConsumable(string name, int quantity)
     {
@@ -74,6 +75,11 @@ public abstract class Character : MonoBehaviour
     public bool HasConsumable(string name)
     {
         return inventory.ContainsKey(name) && inventory[name] > 0;
+    }
+
+    public void ShowSelector(bool status)
+    {
+        selector.enabled = status;
     }
 
     public abstract void AskForAction();

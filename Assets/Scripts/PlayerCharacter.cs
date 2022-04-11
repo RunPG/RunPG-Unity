@@ -13,8 +13,10 @@ public class PlayerCharacter : Character
     private Button buttonSkill2;
     private Button buttonSkill3;
     private Button buttonSkill4;
+    private Button buttonSkillBack;
 
     private List<Button> objectButtons = new List<Button>();
+    private Button buttonObjectBack;
     private Transform objects;
 
     private string[] skills = new string[4];
@@ -40,8 +42,10 @@ public class PlayerCharacter : Character
         buttonSkill2 = AttackCanvas.transform.Find("Background/Actions/Button Action 2").GetComponent<Button>();
         buttonSkill3 = AttackCanvas.transform.Find("Background/Actions/Button Action 3").GetComponent<Button>();
         buttonSkill4 = AttackCanvas.transform.Find("Background/Actions/Button Action 4").GetComponent<Button>();
+        buttonSkillBack = AttackCanvas.transform.Find("Background/Button Back").GetComponent<Button>();
 
         objects = ObjectCanvas.transform.Find("Background/Scroll/ScrollBack/Objects");
+        buttonObjectBack = ObjectCanvas.transform.Find("Background/Button Back").GetComponent<Button>();
 
         currentHealth = maxHealth;
         healthBar.SetMaxHealth(maxHealth);
@@ -58,9 +62,13 @@ public class PlayerCharacter : Character
                 if (raycastHit.transform.gameObject.GetComponent<Character>() != null)
                 {
                     selectedAction.target = raycastHit.transform.gameObject.GetComponent<Character>();
-                    isSelected = false;
-                    ResetInterface();
-                    CombatManager.Instance.AddAction(selectedAction);
+                    if (CombatManager.Instance.VerifyTarget(selectedAction))
+                    {
+                        isSelected = false;
+                        ResetInterface();
+                        CombatManager.Instance.HidePossibleTarget();
+                        CombatManager.Instance.AddAction(selectedAction);
+                    }
                 }
             }
         }
@@ -93,6 +101,8 @@ public class PlayerCharacter : Character
             buttonSkill2.interactable = true;
             buttonSkill3.interactable = true;
             buttonSkill4.interactable = true;
+            CombatManager.Instance.HidePossibleTarget();
+            CombatManager.Instance.ShowPossibleTarget(this, selectedAction.possibleTarget);
         });
 
         buttonSkill2.onClick.AddListener(() =>
@@ -103,6 +113,8 @@ public class PlayerCharacter : Character
             buttonSkill2.interactable = false;
             buttonSkill3.interactable = true;
             buttonSkill4.interactable = true;
+            CombatManager.Instance.HidePossibleTarget();
+            CombatManager.Instance.ShowPossibleTarget(this, selectedAction.possibleTarget);
         });
 
         buttonSkill3.onClick.AddListener(() =>
@@ -113,6 +125,8 @@ public class PlayerCharacter : Character
             buttonSkill2.interactable = true;
             buttonSkill3.interactable = false;
             buttonSkill4.interactable = true;
+            CombatManager.Instance.HidePossibleTarget();
+            CombatManager.Instance.ShowPossibleTarget(this, selectedAction.possibleTarget);
         });
 
         buttonSkill4.onClick.AddListener(() =>
@@ -123,7 +137,11 @@ public class PlayerCharacter : Character
             buttonSkill2.interactable = true;
             buttonSkill3.interactable = true;
             buttonSkill4.interactable = false;
+            CombatManager.Instance.HidePossibleTarget();
+            CombatManager.Instance.ShowPossibleTarget(this, selectedAction.possibleTarget);
         });
+
+        buttonSkillBack.onClick.AddListener(() => ResetAction());
 
         foreach (var item in inventory)
         {
@@ -139,9 +157,27 @@ public class PlayerCharacter : Character
                     b.interactable = true;
                 }
                 button.interactable= false;
+                CombatManager.Instance.HidePossibleTarget();
+                CombatManager.Instance.ShowPossibleTarget(this, selectedAction.possibleTarget);
             });
             objectButtons.Add(button);
         }
+
+        buttonObjectBack.onClick.AddListener(() => ResetAction());
+    }
+
+    public void ResetAction()
+    {
+        selectedAction = null;
+        buttonSkill1.interactable = true;
+        buttonSkill2.interactable = true;
+        buttonSkill3.interactable = true;
+        buttonSkill4.interactable = true;
+        foreach (var b in objectButtons)
+        {
+            b.interactable = true;
+        }
+        CombatManager.Instance.HidePossibleTarget();
     }
 
     private void ResetInterface()
@@ -155,6 +191,8 @@ public class PlayerCharacter : Character
         buttonSkill2.onClick.RemoveAllListeners();
         buttonSkill3.onClick.RemoveAllListeners();
         buttonSkill4.onClick.RemoveAllListeners();
+        buttonSkillBack.onClick.RemoveAllListeners();
+        buttonObjectBack.onClick.RemoveAllListeners();
         buttonSkill1.interactable = true;
         buttonSkill2.interactable = true;
         buttonSkill3.interactable = true;

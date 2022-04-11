@@ -4,8 +4,17 @@ using UnityEngine;
 
 public abstract class CombatAction
 {
-    public abstract string Name { get; }
+    public enum PossibleTarget
+    {
+        Ally,
+        Self,
+        Enemy,
+        AllyOrSelf,
+        All
+    }
+    public abstract string name { get; }
     public Character target { get; set; }
+    public abstract PossibleTarget possibleTarget { get; }
     public Character caster { get; set; }
 
     public abstract void doAction();
