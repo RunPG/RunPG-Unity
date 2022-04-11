@@ -16,6 +16,7 @@ public abstract class CombatAction
     public Character target { get; set; }
     public abstract PossibleTarget possibleTarget { get; }
     public Character caster { get; set; }
+    public abstract int speed { get; }
 
     public abstract void doAction();
 }

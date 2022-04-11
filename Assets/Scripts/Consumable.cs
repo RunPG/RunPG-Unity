@@ -8,9 +8,9 @@ public abstract class Consumable : CombatAction
 
 public class HealthPotion : Consumable
 {
-    public override string name { get { return "Health Potion"; } }
-
-    public override PossibleTarget possibleTarget { get { return PossibleTarget.Self; } }
+    public override string name => "Health Potion";
+    public override PossibleTarget possibleTarget => PossibleTarget.Self;
+    public override int speed => 300;
 
     public override void doAction()
     {
@@ -20,9 +20,9 @@ public class HealthPotion : Consumable
 
 public class Bomb : Consumable
 {
-    public override string name { get { return "Bomb"; } }
-
-    public override PossibleTarget possibleTarget { get { return PossibleTarget.Enemy; } }
+    public override string name => "Bomb";
+    public override PossibleTarget possibleTarget => PossibleTarget.Enemy;
+    public override int speed => 200;
 
     public override void doAction()
     {

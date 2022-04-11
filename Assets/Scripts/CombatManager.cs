@@ -123,7 +123,7 @@ public class CombatManager : MonoBehaviour
                 while (queue.Count < i + 1)
                     yield return null;
             }
-            foreach (var action in queue)
+            foreach (var action in queue.OrderByDescending(action => action.speed))
             {
                 // Later some spell may target dead characters (revive)
                 if (action == null || !action.caster.isAlive() || !action.target.isAlive())
