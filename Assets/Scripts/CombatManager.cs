@@ -123,7 +123,13 @@ public class CombatManager : MonoBehaviour
             for (int i = 0; i < characters.Count; i++)
             {
                 if (!characters[i].isAlive())
+                {
+                    Idle idle = new Idle();
+                    idle.target = characters[i];
+                    idle.caster = characters[i];
+                    queue.Add(idle);
                     continue;
+                }
 
                 if (characters[i].IsStun())
                 {
