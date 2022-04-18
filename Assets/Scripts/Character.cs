@@ -18,6 +18,9 @@ public abstract class Character : MonoBehaviour
 
     protected Dictionary<string, int> inventory = new Dictionary<string, int>();
 
+    protected ElementalStatus elementalStatus;
+    protected StunStatus stunStatus;
+
     public bool isAlive()
     {
         return (currentHealth > 0);
@@ -80,6 +83,63 @@ public abstract class Character : MonoBehaviour
     public void ShowSelector(bool status)
     {
         selector.enabled = status;
+    }
+
+    public void CleanElementalStatus()
+    {
+        elementalStatus = null;
+    }
+
+    public void AddElementalStatus(ElementalStatus status)
+    {
+        if (elementalStatus == null)
+            elementalStatus = status;
+    }
+
+    public void DecreaseElementalStatusTurns()
+    {
+        if (elementalStatus != null)
+        {
+            elementalStatus.DecraseTurns();
+            if (!elementalStatus.IsAffected())
+                elementalStatus = null;
+        }
+    }
+
+    public bool HasElementalStatus()
+    {
+        return elementalStatus != null;
+    }
+
+    public bool IsAffectedByElementalStatus<T>() where T : ElementalStatus
+    {
+        if (elementalStatus == null)
+            return false;
+        else
+            return elementalStatus is T;
+    }
+
+    public int GetElementalRemainingTurns()
+    {
+        if (!HasElementalStatus())
+            return 0;
+        else
+            return elementalStatus.GetRemainingTurns();
+    }
+
+    public void CleanStun()
+    {
+        stunStatus = null;
+    }
+
+    public void Stun()
+    {
+        stunStatus = new StunStatus();
+    }
+
+    public bool IsStun()
+    {
+        return stunStatus != null;
     }
 
     public abstract void AskForAction();

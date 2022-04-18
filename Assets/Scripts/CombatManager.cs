@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
-using Random = System.Random;
+
 
 public class CombatManager : MonoBehaviour
 {
@@ -30,10 +30,12 @@ public class CombatManager : MonoBehaviour
         {
             Instance = this;
         }
-        RegisterCombatAction<LightAttack>("Light Attack");
-        RegisterCombatAction<HeavyAttack>("Heavy Attack");
-        RegisterCombatAction<HealthPotion>("Health Potion");
-        RegisterCombatAction<Bomb>("Bomb");
+        RegisterCombatAction<Idle>("Idle");
+        RegisterCombatAction<Entaille>("Entaille");
+        RegisterCombatAction<CoupDeBouclier>("Coup de bouclier");
+        RegisterCombatAction<BouleDeFeu>("Boule de feu");
+        RegisterCombatAction<HealthPotion>("Potion de vie");
+        RegisterCombatAction<Bomb>("Bombe");
     }
     private void Start()
     {
@@ -45,7 +47,7 @@ public class CombatManager : MonoBehaviour
         queue.Add(action);
     }
 
-    /*
+    
     public List<Character> GetMyAllies(Character myCharacter)
     {
         List<Character> allies = new List<Character>();
@@ -66,7 +68,7 @@ public class CombatManager : MonoBehaviour
                 enemies.Add(character);
         }
         return enemies;
-    }*/
+    }
 
     public List<Character> GetPossibleTargets(Character caster, CombatAction.PossibleTarget possibleTarget)
     {
@@ -115,19 +117,41 @@ public class CombatManager : MonoBehaviour
     {
         while (true)
         {
+            ResolveBurnStatus();
+
             queue.Clear();
             for (int i = 0; i < characters.Count; i++)
             {
+                if (!characters[i].isAlive())
+                    continue;
+
+                if (characters[i].IsStun())
+                {
+                    characters[i].CleanStun();
+                    Idle idle = new Idle();
+                    idle.target = characters[i];
+                    idle.caster = characters[i];
+                    queue.Add(idle);
+                    continue;
+                }
+
                 logger.Log("asking character " + i);
                 characters[i].AskForAction();
                 while (queue.Count < i + 1)
                     yield return null;
             }
+
             foreach (var action in queue.OrderByDescending(action => action.speed))
             {
                 // Later some spell may target dead characters (revive)
-                if (action == null || !action.caster.isAlive() || !action.target.isAlive())
+                if (!action.caster.isAlive() || !action.target.isAlive())
                     continue;
+
+                if (action.caster.IsStun())
+                {
+                    action.caster.CleanStun();
+                    continue;
+                }
 
                 if (!VerifyTarget(action))
                     throw new Exception("Error wrong target");
@@ -138,6 +162,7 @@ public class CombatManager : MonoBehaviour
                 action.doAction();
                 yield return new WaitForSeconds(1);
             }
+
             if (characters.Where(c => c.isAlive() && c.CompareTag("Team1")).Count() == 0
                 || characters.Where(c => c.isAlive() && c.CompareTag("Team2")).Count() == 0)
             {
@@ -168,5 +193,36 @@ public class CombatManager : MonoBehaviour
         {
             return new T();
         });
+    }
+
+    private void ResolveBurnStatus()
+    {
+        foreach (var character in characters)
+        {
+            if (character.IsAffectedByElementalStatus<BurnStatus>())
+            {
+                character.TakeDamage(5);
+                character.DecreaseElementalStatusTurns();
+            }
+        }
+    }
+
+    private void ResolveElectrifiedStatus()
+    {
+        foreach (var character in characters)
+        {
+            if (character.IsAffectedByElementalStatus<BurnStatus>())
+            {
+                character.TakeDamage(3);
+                character.DecreaseElementalStatusTurns();
+                List<Character> possibleTargets = GetMyAllies(character).FindAll(c => !c.HasElementalStatus());
+                if (possibleTargets.Count() > 0)
+                {
+                    int x = UnityEngine.Random.Range(0, possibleTargets.Count);
+                    possibleTargets[x].AddElementalStatus(new ElectrifiedStatus(character.GetElementalRemainingTurns()));
+                }
+                character.CleanElementalStatus();
+            }
+        }
     }
 }

@@ -29,17 +29,17 @@ public class PlayerCharacter : Character
 
     void Awake()
     {
-        AddConsumable("Health Potion", 1);
-        AddConsumable("Bomb", 1);
+        AddConsumable("Potion de vie", 1);
+        AddConsumable("Bombe", 1);
 
         ActionCanvas = GameObject.Find("Canvas ActionSelection").GetComponent<Canvas>();
         AttackCanvas = GameObject.Find("Canvas AttackSelection").GetComponent<Canvas>();
         ObjectCanvas = GameObject.Find("Canvas ObjectSelection").GetComponent <Canvas>();
 
-        skills[0] = "Light Attack";
-        skills[1] = "Light Attack";
-        skills[2] = "Heavy Attack";
-        skills[3] = "Heavy Attack";
+        skills[0] = "Entaille";
+        skills[1] = "Entaille";
+        skills[2] = "Coup de bouclier";
+        skills[3] = "Boule de feu";
 
         buttonSkill1 = AttackCanvas.transform.Find("Background/Actions/Button Action 1").GetComponent<Button>();
         buttonSkill2 = AttackCanvas.transform.Find("Background/Actions/Button Action 2").GetComponent<Button>();

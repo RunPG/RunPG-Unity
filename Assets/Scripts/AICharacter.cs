@@ -8,12 +8,12 @@ public class AICharacter : Character
 
     private void Awake()
     {
-        AddConsumable("Health Potion", 1);
+        AddConsumable("Potion de vie", 1);
 
-        skills[0] = "Light Attack";
-        skills[1] = "Light Attack";
-        skills[2] = "Light Attack";
-        skills[3] = "Heavy Attack";
+        skills[0] = "Entaille";
+        skills[1] = "Entaille";
+        skills[2] = "Entaille";
+        skills[3] = "Coup de bouclier";
 
         currentHealth = maxHealth;
         healthBar.SetMaxHealth(maxHealth);

@@ -20,3 +20,14 @@ public abstract class CombatAction
 
     public abstract void doAction();
 }
+
+public class Idle : CombatAction
+{
+    public override string name => "Idle";
+
+    public override PossibleTarget possibleTarget => PossibleTarget.Self;
+
+    public override int speed => 0;
+
+    public override void doAction() {}
+}

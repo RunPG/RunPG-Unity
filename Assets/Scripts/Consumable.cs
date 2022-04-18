@@ -8,7 +8,7 @@ public abstract class Consumable : CombatAction
 
 public class HealthPotion : Consumable
 {
-    public override string name => "Health Potion";
+    public override string name => "Potion de vie";
     public override PossibleTarget possibleTarget => PossibleTarget.Self;
     public override int speed => 300;
 
@@ -20,7 +20,7 @@ public class HealthPotion : Consumable
 
 public class Bomb : Consumable
 {
-    public override string name => "Bomb";
+    public override string name => "Bombe";
     public override PossibleTarget possibleTarget => PossibleTarget.Enemy;
     public override int speed => 200;
 
