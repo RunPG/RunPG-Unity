@@ -4,12 +4,14 @@ using Photon.Realtime;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using UnityEngine.Networking;
+using System.Collections;
+using System.Text;
 
 namespace RunPG.Multi
 {
     public class Launcher : MonoBehaviourPunCallbacks
     {
-
         #region Private Serializable Fields
  
 
@@ -24,9 +26,13 @@ namespace RunPG.Multi
         [SerializeField]
         private Button _connexionButton;
         [SerializeField]
+        private Button _registerButton;
+        [SerializeField]
         private GameObject _connexionPannel;
         [SerializeField]
         private GameObject _authentificationPannel;
+        [SerializeField]
+        private GameObject _errorMessage ;
         /// <summary>
         /// The maximum number of players per room. When a room is full, it can't be joined by new players, and so new room will be created.
         /// </summary>
@@ -56,11 +62,39 @@ namespace RunPG.Multi
         private void Start()
         {
             _connexionButton.onClick.AddListener(GoToMainMenu);
-        }
+            _registerButton.onClick.AddListener(() => StartCoroutine("Register"));
 
+        }
+        bool GETPlayer()
+        {
+            if (_username.text.Length != 0)
+            {
+                using (UnityWebRequest request = UnityWebRequest.Get("http://178.62.237.73/user/" + _username.text))
+                {
+                    request.SendWebRequest();
+                    while (request.isDone)
+                    {
+                        //TODO change 
+                        //waiting for request to be done
+                    }
+                    if (request.result != UnityWebRequest.Result.Success)
+                    {
+                        _errorMessage.SetActive(true);
+                        _errorMessage.GetComponent<Text>().text = "User does not exist !";
+
+                        return false;
+                    }
+                    else
+                    {
+                        return true;
+                    }
+                }             
+            }
+            return false;
+        }
         private void GoToMainMenu()
         {
-            if (isConnecting)
+            if (isConnecting || !GETPlayer())
                 return;
             _authentificationPannel.SetActive(false);
             _connexionPannel.SetActive(true);
@@ -159,17 +193,58 @@ namespace RunPG.Multi
             // null means we dont want a special room name
             PhotonNetwork.CreateRoom(null, roomOptions, TypedLobby.Default);
         }
+        IEnumerator Register()
+        {
+            if (_username.text.Length != 0)
+            {
+                var str = "{\"name\":\"" + _username.text + "\"}";
+                Debug.Log(str);
+                using (UnityWebRequest request = UnityWebRequest.Post("http://178.62.237.73/user/", "POST"))
+                {
+                    request.SetRequestHeader("Content-Type", "application/json");
+                    request.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(str)) as UploadHandler;
+                    yield return request.SendWebRequest();
 
+                    if (request.result != UnityWebRequest.Result.Success)
+                    {
+                        _errorMessage.SetActive(true);
+                        _errorMessage.GetComponent<Text>().text = "User already exist!";
+                    }             
+                }
+            }
+        }
         public override void OnCreateRoomFailed(short returnCode, string message)
         {
             print("Launcher: CreateRoom failed: " + message + " return code:" + returnCode); 
         }
-       
+      /*  async Task<string> makeRequest()
+        {
 
+            var json = "{\"name\":\"test" + "\"}";
+            using (UnityWebRequest webRequest = UnityWebRequest.Post("http://178.62.237.73/user/", json))
+            {
+                webRequest.SendWebRequest();
+
+                string result = Encoding.UTF8.GetString(webRequest.downloadHandler.data);
+
+                if (webRequest.result != UnityWebRequest.Result.Success)
+                {
+                    JSONNode error = JSON.Parse(result);
+
+                    registerAndLoginError.GetComponent<Text>().text = error["error"]["message"];
+                    registerAndLoginError.SetActive(true);
+
+                    return "";
+                }
+            }
+
+            BasicLogin();
+            return "";
+        }*/
         public override void OnJoinRandomFailed(short returnCode, string message)
         {
             Debug.Log("PUN Basics Tutorial/Launcher:OnJoinRandomFailed() was called by PUN. No random room available, so we create one.\nCalling: PhotonNetwork.CreateRoom");
-
+    
             // #Critical: we failed to join a random room, maybe none exists or they are all full. No worries, we create a new room.
             PhotonNetwork.CreateRoom(null, new RoomOptions { MaxPlayers = maxPlayersPerRoom });
         }

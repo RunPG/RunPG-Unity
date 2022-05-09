@@ -1,9 +1,11 @@
+using Photon.Pun;
+using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class MenuManager : MonoBehaviour
+public class MenuManager : MonoBehaviourPunCallbacks
 {
     [SerializeField]
     private Button mainButton;
@@ -15,6 +17,8 @@ public class MenuManager : MonoBehaviour
     private Button CharacterButton;
     [SerializeField]
     private Button guildButton;
+    [SerializeField]
+    private Button lobbyButton;
     [SerializeField]
     private GameObject menuPanel;
     [SerializeField]
@@ -52,11 +56,30 @@ public class MenuManager : MonoBehaviour
             menuPanel.SetActive(false);
             FriendListPanel.SetActive(true);
         });
+        lobbyButton.onClick.AddListener(JoinLobby);
     }
-
-    // Update is called once per frame
-    void Update()
+    void JoinLobby()
     {
-        
+       
+        RoomOptions roomOptions = new RoomOptions();
+        roomOptions.IsVisible = true;
+        roomOptions.IsVisible = true;
+        roomOptions.MaxPlayers = 4;
+        // null means we dont want a special room name
+        PhotonNetwork.CreateRoom(null, roomOptions, TypedLobby.Default);
+    }
+    public override void OnJoinedRoom()
+    {
+        Debug.Log("PUN Basics Tutorial/Launcher: OnJoinedRoom() called by PUN. Now this client is in a room.");
+        // #Critical: We only load if we are the first player, else we rely on `PhotonNetwork.AutomaticallySyncScene` to sync our instance scene.
+        if (PhotonNetwork.CurrentRoom.PlayerCount == 1)
+        {
+            Debug.Log("We load the Lobby");
+
+
+            // #Critical
+            // Load the lobby.
+            PhotonNetwork.LoadLevel("Lobby");
+        }
     }
 }

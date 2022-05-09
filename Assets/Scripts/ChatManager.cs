@@ -5,14 +5,23 @@ using Photon.Chat;
 using ExitGames.Client.Photon;
 using UnityEngine.UI;
 using Photon.Pun;
+using System;
+using Photon.Realtime;
 
 public class ChatManager : MonoBehaviour, IChatClientListener
 {
     private ChatClient _chatClient;
-    [SerializeField] InputField textInput;
+    [SerializeField] InputField msgTextInput;
     [SerializeField] Button sendMsgButton;
+    //Messages display
     [SerializeField] GameObject msgPrefab;
-    [SerializeField] GameObject prefabPos;
+    [SerializeField] Transform msgPrefabPos;
+    //Friendlist display 
+    [SerializeField] GameObject friendlistPrefab;
+    [SerializeField] Transform friendlistPrefabPos;
+
+    [SerializeField] Button addFriendButton;
+    [SerializeField] InputField friendTextInput;
 
     public void DebugReturn(DebugLevel level, string message)
     {
@@ -24,7 +33,24 @@ public class ChatManager : MonoBehaviour, IChatClientListener
         Debug.Log("OnChatStateChange:OnConnected called");
 
     }
-
+    public void AddFriends(string[] friends)
+    {
+        foreach (var friend in friends)
+        {
+            Player player = null;
+            //TODO GET USER ID IN THE DB AND THEN SEND RPC TO THIS USER ID
+            PhotonView photonView = PhotonView.Get(this);
+            photonView.RPC("AddFriendAskConfirmation", player);
+            var display = Instantiate(friendlistPrefab, friendlistPrefabPos);
+            display.transform.GetChild(0).GetComponent<Text>().text = friend;
+        }
+        _chatClient.AddFriends(friends);
+    }
+    [PunRPC]
+    public void AddFriendAskConfirmation(string friend)
+    {
+        Debug.Log("Added");
+    }
     public void OnConnected()   
     {
         Debug.Log("ChatManager:OnConnected called");
@@ -35,21 +61,18 @@ public class ChatManager : MonoBehaviour, IChatClientListener
     public void OnDisconnected()
     {
         Debug.Log("ChatManager:OnDisconnected called");
-
     }
 
     public void OnGetMessages(string channelName, string[] senders, object[] messages)
     {
         Debug.Log("OnGetMessages");
-
+        
         string msgs = "";
         for (int i = 0; i < senders.Length; i++)
         {
-
             msgs = string.Format("{0}{1}={2}, ", msgs, senders[i], messages[i]);
             if (senders[i] != PhotonNetwork.NickName)
                 DisplayMessage(messages[i].ToString(), senders[i]);
-
 
         }
         // All public messages are automatically cached in `Dictionary<string, ChatChannel> PublicChannels`.
@@ -65,8 +88,6 @@ public class ChatManager : MonoBehaviour, IChatClientListener
     public void OnStatusUpdate(string user, int status, bool gotMessage, object message)
     {
         Debug.Log("ChatManager:OnStatusUpdate called: " + user + status);
-
-
     }
 
     public void OnSubscribed(string[] channels, bool[] results)
@@ -91,7 +112,7 @@ public class ChatManager : MonoBehaviour, IChatClientListener
         _chatClient.ChatRegion = "EU";
 
         Debug.Log(PhotonNetwork.PhotonServerSettings.AppSettings.AppIdChat);
-        _chatClient.Connect(PhotonNetwork.PhotonServerSettings.AppSettings.AppIdChat, PhotonNetwork.AppVersion, new AuthenticationValues(PhotonNetwork.NickName));
+        _chatClient.Connect(PhotonNetwork.PhotonServerSettings.AppSettings.AppIdChat, PhotonNetwork.AppVersion, new Photon.Chat.AuthenticationValues(PhotonNetwork.NickName));
         Application.runInBackground = true;
     }
 
@@ -99,18 +120,22 @@ public class ChatManager : MonoBehaviour, IChatClientListener
     void Start()
     {
         sendMsgButton.onClick.AddListener(SendMessage);
-
+        addFriendButton.onClick.AddListener(delegate
+        {
+            string[] friends = new string[] { friendTextInput.text };
+            AddFriends(friends);
+        });
     }
     void SendMessage()
     {
-        DisplayMessage(textInput.text, PhotonNetwork.NickName);
-        _chatClient.PublishMessage("guild", textInput.text);
-        textInput.text = "";
+        DisplayMessage(msgTextInput.text, PhotonNetwork.NickName);
+        _chatClient.PublishMessage("guild", msgTextInput.text);
+        msgTextInput.text = "";
 
     }
     public void DisplayMessage(string message, string sender)
     {
-        var msg = Instantiate(msgPrefab, prefabPos.transform);
+        var msg = Instantiate(msgPrefab, msgPrefabPos);
         msg.transform.GetChild(0).GetComponent<Text>().text = message;
         msg.transform.GetChild(1).GetComponent<Text>().text = sender;
     }
@@ -119,4 +144,5 @@ public class ChatManager : MonoBehaviour, IChatClientListener
     {
         _chatClient.Service();
     }
+    
 }
