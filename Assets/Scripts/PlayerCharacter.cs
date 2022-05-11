@@ -19,6 +19,7 @@ public class PlayerCharacter : Character
     private Button buttonObjectBack;
     private Transform objects;
 
+    [SerializeField]
     private string[] skills = new string[4];
 
     private bool isSelected = false;
@@ -29,17 +30,12 @@ public class PlayerCharacter : Character
 
     void Awake()
     {
-        AddConsumable("Potion de vie", 1);
+        AddConsumable("Potion de vie", 2);
         AddConsumable("Bombe", 1);
 
         ActionCanvas = GameObject.Find("Canvas ActionSelection").GetComponent<Canvas>();
         AttackCanvas = GameObject.Find("Canvas AttackSelection").GetComponent<Canvas>();
         ObjectCanvas = GameObject.Find("Canvas ObjectSelection").GetComponent <Canvas>();
-
-        skills[0] = "Entaille";
-        skills[1] = "Entaille";
-        skills[2] = "Coup de bouclier";
-        skills[3] = "Boule de feu";
 
         buttonSkill1 = AttackCanvas.transform.Find("Background/Actions/Button Action 1").GetComponent<Button>();
         buttonSkill2 = AttackCanvas.transform.Find("Background/Actions/Button Action 2").GetComponent<Button>();

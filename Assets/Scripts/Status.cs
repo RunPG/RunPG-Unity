@@ -40,6 +40,21 @@ public class StunStatus : Status
     }
 }
 
+public class TauntStatus : Status
+{
+    protected Character taunter;
+    public TauntStatus(Character caster)
+    {
+        taunter = caster;
+        remainingTurns = 3;
+    }
+
+    public Character GetTaunter()
+    {
+        return taunter;
+    }
+}
+
 public class ElementalStatus : Status {}
 
 public class BurnStatus : ElementalStatus 

@@ -20,6 +20,10 @@ public abstract class Character : MonoBehaviour
 
     protected ElementalStatus elementalStatus;
     protected StunStatus stunStatus;
+    protected TauntStatus tauntStatus;
+
+    [SerializeField]
+    protected Animator animator;
 
     public bool isAlive()
     {
@@ -137,10 +141,39 @@ public abstract class Character : MonoBehaviour
         stunStatus = new StunStatus();
     }
 
+    public void CleanTaunt()
+    {
+        tauntStatus = null;
+    }
+
+    public void Taunt(Character caster)
+    {
+        tauntStatus = new TauntStatus(caster);
+    }
+
+    public Character GetTaunter()
+    {
+        if (tauntStatus != null)
+        {
+            return tauntStatus.GetTaunter();
+        }
+        return null;
+    }
+
     public bool IsStun()
     {
         return stunStatus != null;
     }
 
+    public bool IsTaunt()
+    {
+        return tauntStatus != null;
+    }
+
     public abstract void AskForAction();
+
+    public void PlayAnimation(string animation)
+    {
+        animator.SetTrigger(animation + "Trigger");
+    }
 }

@@ -32,8 +32,9 @@ public class CombatManager : MonoBehaviour
         }
         RegisterCombatAction<Idle>("Idle");
         RegisterCombatAction<Entaille>("Entaille");
-        RegisterCombatAction<CoupDeBouclier>("Coup de bouclier");
+        RegisterCombatAction<Provocation>("Provocation");
         RegisterCombatAction<BouleDeFeu>("Boule de feu");
+        RegisterCombatAction<Embrasement>("Embrasement");
         RegisterCombatAction<HealthPotion>("Potion de vie");
         RegisterCombatAction<Bomb>("Bombe");
     }
@@ -163,6 +164,14 @@ public class CombatManager : MonoBehaviour
                     throw new Exception("Error wrong target");
 
                 logger.Log("resolving action " + action.name);
+
+                if (action.caster.IsTaunt()
+                    && (action.possibleTarget == CombatAction.PossibleTarget.Enemy
+                    || action.possibleTarget == CombatAction.PossibleTarget.All))
+                {
+                    action.target = action.caster.GetTaunter();
+                }
+
                 if (action as Consumable != null)
                     action.caster.UseConsumable(action.name);
                 action.doAction();
