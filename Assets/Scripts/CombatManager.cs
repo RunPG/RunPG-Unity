@@ -167,7 +167,8 @@ public class CombatManager : MonoBehaviour
 
                 if (action.caster.IsTaunt()
                     && (action.possibleTarget == CombatAction.PossibleTarget.Enemy
-                    || action.possibleTarget == CombatAction.PossibleTarget.All))
+                    || action.possibleTarget == CombatAction.PossibleTarget.All)
+                    && action.caster.GetTaunter().isAlive())
                 {
                     action.target = action.caster.GetTaunter();
                 }
