@@ -16,6 +16,9 @@ public abstract class Character : MonoBehaviour
     [SerializeField]
     protected Image selector;
 
+    [SerializeField]
+    private List<Sprite> status;
+
     protected Dictionary<string, int> inventory = new Dictionary<string, int>();
 
     protected ElementalStatus elementalStatus;
@@ -24,6 +27,10 @@ public abstract class Character : MonoBehaviour
 
     [SerializeField]
     protected Animator animator;
+
+    [SerializeField]
+    private Transform statusUI;
+
 
     public bool isAlive()
     {
@@ -97,7 +104,10 @@ public abstract class Character : MonoBehaviour
     public void AddElementalStatus(ElementalStatus status)
     {
         if (elementalStatus == null)
+        {
             elementalStatus = status;
+            AddStatusIcon(status.ToString());
+        }
     }
 
     public void DecreaseElementalStatusTurns()
@@ -106,7 +116,10 @@ public abstract class Character : MonoBehaviour
         {
             elementalStatus.DecraseTurns();
             if (!elementalStatus.IsAffected())
+            {
+                DeleteStatusIcon(elementalStatus.ToString());
                 elementalStatus = null;
+            }
         }
     }
 
@@ -134,21 +147,25 @@ public abstract class Character : MonoBehaviour
     public void CleanStun()
     {
         stunStatus = null;
+        DeleteStatusIcon("StunStatus");
     }
 
     public void Stun()
     {
         stunStatus = new StunStatus();
+        AddStatusIcon("StunStatus");
     }
 
     public void CleanTaunt()
     {
         tauntStatus = null;
+        DeleteStatusIcon("TauntStatus");
     }
 
     public void Taunt(Character caster)
     {
         tauntStatus = new TauntStatus(caster);
+        AddStatusIcon("TauntStatus");
     }
 
     public Character GetTaunter()
@@ -175,5 +192,19 @@ public abstract class Character : MonoBehaviour
     public void PlayAnimation(string animation)
     {
         animator.SetTrigger(animation + "Trigger");
+    }
+
+    private void AddStatusIcon(string name)
+    {
+        GameObject newStatusGameObject = Instantiate(statusUI.Find("StatusExample").gameObject, statusUI, false);
+        newStatusGameObject.name = name;
+        newStatusGameObject.SetActive(true);
+        Image newStatusImage = newStatusGameObject.GetComponent<Image>();
+        newStatusImage.sprite = status.Find(elt => elt.name == name);
+    }
+
+    private void DeleteStatusIcon(string name)
+    {
+        Destroy(statusUI.Find(name).gameObject);
     }
 }
