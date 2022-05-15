@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class PlayerCharacter : Character
@@ -32,7 +33,7 @@ public class PlayerCharacter : Character
     {
         AddConsumable("Potion de vie", 2);
         AddConsumable("Bombe", 1);
-
+        
         ActionCanvas = GameObject.Find("Canvas ActionSelection").GetComponent<Canvas>();
         AttackCanvas = GameObject.Find("Canvas AttackSelection").GetComponent<Canvas>();
         ObjectCanvas = GameObject.Find("Canvas ObjectSelection").GetComponent <Canvas>();
@@ -146,21 +147,47 @@ public class PlayerCharacter : Character
 
         foreach (var item in inventory)
         {
-            Button button = Instantiate(objects.Find("ButtonExample").gameObject, objects, false).GetComponent<Button>();
-            button.GetComponentInChildren<Text>().text = item.Key;
-            button.gameObject.SetActive(true);
-            button.onClick.AddListener(() =>
+            Sprite itemSprite = CombatManager.Instance.GetItemSprite(item.Key);
+            UnityAction buttonAction = () =>
             {
                 selectedAction = CombatManager.Instance.GetCombatAction(item.Key);
                 selectedAction.caster = this;
-                foreach(var b in objectButtons)
+                foreach (var b in objectButtons)
                 {
                     b.interactable = true;
                 }
-                button.interactable= false;
+                var it = UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.GetComponent<Button>();
+                it.interactable = false;
                 CombatManager.Instance.HidePossibleTarget();
                 CombatManager.Instance.ShowPossibleTarget(this, selectedAction.possibleTarget);
-            });
+            };
+
+            Button button = Instantiate(objects.Find("ButtonExample").gameObject, objects, false).GetComponent<Button>();
+            button.GetComponentInChildren<Text>().text = item.Key;
+
+            Image buttonImage = button.GetComponent<Image>();
+            Image[] images = button.GetComponentsInChildren<Image>();
+            foreach (var image in images)
+            {
+                if (image != buttonImage && itemSprite != null)
+                {
+                    image.sprite = itemSprite;
+                    break;
+                }
+            }
+
+            Text[] texts = button.GetComponentsInChildren<Text>();
+            foreach (var text in texts)
+            {
+                if (text.gameObject.name == "Name")
+                    text.text = item.Key;
+                else if (text.gameObject.name == "Quantity" && item.Value > 1)
+                    text.text = "X" + item.Value;
+            }
+
+            button.gameObject.SetActive(true);
+            button.onClick.AddListener(buttonAction);
+
             objectButtons.Add(button);
         }
 

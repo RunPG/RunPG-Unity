@@ -17,6 +17,9 @@ public class CombatManager : MonoBehaviour
     [SerializeField]
     private List<Character> characters = new List<Character>();
 
+    [SerializeField]
+    private List<Sprite> Items = new List<Sprite>();
+
     private List<CombatAction> queue = new List<CombatAction>();
 
     private void Awake()
@@ -240,5 +243,19 @@ public class CombatManager : MonoBehaviour
                 character.CleanElementalStatus();
             }
         }
+    }
+
+    public Sprite GetItemSprite(string itemName)
+    {
+        foreach (var elt in Items)
+        {
+            if (elt.name == itemName)
+            {
+                return elt;
+            }
+        }
+        logger.LogError("CombatManager", "Error on get item sprite");
+
+        return null;
     }
 }
