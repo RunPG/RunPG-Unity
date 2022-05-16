@@ -32,7 +32,7 @@ public class Entaille : Skill
     private IEnumerator DoAction()
     {
         yield return new WaitForSeconds(0.4f);
-        target.TakeDamage(20);
+        target.TakeDamage(25);
     }
 }
 
@@ -94,7 +94,7 @@ public class BouleDeFeu : Skill
             yield return null;
         }
 
-        target.TakeDamage(15);
+        target.TakeDamage(25);
         target.AddElementalStatus(new BurnStatus());
         GameObject.Destroy(fireball);
     }

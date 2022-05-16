@@ -15,7 +15,7 @@ public class HealthPotion : Consumable
 
     public override void PlayAction()
     {
-        target.Heal(20);
+        target.Heal(70);
     }
 }
 

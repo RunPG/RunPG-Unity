@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -20,6 +21,9 @@ public class CombatManager : MonoBehaviour
     [SerializeField]
     private List<Sprite> Items = new List<Sprite>();
 
+    [SerializeField]
+    private GameObject ResultScreen;
+
     private List<CombatAction> queue = new List<CombatAction>();
 
     private void Awake()
@@ -33,7 +37,7 @@ public class CombatManager : MonoBehaviour
         {
             Instance = this;
         }
-        RegisterCombatAction<Idle>("Idle");
+        RegisterCombatAction<Attendre>("Attendre");
         RegisterCombatAction<Entaille>("Entaille");
         RegisterCombatAction<Provocation>("Provocation");
         RegisterCombatAction<BouleDeFeu>("Boule de feu");
@@ -121,14 +125,12 @@ public class CombatManager : MonoBehaviour
     {
         while (true)
         {
-            ResolveBurnStatus();
-
             queue.Clear();
             for (int i = 0; i < characters.Count; i++)
             {
                 if (!characters[i].isAlive())
                 {
-                    Idle idle = new Idle();
+                    Attendre idle = new Attendre();
                     idle.target = characters[i];
                     idle.caster = characters[i];
                     queue.Add(idle);
@@ -138,7 +140,7 @@ public class CombatManager : MonoBehaviour
                 if (characters[i].IsStun())
                 {
                     characters[i].CleanStun();
-                    Idle idle = new Idle();
+                    Attendre idle = new Attendre();
                     idle.target = characters[i];
                     idle.caster = characters[i];
                     queue.Add(idle);
@@ -188,9 +190,20 @@ public class CombatManager : MonoBehaviour
                 yield return new WaitForSeconds(action.duration);
             }
 
-            if (characters.Where(c => c.isAlive() && c.CompareTag("Team1")).Count() == 0
-                || characters.Where(c => c.isAlive() && c.CompareTag("Team2")).Count() == 0)
+            ResolveBurnStatus();
+
+            if (characters.Where(c => c.isAlive() && c.CompareTag("Team1")).Count() == 0)
             {
+                ResultScreen.GetComponent<CanvasGroup>().alpha = 1;
+                ResultScreen.GetComponentInChildren<TextMeshProUGUI>().text = "Défaite";
+                ResultScreen.GetComponentInChildren<TextMeshProUGUI>().color = Color.red;
+                break;
+            }
+            else if (characters.Where(c => c.isAlive() && c.CompareTag("Team2")).Count() == 0)
+            {
+                ResultScreen.GetComponent<CanvasGroup>().alpha = 1;
+                ResultScreen.GetComponentInChildren<TextMeshProUGUI>().text = "Victoire";
+                ResultScreen.GetComponentInChildren<TextMeshProUGUI>().color = Color.yellow;
                 break;
             }
         }

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
@@ -10,11 +11,18 @@ public class PlayerCharacter : Character
     private Canvas AttackCanvas;
     private Canvas ObjectCanvas;
 
+    private Button buttonPass;
+
     private Button buttonSkill1;
     private Button buttonSkill2;
     private Button buttonSkill3;
     private Button buttonSkill4;
     private Button buttonSkillBack;
+
+    private GameObject veil1;
+    private GameObject veil2;
+    private GameObject veil3;
+    private GameObject veil4;
 
     private List<Button> objectButtons = new List<Button>();
     private Button buttonObjectBack;
@@ -45,10 +53,23 @@ public class PlayerCharacter : Character
         AttackCanvas = GameObject.Find("Canvas AttackSelection").GetComponent<Canvas>();
         ObjectCanvas = GameObject.Find("Canvas ObjectSelection").GetComponent <Canvas>();
 
-        buttonSkill1 = AttackCanvas.transform.Find("Background/Actions/Button Action 1").GetComponent<Button>();
-        buttonSkill2 = AttackCanvas.transform.Find("Background/Actions/Button Action 2").GetComponent<Button>();
-        buttonSkill3 = AttackCanvas.transform.Find("Background/Actions/Button Action 3").GetComponent<Button>();
-        buttonSkill4 = AttackCanvas.transform.Find("Background/Actions/Button Action 4").GetComponent<Button>();
+        buttonSkill1 = AttackCanvas.transform.Find("Background/Actions/Action 1/Button").GetComponent<Button>();
+        buttonSkill2 = AttackCanvas.transform.Find("Background/Actions/Action 2/Button").GetComponent<Button>();
+        buttonSkill3 = AttackCanvas.transform.Find("Background/Actions/Action 3/Button").GetComponent<Button>();
+        buttonSkill4 = AttackCanvas.transform.Find("Background/Actions/Action 4/Button").GetComponent<Button>();
+
+        buttonPass = ActionCanvas.transform.Find("Background/PassButton").GetComponent<Button>();
+
+        veil1 = AttackCanvas.transform.Find("Background/Actions/Action 1/CooldownUI").gameObject;
+        veil2 = AttackCanvas.transform.Find("Background/Actions/Action 2/CooldownUI").gameObject;
+        veil3 = AttackCanvas.transform.Find("Background/Actions/Action 3/CooldownUI").gameObject;
+        veil4 = AttackCanvas.transform.Find("Background/Actions/Action 4/CooldownUI").gameObject;
+
+        veil1.SetActive(false);
+        veil2.SetActive(false);
+        veil3.SetActive(false);
+        veil4.SetActive(false);
+
         buttonSkillBack = AttackCanvas.transform.Find("Background/Button Back").GetComponent<Button>();
 
         objects = ObjectCanvas.transform.Find("Background/Scroll/ScrollBack/Objects");
@@ -93,6 +114,23 @@ public class PlayerCharacter : Character
         buttonSkill2.GetComponentInChildren<Text>().text = skills[1].name;
         buttonSkill3.GetComponentInChildren<Text>().text = skills[2].name;
         buttonSkill4.GetComponentInChildren<Text>().text = skills[3].name;
+
+        buttonSkill1.interactable = skills[0].remainingCooldownTurns == 0;
+        veil1.SetActive(skills[0].remainingCooldownTurns != 0);
+        veil1.GetComponentInChildren<TextMeshProUGUI>().text = skills[0].remainingCooldownTurns.ToString() + " Tours";
+
+        buttonSkill2.interactable = skills[1].remainingCooldownTurns == 0;
+        veil2.SetActive(skills[1].remainingCooldownTurns != 0);
+        veil2.GetComponentInChildren<TextMeshProUGUI>().text = skills[1].remainingCooldownTurns.ToString() + " Tours";
+
+        buttonSkill3.interactable = skills[2].remainingCooldownTurns == 0;
+        veil3.SetActive(skills[2].remainingCooldownTurns != 0);
+        veil3.GetComponentInChildren<TextMeshProUGUI>().text = skills[2].remainingCooldownTurns.ToString() + " Tours";
+
+        buttonSkill4.interactable = skills[3].remainingCooldownTurns == 0;
+        veil4.SetActive(skills[3].remainingCooldownTurns != 0);
+        veil4.GetComponentInChildren<TextMeshProUGUI>().text = skills[3].remainingCooldownTurns.ToString() + " Tours";
+
         CanvasGroup actionGroup = ActionCanvas.GetComponent<CanvasGroup>();
         actionGroup.alpha = 1;
         actionGroup.interactable = true;
@@ -102,53 +140,61 @@ public class PlayerCharacter : Character
         ShowSelected(true);
         selectedAction = null;
 
+        buttonPass.onClick.AddListener(() =>
+        {
+            selectedAction = CombatManager.Instance.GetCombatAction("Attendre");
+            selectedAction.caster = this;
+            selectedAction.target = this;
+            isSelected = false;
+            ShowSelected(false);
+            ResetInterface();
+            CombatManager.Instance.HidePossibleTarget();
+            CombatManager.Instance.AddAction(selectedAction);
+        });
+
         buttonSkill1.onClick.AddListener(() =>
         {
-            Debug.Log(skills[0].remainingCooldownTurns);
             selectedAction = skills[0];
             selectedAction.caster = this;
             buttonSkill1.interactable = false;
-            buttonSkill2.interactable = true;
-            buttonSkill3.interactable = true;
-            buttonSkill4.interactable = true;
+            buttonSkill2.interactable = skills[1].remainingCooldownTurns == 0;
+            buttonSkill3.interactable = skills[2].remainingCooldownTurns == 0;
+            buttonSkill4.interactable = skills[3].remainingCooldownTurns == 0;
             CombatManager.Instance.HidePossibleTarget();
             CombatManager.Instance.ShowPossibleTarget(this, selectedAction.possibleTarget);
         });
 
         buttonSkill2.onClick.AddListener(() =>
         {
-            Debug.Log(skills[1].remainingCooldownTurns);
             selectedAction = skills[1];
             selectedAction.caster = this;
-            buttonSkill1.interactable = true;
+            buttonSkill1.interactable = skills[0].remainingCooldownTurns == 0;
             buttonSkill2.interactable = false;
-            buttonSkill3.interactable = true;
-            buttonSkill4.interactable = true;
+            buttonSkill3.interactable = skills[2].remainingCooldownTurns == 0;
+            buttonSkill4.interactable = skills[3].remainingCooldownTurns == 0;
             CombatManager.Instance.HidePossibleTarget();
             CombatManager.Instance.ShowPossibleTarget(this, selectedAction.possibleTarget);
         });
 
         buttonSkill3.onClick.AddListener(() =>
         {
-            Debug.Log(skills[2].remainingCooldownTurns);
             selectedAction = skills[2];
             selectedAction.caster = this;
-            buttonSkill1.interactable = true;
-            buttonSkill2.interactable = true;
+            buttonSkill1.interactable = skills[0].remainingCooldownTurns == 0;
+            buttonSkill2.interactable = skills[1].remainingCooldownTurns == 0;
             buttonSkill3.interactable = false;
-            buttonSkill4.interactable = true;
+            buttonSkill4.interactable = skills[3].remainingCooldownTurns == 0;
             CombatManager.Instance.HidePossibleTarget();
             CombatManager.Instance.ShowPossibleTarget(this, selectedAction.possibleTarget);
         });
 
         buttonSkill4.onClick.AddListener(() =>
         {
-            Debug.Log(skills[3].remainingCooldownTurns);
             selectedAction = skills[3];
             selectedAction.caster = this;
-            buttonSkill1.interactable = true;
-            buttonSkill2.interactable = true;
-            buttonSkill3.interactable = true;
+            buttonSkill1.interactable = skills[0].remainingCooldownTurns == 0;
+            buttonSkill2.interactable = skills[1].remainingCooldownTurns == 0;
+            buttonSkill3.interactable = skills[2].remainingCooldownTurns == 0;
             buttonSkill4.interactable = false;
             CombatManager.Instance.HidePossibleTarget();
             CombatManager.Instance.ShowPossibleTarget(this, selectedAction.possibleTarget);
@@ -230,6 +276,7 @@ public class PlayerCharacter : Character
         buttonSkill2.onClick.RemoveAllListeners();
         buttonSkill3.onClick.RemoveAllListeners();
         buttonSkill4.onClick.RemoveAllListeners();
+        buttonPass.onClick.RemoveAllListeners();
         buttonSkillBack.onClick.RemoveAllListeners();
         buttonObjectBack.onClick.RemoveAllListeners();
         buttonSkill1.interactable = true;

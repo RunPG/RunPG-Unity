@@ -23,9 +23,9 @@ public abstract class CombatAction
     public abstract void PlayAction();
 }
 
-public class Idle : CombatAction
+public class Attendre : CombatAction
 {
-    public override string name => "Idle";
+    public override string name => "Attendre";
 
     public override PossibleTarget possibleTarget => PossibleTarget.Self;
 
