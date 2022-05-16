@@ -36,18 +36,20 @@ public abstract class Character : MonoBehaviour
     [SerializeField]
     private GameObject healthBarGameObject;
 
+    private GameObject healthBarInstance;
+
 
     protected virtual void Awake()
     {
         
         GameObject HealthBarCanvas = GameObject.Find("Canvas Healthbar");
-        GameObject newHealthbar = Instantiate(healthBarGameObject, HealthBarCanvas.transform).gameObject;
+        healthBarInstance = Instantiate(healthBarGameObject, HealthBarCanvas.transform).gameObject;
 
-        healthBar = newHealthbar.GetComponentInChildren<HealthBar>();
-        selector = newHealthbar.transform.Find("Selector").GetComponent<Image>();
-        statusUI = newHealthbar.transform.Find("StatusLayout");
+        healthBar = healthBarInstance.GetComponentInChildren<HealthBar>();
+        selector = healthBarInstance.transform.Find("Selector").GetComponent<Image>();
+        statusUI = healthBarInstance.transform.Find("StatusLayout");
 
-        newHealthbar.transform.position = Camera.main.WorldToScreenPoint(healthBarPosition.position);
+        healthBarInstance.transform.position = Camera.main.WorldToScreenPoint(healthBarPosition.position);
     }
 
     public bool isAlive()
@@ -62,6 +64,11 @@ public abstract class Character : MonoBehaviour
 
         currentHealth -= damage;
         Mathf.Clamp(currentHealth, 0, maxHealth);
+        if (currentHealth <= 0)
+        {
+            gameObject.SetActive(false);
+            healthBarInstance.SetActive(false);
+        }
         healthBar.SetHealth(currentHealth);
     }
 
