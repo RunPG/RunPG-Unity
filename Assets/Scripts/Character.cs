@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -30,7 +31,6 @@ public abstract class Character : MonoBehaviour
 
     [SerializeField]
     private Transform statusUI;
-
 
     public bool isAlive()
     {
@@ -175,6 +175,19 @@ public abstract class Character : MonoBehaviour
             return tauntStatus.GetTaunter();
         }
         return null;
+    }
+
+    public void DecreaseTauntTurn()
+    {
+        if (tauntStatus != null)
+        {
+            tauntStatus.DecraseTurns();
+            if (tauntStatus.GetRemainingTurns() <= 0)
+            {
+                tauntStatus = null;
+                DeleteStatusIcon("TauntStatus");
+            }
+        }
     }
 
     public bool IsStun()

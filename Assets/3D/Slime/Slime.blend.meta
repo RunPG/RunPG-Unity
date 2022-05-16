@@ -8,10 +8,10 @@ ModelImporter:
     second: TPos
   - first:
       74: -3100369314251171874
-    second: Idle
+    second: Inactif
   - first:
       74: 5539831331247536789
-    second: Jump
+    second: Bond
   externalObjects:
   - first:
       type: UnityEngine:Material
@@ -81,7 +81,7 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 1
     - serializedVersion: 16
-      name: Idle
+      name: Inactif
       takeName: Scene
       internalID: 0
       firstFrame: 7
@@ -110,7 +110,7 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 1
     - serializedVersion: 16
-      name: Jump
+      name: Bond
       takeName: Scene
       internalID: 0
       firstFrame: 11

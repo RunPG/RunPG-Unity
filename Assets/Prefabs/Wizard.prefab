@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &920316670865067015
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6222558984306053160}
+  m_Layer: 0
+  m_Name: FireballStart
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6222558984306053160
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 920316670865067015}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 883792260147714846}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2047305514895275081
 GameObject:
   m_ObjectHideFlags: 0
@@ -44,7 +75,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 2047305514895275081}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5ba80979d948ea341ba8f8c56823a9f1, type: 3}
+  m_Script: {fileID: 11500000, guid: 9ae7243f4bfa2f544a396b92bd174d4a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 100
@@ -58,11 +89,11 @@ MonoBehaviour:
   - {fileID: 21300000, guid: e92768783aae81c41905d9a4eed2a451, type: 3}
   animator: {fileID: 7171566785710481535}
   statusUI: {fileID: 8681361001636058663}
-  skills:
-  - 
-  - 
-  - 
-  - 
+  skillNames:
+  - Boule de feu
+  - Boule de feu
+  - Embrasement
+  - Embrasement
   background: {fileID: 7507734855519628783}
 --- !u!136 &1932481685353180089
 CapsuleCollider:
@@ -210,6 +241,11 @@ PrefabInstance:
       propertyPath: m_PresetInfoIsWorld
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 8304679446551517514, guid: e6e8ced717bed0249a7fe5099334cca3,
+        type: 3}
+      propertyPath: m_Text
+      value: Sorcier
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e6e8ced717bed0249a7fe5099334cca3, type: 3}
 --- !u!224 &4343946458945821173 stripped
@@ -344,6 +380,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 941c38682a0aa854ba34915669475e60, type: 3}
+--- !u!4 &883792260147714846 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7284643259353517314, guid: 941c38682a0aa854ba34915669475e60,
+    type: 3}
+  m_PrefabInstance: {fileID: 7591833198329189916}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &7321434366144473933 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 941c38682a0aa854ba34915669475e60,

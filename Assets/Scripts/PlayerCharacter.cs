@@ -21,7 +21,9 @@ public class PlayerCharacter : Character
     private Transform objects;
 
     [SerializeField]
-    private string[] skills = new string[4];
+    private string[] skillNames = new string[4];
+
+    private Skill[] skills = new Skill[4];
 
     private bool isSelected = false;
     private CombatAction selectedAction = null;
@@ -33,7 +35,12 @@ public class PlayerCharacter : Character
     {
         AddConsumable("Potion de vie", 2);
         AddConsumable("Bombe", 1);
-        
+
+        skills[0] = (Skill)CombatManager.Instance.GetCombatAction(skillNames[0]);
+        skills[1] = (Skill)CombatManager.Instance.GetCombatAction(skillNames[1]);
+        skills[2] = (Skill)CombatManager.Instance.GetCombatAction(skillNames[2]);
+        skills[3] = (Skill)CombatManager.Instance.GetCombatAction(skillNames[3]);
+
         ActionCanvas = GameObject.Find("Canvas ActionSelection").GetComponent<Canvas>();
         AttackCanvas = GameObject.Find("Canvas AttackSelection").GetComponent<Canvas>();
         ObjectCanvas = GameObject.Find("Canvas ObjectSelection").GetComponent <Canvas>();
@@ -82,10 +89,10 @@ public class PlayerCharacter : Character
             return;
         }
 
-        buttonSkill1.GetComponentInChildren<Text>().text = skills[0];
-        buttonSkill2.GetComponentInChildren<Text>().text = skills[1];
-        buttonSkill3.GetComponentInChildren<Text>().text = skills[2];
-        buttonSkill4.GetComponentInChildren<Text>().text = skills[3];
+        buttonSkill1.GetComponentInChildren<Text>().text = skills[0].name;
+        buttonSkill2.GetComponentInChildren<Text>().text = skills[1].name;
+        buttonSkill3.GetComponentInChildren<Text>().text = skills[2].name;
+        buttonSkill4.GetComponentInChildren<Text>().text = skills[3].name;
         CanvasGroup actionGroup = ActionCanvas.GetComponent<CanvasGroup>();
         actionGroup.alpha = 1;
         actionGroup.interactable = true;
@@ -97,7 +104,8 @@ public class PlayerCharacter : Character
 
         buttonSkill1.onClick.AddListener(() =>
         {
-            selectedAction = CombatManager.Instance.GetCombatAction(skills[0]);
+            Debug.Log(skills[0].remainingCooldownTurns);
+            selectedAction = skills[0];
             selectedAction.caster = this;
             buttonSkill1.interactable = false;
             buttonSkill2.interactable = true;
@@ -109,7 +117,8 @@ public class PlayerCharacter : Character
 
         buttonSkill2.onClick.AddListener(() =>
         {
-            selectedAction = CombatManager.Instance.GetCombatAction(skills[1]);
+            Debug.Log(skills[1].remainingCooldownTurns);
+            selectedAction = skills[1];
             selectedAction.caster = this;
             buttonSkill1.interactable = true;
             buttonSkill2.interactable = false;
@@ -121,7 +130,8 @@ public class PlayerCharacter : Character
 
         buttonSkill3.onClick.AddListener(() =>
         {
-            selectedAction = CombatManager.Instance.GetCombatAction(skills[2]);
+            Debug.Log(skills[2].remainingCooldownTurns);
+            selectedAction = skills[2];
             selectedAction.caster = this;
             buttonSkill1.interactable = true;
             buttonSkill2.interactable = true;
@@ -133,7 +143,8 @@ public class PlayerCharacter : Character
 
         buttonSkill4.onClick.AddListener(() =>
         {
-            selectedAction = CombatManager.Instance.GetCombatAction(skills[3]);
+            Debug.Log(skills[3].remainingCooldownTurns);
+            selectedAction = skills[3];
             selectedAction.caster = this;
             buttonSkill1.interactable = true;
             buttonSkill2.interactable = true;
@@ -245,5 +256,15 @@ public class PlayerCharacter : Character
             background.color = new Color(1f, 1f, 1f);
         else
             background.color = new Color(0.5f, 0.7f, 1f);
+    }
+
+    public void DecreaseCooldownTurns()
+    {
+        foreach (var skill in skills)
+        {
+            skill.remainingCooldownTurns--;
+            if (skill.remainingCooldownTurns < 0)
+                skill.remainingCooldownTurns = 0;
+        }
     }
 }

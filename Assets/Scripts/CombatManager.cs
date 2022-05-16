@@ -149,6 +149,11 @@ public class CombatManager : MonoBehaviour
                 characters[i].AskForAction();
                 while (queue.Count < i + 1)
                     yield return null;
+                PlayerCharacter character = characters[i] as PlayerCharacter;
+                if (character != null)
+                {
+                    character.DecreaseCooldownTurns();
+                }
             }
 
             foreach (var action in queue.OrderByDescending(action => action.speed))
@@ -174,12 +179,13 @@ public class CombatManager : MonoBehaviour
                     && action.caster.GetTaunter().isAlive())
                 {
                     action.target = action.caster.GetTaunter();
+                    action.caster.DecreaseTauntTurn();
                 }
 
                 if (action as Consumable != null)
                     action.caster.UseConsumable(action.name);
-                action.doAction();
-                yield return new WaitForSeconds(1);
+                action.PlayAction();
+                yield return new WaitForSeconds(action.duration);
             }
 
             if (characters.Where(c => c.isAlive() && c.CompareTag("Team1")).Count() == 0
@@ -259,3 +265,5 @@ public class CombatManager : MonoBehaviour
         return null;
     }
 }
+
+
