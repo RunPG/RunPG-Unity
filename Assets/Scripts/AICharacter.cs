@@ -4,8 +4,9 @@ using UnityEngine;
 
 public abstract class AICharacter : Character
 {
-    private void Awake()
+    protected override void Awake()
     {
+        base.Awake();
         currentHealth = maxHealth;
         healthBar.SetMaxHealth(maxHealth);
     }

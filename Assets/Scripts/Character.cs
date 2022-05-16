@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public abstract class Character : MonoBehaviour
@@ -11,10 +12,8 @@ public abstract class Character : MonoBehaviour
     protected int maxHealth = 100;
     protected int currentHealth;
 
-    [SerializeField]
     protected HealthBar healthBar;
 
-    [SerializeField]
     protected Image selector;
 
     [SerializeField]
@@ -29,8 +28,27 @@ public abstract class Character : MonoBehaviour
     [SerializeField]
     protected Animator animator;
 
-    [SerializeField]
     private Transform statusUI;
+
+    [SerializeField]
+    private Transform healthBarPosition;
+
+    [SerializeField]
+    private GameObject healthBarGameObject;
+
+
+    protected virtual void Awake()
+    {
+        
+        GameObject HealthBarCanvas = GameObject.Find("Canvas Healthbar");
+        GameObject newHealthbar = Instantiate(healthBarGameObject, HealthBarCanvas.transform).gameObject;
+
+        healthBar = newHealthbar.GetComponentInChildren<HealthBar>();
+        selector = newHealthbar.transform.Find("Selector").GetComponent<Image>();
+        statusUI = newHealthbar.transform.Find("StatusLayout");
+
+        newHealthbar.transform.position = Camera.main.WorldToScreenPoint(healthBarPosition.position);
+    }
 
     public bool isAlive()
     {

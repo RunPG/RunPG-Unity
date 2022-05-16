@@ -39,8 +39,10 @@ public class PlayerCharacter : Character
     [SerializeField]
     private Image background;
 
-    void Awake()
+    protected override void Awake()
     {
+        base.Awake();
+
         AddConsumable("Potion de vie", 2);
         AddConsumable("Bombe", 1);
 
