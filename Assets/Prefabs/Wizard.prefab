@@ -111,24 +111,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 100
-  name: 
   status:
   - {fileID: 21300000, guid: a8394b741139f1f43a20f238e80e106f, type: 3}
   - {fileID: 21300000, guid: abda633ed73468a4990e133994cf0b3a, type: 3}
   - {fileID: 21300000, guid: 8a4cb3f4760b1e2479dfd40d51d58723, type: 3}
   - {fileID: 21300000, guid: 513b408c54129d940962d8a7286641cc, type: 3}
-  - {fileID: 21300000, guid: e92768783aae81c41905d9a4eed2a451, type: 3}
+  - {fileID: 21300000, guid: 33526b296bbfa4f4787e3fa377faa1d1, type: 3}
   animator: {fileID: 7171566785710481535}
   healthBarPosition: {fileID: 5516915872241451436}
   head: {fileID: 1006908850054742157}
   healthBarGameObject: {fileID: 5442145643889852401, guid: 58fb3f8a85fa6e346bd0c3a075d4a7b9,
     type: 3}
+  name: 
   skillNames:
   - Boule de feu
   - Boule de feu
   - Embrasement
   - Embrasement
-  background: {fileID: 0}
 --- !u!136 &1932481685353180089
 CapsuleCollider:
   m_ObjectHideFlags: 0
