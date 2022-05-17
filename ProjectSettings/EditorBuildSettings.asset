@@ -6,6 +6,6 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/CombatScene.unity
-    guid: 90dc9b4daab121b4dbf7639f9e2ed75e
+    path: Assets/Scenes/UI.unity
+    guid: 28303c801c2676247956ac741993ee23
   m_configObjects: {}

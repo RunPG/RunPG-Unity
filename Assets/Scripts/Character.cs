@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -32,11 +33,13 @@ public abstract class Character : MonoBehaviour
 
     [SerializeField]
     private Transform healthBarPosition;
+    [SerializeField]
+    private Transform head;
 
     [SerializeField]
     private GameObject healthBarGameObject;
 
-    private GameObject healthBarInstance;
+    protected GameObject healthBarInstance;
 
 
     protected virtual void Awake()
@@ -49,7 +52,16 @@ public abstract class Character : MonoBehaviour
         selector = healthBarInstance.transform.Find("Selector").GetComponent<Image>();
         statusUI = healthBarInstance.transform.Find("StatusLayout");
 
-        healthBarInstance.transform.position = Camera.main.WorldToScreenPoint(healthBarPosition.position);
+        
+    }
+
+    private void Start()
+    {
+        GameObject HealthBarCanvas = GameObject.Find("Canvas Healthbar");
+        float x = RectTransformUtility.WorldToScreenPoint(Camera.main, head.position).x;
+        float y = RectTransformUtility.WorldToScreenPoint(Camera.main, healthBarPosition.position).y;
+
+        healthBarInstance.transform.position = new Vector2(x, y);
     }
 
     public bool isAlive()
@@ -177,8 +189,11 @@ public abstract class Character : MonoBehaviour
 
     public void Stun()
     {
+        if (stunStatus == null)
+        {
+            AddStatusIcon("StunStatus");
+        }
         stunStatus = new StunStatus();
-        AddStatusIcon("StunStatus");
     }
 
     public void CleanTaunt()
@@ -189,8 +204,11 @@ public abstract class Character : MonoBehaviour
 
     public void Taunt(Character caster)
     {
-        tauntStatus = new TauntStatus(caster);
-        AddStatusIcon("TauntStatus");
+        if (tauntStatus == null)
+        {
+            AddStatusIcon("TauntStatus");
+        }
+        tauntStatus = new TauntStatus(caster); 
     }
 
     public Character GetTaunter()

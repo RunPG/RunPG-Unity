@@ -79,7 +79,7 @@ public class BouleDeFeu : Skill
 
     private IEnumerator DoAction()
     {
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(0.8f);
         Vector3 startPos = caster.transform.Find("Wizard/Armature/Root/Spine1/Spine2/Shoulder.R/UpperArm.R/LowerArm.R/Hand.R/Hand.R_end/FireballStart").position;
         Vector3 endPos = target.transform.position;
         GameObject fireball = GameObject.Instantiate<GameObject>(fireballRessource, startPos, Quaternion.LookRotation(endPos - startPos));

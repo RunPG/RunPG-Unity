@@ -29,6 +29,9 @@ public class PlayerCharacter : Character
     private Transform objects;
 
     [SerializeField]
+    protected string name;
+
+    [SerializeField]
     private string[] skillNames = new string[4];
 
     private Skill[] skills = new Skill[4];
@@ -36,12 +39,11 @@ public class PlayerCharacter : Character
     private bool isSelected = false;
     private CombatAction selectedAction = null;
 
-    [SerializeField]
-    private Image background;
-
     protected override void Awake()
     {
         base.Awake();
+
+        healthBarInstance.transform.Find("Name").GetComponent<TextMeshProUGUI>().text = name;
 
         AddConsumable("Potion de vie", 2);
         AddConsumable("Bombe", 1);
@@ -302,9 +304,9 @@ public class PlayerCharacter : Character
     private void ShowSelected(bool status)
     {
         if (!status)
-            background.color = new Color(1f, 1f, 1f);
+            healthBarInstance.transform.Find("Background").GetComponent<Image>().color = new Color(1f, 1f, 1f);
         else
-            background.color = new Color(0.5f, 0.7f, 1f);
+            healthBarInstance.transform.Find("Background").GetComponent<Image>().color = new Color(0.5f, 0.7f, 1f);
     }
 
     public void DecreaseCooldownTurns()
