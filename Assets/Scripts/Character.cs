@@ -45,7 +45,7 @@ public abstract class Character : MonoBehaviour
     protected virtual void Awake()
     {
         
-        GameObject HealthBarCanvas = GameObject.Find("Canvas Healthbar");
+        GameObject HealthBarCanvas = GameObject.Find("UI/Canvas Healthbar");
         healthBarInstance = Instantiate(healthBarGameObject, HealthBarCanvas.transform).gameObject;
 
         healthBar = healthBarInstance.GetComponentInChildren<HealthBar>();
