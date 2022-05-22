@@ -7,6 +7,9 @@ using UnityEngine.UI;
 using Photon.Pun;
 using System;
 using Photon.Realtime;
+using UnityEngine.Networking;
+using System.Text;
+using Assets.Scripts;
 
 public class ChatManager : MonoBehaviour, IChatClientListener
 {
@@ -33,18 +36,87 @@ public class ChatManager : MonoBehaviour, IChatClientListener
         Debug.Log("OnChatStateChange:OnConnected called");
 
     }
+    void Start()
+    {
+        GetFriendsAtStart();
+        sendMsgButton.onClick.AddListener(SendMessage);
+        addFriendButton.onClick.AddListener(delegate
+        {
+            OnclickAddFriend(friendTextInput.text);
+        });
+    }
     public void AddFriends(string[] friends)
     {
+        Debug.Log("AddFriend");
         foreach (var friend in friends)
         {
-            Player player = null;
-            //TODO GET USER ID IN THE DB AND THEN SEND RPC TO THIS USER ID
-            PhotonView photonView = PhotonView.Get(this);
-            photonView.RPC("AddFriendAskConfirmation", player);
+            Debug.Log("Adding ");
             var display = Instantiate(friendlistPrefab, friendlistPrefabPos);
             display.transform.GetChild(0).GetComponent<Text>().text = friend;
         }
         _chatClient.AddFriends(friends);
+    }
+    public void OnclickAddFriend(string friend)
+    {
+        int? friend_id = Requests.GETPlayerID(friend, null);
+        if (friend_id != null)
+        {
+            var coroutine = Requests.POSTAddFriend(friend_id.Value);
+            StartCoroutine(coroutine);
+            Debug.Log("Starting POSTREGISTER" + PhotonNetwork.NickName);
+            //  Player player = null;
+            //TODO GET USER ID IN THE DB AND THEN SEND RPC TO THIS USER ID
+            //   PhotonView photonView = PhotonView.Get(this);
+            //   photonView.RPC("AddFriendAskConfirmation", player);
+        }
+        else
+        {
+            Debug.Log("This user does not exist !");
+            //TODO: notif error
+        }
+        string[] friends = new string[1];
+        friends[0] = friend;
+        if (_chatClient.AddFriends(friends))
+        {
+            var display = Instantiate(friendlistPrefab, friendlistPrefabPos);
+            display.transform.GetChild(0).GetComponent<Text>().text = friend;
+        }
+    }
+    void GetFriendsAtStart()
+    {
+
+        var friendlist = Requests.GETAllFriends(Int32.Parse(PhotonNetwork.NickName));
+        List<String> friends = new List<String>();
+
+        foreach (var friend in friendlist)
+        {
+            Debug.Log("friend:" + friend.friendId);
+           var username = Requests.GETPlayerName(friend.friendId,null);
+           friends.Add(username);
+        }
+        AddFriends(friends.ToArray());
+    }
+    bool GETPlayer(String username)
+    {
+        using (UnityWebRequest request = UnityWebRequest.Get("http://178.62.237.73/user/" + friendTextInput.text))
+        {
+            request.SendWebRequest();
+            while (!request.isDone)
+            {
+                //TODO change 
+                //waiting for request to be done
+            }
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                Debug.Log(request.result + ":" + username);
+                return false;
+            }
+            else
+            {
+                Debug.Log(request.result);
+                return true;
+            }
+        }
     }
     [PunRPC]
     public void AddFriendAskConfirmation(string friend)
@@ -117,15 +189,7 @@ public class ChatManager : MonoBehaviour, IChatClientListener
     }
 
     // Start is called before the first frame update
-    void Start()
-    {
-        sendMsgButton.onClick.AddListener(SendMessage);
-        addFriendButton.onClick.AddListener(delegate
-        {
-            string[] friends = new string[] { friendTextInput.text };
-            AddFriends(friends);
-        });
-    }
+
     void SendMessage()
     {
         DisplayMessage(msgTextInput.text, PhotonNetwork.NickName);
