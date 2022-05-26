@@ -28,12 +28,6 @@ public class PlayerCharacter : Character
     private Button buttonObjectBack;
     private Transform objects;
 
-    [SerializeField]
-    protected string name;
-
-    [SerializeField]
-    private string[] skillNames = new string[4];
-
     private Skill[] skills = new Skill[4];
 
     private bool isSelected = false;
@@ -43,15 +37,8 @@ public class PlayerCharacter : Character
     {
         base.Awake();
 
-        healthBarInstance.transform.Find("Name").GetComponent<TextMeshProUGUI>().text = name;
-
         AddConsumable("Potion de vie", 2);
         AddConsumable("Bombe", 1);
-
-        skills[0] = (Skill)CombatManager.Instance.GetCombatAction(skillNames[0]);
-        skills[1] = (Skill)CombatManager.Instance.GetCombatAction(skillNames[1]);
-        skills[2] = (Skill)CombatManager.Instance.GetCombatAction(skillNames[2]);
-        skills[3] = (Skill)CombatManager.Instance.GetCombatAction(skillNames[3]);
 
         ActionCanvas = GameObject.Find("Canvas ActionSelection").GetComponent<Canvas>();
         AttackCanvas = GameObject.Find("Canvas AttackSelection").GetComponent<Canvas>();
@@ -78,9 +65,20 @@ public class PlayerCharacter : Character
 
         objects = ObjectCanvas.transform.Find("Background/Scroll/ScrollBack/Objects");
         buttonObjectBack = ObjectCanvas.transform.Find("Background/Button Back").GetComponent<Button>();
+    }
 
-        currentHealth = maxHealth;
-        healthBar.SetMaxHealth(maxHealth);
+    public void Init(string name, string[] skillNames, int maxHP, int currentHP)
+    {
+        healthBarInstance.transform.Find("Name").GetComponent<TextMeshProUGUI>().text = name;
+
+        skills[0] = (Skill)CombatManager.Instance.GetCombatAction(skillNames[0]);
+        skills[1] = (Skill)CombatManager.Instance.GetCombatAction(skillNames[1]);
+        skills[2] = (Skill)CombatManager.Instance.GetCombatAction(skillNames[2]);
+        skills[3] = (Skill)CombatManager.Instance.GetCombatAction(skillNames[3]);
+
+        maxHealth = maxHP;
+        currentHealth = currentHP;
+        healthBar.SetMaxHealth(maxHP);
     }
 
     private void Update()

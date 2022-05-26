@@ -9,14 +9,29 @@ using UnityEngine.UI;
 
 public class CombatManager : MonoBehaviour
 {
+    private static readonly Vector3[][] PlayerPositions = new Vector3[4][] { new Vector3[1] { new Vector3(0, 0, -0.175f) }, new Vector3[2] { new Vector3(-0.15f, 0, -0.175f), new Vector3(0.15f, 0, -0.175f) }, new Vector3[] { new Vector3(-0.2f, 0, -0.175f), new Vector3(0, 0, 0), new Vector3(0.2f, 0, -0.175f) }, new Vector3[4] {new Vector3(-0.3f, 0, 0), new Vector3(-0.15f, 0, -0.175f), new Vector3(0.15f, 0, -0.175f), new Vector3(0.3f, 0, 0) } };
+    // TODO: Add positions for monsters up to 6
+    private static readonly Vector3[][] EnemyPositions = new Vector3[3][] { new Vector3[1] { new Vector3(0, 0, 0.9f) }, new Vector3[2] { new Vector3(-0.25f, 0, 0.9f), new Vector3(0.25f, 0, 0.9f) }, new Vector3[3] { new Vector3(-0.3f, 0, 1.15f), new Vector3(0, 0, 0.85f), new Vector3(0.3f, 0, 1.15f) } };
+
     private ILogger logger = Debug.unityLogger;
 
     public static CombatManager Instance { get; private set; }
 
     private Dictionary<string, Func<CombatAction>> combatActions = new Dictionary<string, Func<CombatAction>>();
 
+
+    private List<Character> characters;
+
+    // Class
     [SerializeField]
-    private List<Character> characters = new List<Character>();
+    private GameObject wizardPrefab;
+    [SerializeField]
+    private GameObject paladinPrefab;
+
+
+    // Enemies
+    [SerializeField]
+    private GameObject slimePrefab;
 
     [SerializeField]
     private List<Sprite> Items = new List<Sprite>();
@@ -25,6 +40,8 @@ public class CombatManager : MonoBehaviour
     private GameObject ResultScreen;
 
     private List<CombatAction> queue = new List<CombatAction>();
+
+    private DungeonManager dungeonManager;
 
     private void Awake()
     {
@@ -47,7 +64,23 @@ public class CombatManager : MonoBehaviour
     }
     private void Start()
     {
+        
+        dungeonManager = GameObject.FindObjectOfType<DungeonManager>();
+
+        characters = new List<Character>();
+
+        for (int i = 0; i < dungeonManager.characters.Length; i++)
+        {
+            InitPlayer(i);
+        }
+
+        for (int i = 0; i < dungeonManager.enemies.Length; i++)
+        {
+            InitMonster(i);
+        }
+
         StartCoroutine(Combat());
+        
     }
 
     public void AddAction(CombatAction action)
@@ -276,6 +309,50 @@ public class CombatManager : MonoBehaviour
         logger.LogError("CombatManager", "Error on get item sprite");
 
         return null;
+    }
+
+    private void InitPlayer(int index)
+    {
+        GameObject character;
+        switch (dungeonManager.characters[index].classType)
+        {
+            case "Paladin":
+                character = Instantiate(paladinPrefab, PlayerPositions[dungeonManager.characters.Length - 1][index], Quaternion.identity);
+                break;
+            case "Sorcier":
+                character = Instantiate(wizardPrefab, PlayerPositions[dungeonManager.characters.Length - 1][index], Quaternion.identity);
+                break;
+            default:
+                throw new Exception("Class doesn't exist: " + dungeonManager.characters[index].classType);
+        }
+
+        PlayerCharacter playerCharacter = character.GetComponent<PlayerCharacter>();
+
+        playerCharacter.Init(dungeonManager.characters[index].name, dungeonManager.characters[index].skillNames, dungeonManager.characters[index].maxHP, dungeonManager.characters[index].currentHP);
+
+        playerCharacter.tag = "Team1";
+
+        characters.Add(playerCharacter);
+    }
+
+    private void InitMonster(int index)
+    {
+        GameObject monster;
+        switch (dungeonManager.enemies[index].name)
+        {
+            case "Slime":
+                monster = Instantiate(slimePrefab, EnemyPositions[dungeonManager.enemies.Length - 1][index], Quaternion.identity);
+                break;
+            default:
+                throw new Exception("Monster doesn't exist: " + dungeonManager.enemies[index].name);
+        }
+
+        AICharacter AICharacter = monster.GetComponent<AICharacter>();
+        AICharacter.Init(dungeonManager.enemies[index].name, dungeonManager.enemies[index].maxHP);
+
+        AICharacter.tag = "Team2";
+
+        characters.Add(AICharacter);
     }
 }
 

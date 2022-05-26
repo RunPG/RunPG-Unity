@@ -4,10 +4,13 @@ using UnityEngine;
 
 public abstract class AICharacter : Character
 {
-    protected override void Awake()
+    protected string monsterName;
+
+    public void Init(string name, int maxHP)
     {
-        base.Awake();
-        currentHealth = maxHealth;
+        monsterName = name;
+        maxHealth = maxHP;
+        currentHealth = maxHP;
         healthBar.SetMaxHealth(maxHealth);
     }
 }
