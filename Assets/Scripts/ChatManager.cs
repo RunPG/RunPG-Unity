@@ -64,8 +64,8 @@ public class ChatManager : MonoBehaviour, IChatClientListener
             var coroutine = Requests.POSTAddFriend(friend_id.Value);
             StartCoroutine(coroutine);
             Debug.Log("Starting POSTREGISTER" + PhotonNetwork.NickName);
-            //  Player player = null;
             //TODO GET USER ID IN THE DB AND THEN SEND RPC TO THIS USER ID
+            //  Player player = null;
             //   PhotonView photonView = PhotonView.Get(this);
             //   photonView.RPC("AddFriendAskConfirmation", player);
         }
