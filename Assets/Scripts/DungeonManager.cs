@@ -7,13 +7,13 @@ public class DungeonManager : MonoBehaviour
 {
     public class DungeonCharacterInfo
     {
-        public DungeonCharacterInfo(string name, string classType, string[] skillNames, int maxHP, int currentHP)
+        public DungeonCharacterInfo(string name, string classType, string[] skillNames, int maxHP)
         {
             this.name = name;
             this.classType = classType;
             this.skillNames = skillNames;
             this.maxHP = maxHP;
-            this.currentHP = currentHP;
+            this.currentHP = maxHP;
         }
 
         public string name { get; private set; }
@@ -37,26 +37,42 @@ public class DungeonManager : MonoBehaviour
         // level and stats when it will be needed
     }
 
+    public static DungeonManager instance;
+
     public DungeonCharacterInfo[] characters { get; private set; }
     public DungeonMonsterInfo[] enemies { get; private set; }
 
-    private void Start()
+    public int currentFloor = 0;
+
+    public const int maxFloor = 3;
+
+    private void Awake()
     {
-        characters = new DungeonCharacterInfo[2];
-        characters[0] = new DungeonCharacterInfo("yott", "Paladin", new string[4] { "Entaille", "Entaille", "Provocation", "Provocation" }, 120, 120);
-        characters[1] = new DungeonCharacterInfo("Firewop1", "Sorcier", new string[4] { "Boule de feu", "Boule de feu", "Embrasement", "Embrasement" }, 100, 100);
+        if (instance == null)
+        {
+            instance = this;
+            DontDestroyOnLoad(this);
+        }
+        else if (instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
     }
 
-
-    public void LoadLevel()
+    private void Start()
     {
-        enemies = new DungeonMonsterInfo[3];
-        enemies[0] = new DungeonMonsterInfo("Slime", 50);
-        enemies[1] = new DungeonMonsterInfo("Slime", 50);
-        enemies[2] = new DungeonMonsterInfo("Slime", 50);
+        if (characters == null)
+        {
+            characters = new DungeonCharacterInfo[2];
+            characters[0] = new DungeonCharacterInfo("yott", "Paladin", new string[4] { "Entaille", "Entaille", "Provocation", "Provocation" }, 120);
+            characters[1] = new DungeonCharacterInfo("Firewop1", "Sorcier", new string[4] { "Boule de feu", "Boule de feu", "Embrasement", "Embrasement" }, 100);
+        }
+    }
 
-        DontDestroyOnLoad(this);
-        SceneManager.LoadScene("UI");
+    public void SetMonsters(DungeonMonsterInfo[] monsters)
+    {
+        enemies = monsters;
     }
 
 }

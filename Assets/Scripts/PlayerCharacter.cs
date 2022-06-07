@@ -69,6 +69,7 @@ public class PlayerCharacter : Character
 
     public void Init(string name, string[] skillNames, int maxHP, int currentHP)
     {
+        characterName = name;
         healthBarInstance.transform.Find("Name").GetComponent<TextMeshProUGUI>().text = name;
 
         skills[0] = (Skill)CombatManager.Instance.GetCombatAction(skillNames[0]);
@@ -79,6 +80,7 @@ public class PlayerCharacter : Character
         maxHealth = maxHP;
         currentHealth = currentHP;
         healthBar.SetMaxHealth(maxHP);
+        healthBar.SetHealth(currentHP);
     }
 
     private void Update()

@@ -11,7 +11,9 @@ public abstract class Character : MonoBehaviour
 {
     [SerializeField]
     protected int maxHealth = 100;
-    protected int currentHealth;
+    public int currentHealth { get; protected set; }
+
+    public string characterName { get; protected set; }
 
     protected HealthBar healthBar;
 

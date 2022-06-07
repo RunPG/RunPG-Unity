@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 
@@ -240,7 +241,25 @@ public class CombatManager : MonoBehaviour
                 break;
             }
         }
-        logger.Log("end");
+
+        foreach (var character in DungeonManager.instance.characters)
+        {
+            Character c = characters.Find(c => c.characterName == character.name);
+            if (c != null)
+            {
+                character.currentHP = c.currentHealth;
+            }
+            else
+            {
+                character.currentHP = 0;
+            }
+        }
+
+        DungeonManager.instance.currentFloor += 1;
+
+        yield return new WaitForSeconds(1);
+
+        SceneManager.LoadScene("DungeonScene");
     }
 
     public bool VerifyTarget(CombatAction action)
@@ -313,6 +332,8 @@ public class CombatManager : MonoBehaviour
 
     private void InitPlayer(int index)
     {
+        if (dungeonManager.characters[index].currentHP <= 0)
+            return;
         GameObject character;
         switch (dungeonManager.characters[index].classType)
         {
