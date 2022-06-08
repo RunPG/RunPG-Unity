@@ -171,7 +171,7 @@ public class CombatManager : MonoBehaviour
                     continue;
                 }
 
-                if (characters[i].IsStun())
+                if (characters[i].IsAffectedByStatus("etourdissement"))
                 {
                     characters[i].CleanStun();
                     Attendre idle = new Attendre();
@@ -198,7 +198,7 @@ public class CombatManager : MonoBehaviour
                 if (!action.caster.isAlive() || !action.target.isAlive())
                     continue;
 
-                if (action.caster.IsStun())
+                if (action.caster.IsAffectedByStatus("Etourdissement"))
                 {
                     action.caster.CleanStun();
                     continue;
@@ -209,13 +209,23 @@ public class CombatManager : MonoBehaviour
 
                 logger.Log("resolving action " + action.name);
 
-                if (action.caster.IsTaunt()
+                if (action.caster.IsAffectedByStatus("Provocation")
                     && (action.possibleTarget == CombatAction.PossibleTarget.Enemy
-                    || action.possibleTarget == CombatAction.PossibleTarget.All)
-                    && action.caster.GetTaunter().isAlive())
+                    || action.possibleTarget == CombatAction.PossibleTarget.All))
                 {
-                    action.target = action.caster.GetTaunter();
-                    action.caster.DecreaseTauntTurn();
+                    TauntStatus taunt = (TauntStatus)action.caster.GetStatus().Find(x => x.name == "Provocation");
+                    print(taunt.remainingTurns);
+                    if (taunt != null)
+                    {
+                        action.target = taunt.GetTaunter();
+                        taunt.DecraseTurns();
+                        if (!taunt.IsAffected())
+                        {
+                            action.caster.GetStatus().Remove(taunt);
+                            action.caster.DeleteStatusIcon("Provocation");
+                        }
+                    }
+                    
                 }
 
                 if (action as Consumable != null)
@@ -285,14 +295,60 @@ public class CombatManager : MonoBehaviour
         });
     }
 
+    public void AddStatus(Status status, Character target)
+    {
+        List<Status> statusList = target.GetStatus();
+        Status s = null;
+        switch (status.statusBehaviour)
+        {
+            case Status.StatusBehaviour.Replace:
+                int i = statusList.FindIndex(x => x.name == status.name);
+                if (i != -1)
+                {
+                    statusList[i] = status;
+                }
+                else
+                {
+                    statusList.Add(status);
+                    target.AddStatusIcon(status.name);
+                }
+                break;
+            case Status.StatusBehaviour.AddDuration:
+                s = statusList.Find(x => x.name == status.name);
+                if (s != null)
+                {
+                    s.remainingTurns += status.remainingTurns;
+                }
+                else
+                {
+                    statusList.Add(status);
+                    target.AddStatusIcon(status.name);
+                }
+                break;
+            case Status.StatusBehaviour.Stack:
+                statusList.Add(status);
+                target.AddStatusIcon(status.name);
+                break;
+        }
+    }
+
     private void ResolveBurnStatus()
     {
         foreach (var character in characters)
         {
-            if (character.IsAffectedByElementalStatus<BurnStatus>())
+            List<Status> statusList = character.GetStatus();
+            for (int i = statusList.Count - 1; i >= 0; i--)
             {
-                character.TakeDamage(5);
-                character.DecreaseElementalStatusTurns();
+                if (statusList[i].name == "Brulure")
+                {
+                    character.TakeDamage(5);
+                    statusList[i].DecraseTurns();
+                    if (!statusList[i].IsAffected())
+                    {
+                        statusList.RemoveAt(i);
+                        character.DeleteStatusIcon("Brulure");
+                    }
+                }
             }
         }
     }
@@ -301,17 +357,24 @@ public class CombatManager : MonoBehaviour
     {
         foreach (var character in characters)
         {
-            if (character.IsAffectedByElementalStatus<BurnStatus>())
+            List<Status> statusList = character.GetStatus();
+            for (int i = statusList.Count - 1; i >= 0; i--)
             {
-                character.TakeDamage(3);
-                character.DecreaseElementalStatusTurns();
-                List<Character> possibleTargets = GetMyAllies(character).FindAll(c => !c.HasElementalStatus());
-                if (possibleTargets.Count() > 0)
+                if (statusList[i].name == "Electrocution")
                 {
-                    int x = UnityEngine.Random.Range(0, possibleTargets.Count);
-                    possibleTargets[x].AddElementalStatus(new ElectrifiedStatus(character.GetElementalRemainingTurns()));
+                    character.TakeDamage(5);
+                    if (statusList[i].remainingTurns > 1)
+                    {
+                        List<Character> possibleTargets = GetMyAllies(character);
+                        if (possibleTargets.Count() > 0)
+                        {
+                            int x = UnityEngine.Random.Range(0, possibleTargets.Count);
+                             CombatManager.Instance.AddStatus(new ElectrifiedStatus(statusList[i].remainingTurns - 1), possibleTargets[x]);
+                        }
+                    }
+                    statusList.RemoveAt(i);
+                    character.DeleteStatusIcon("Electrocution");
                 }
-                character.CleanElementalStatus();
             }
         }
     }

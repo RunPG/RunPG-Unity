@@ -55,7 +55,7 @@ public class Provocation : Skill
     private IEnumerator DoAction()
     {
         yield return new WaitForSeconds(0.8f);
-        target.Taunt(caster);
+        CombatManager.Instance.AddStatus(new TauntStatus(caster), target);
         target.TakeDamage(20);
     }
 }
@@ -95,7 +95,7 @@ public class BouleDeFeu : Skill
         }
 
         target.TakeDamage(25);
-        target.AddElementalStatus(new BurnStatus());
+        CombatManager.Instance.AddStatus(new BurnStatus(), target);
         GameObject.Destroy(fireball);
     }
 }
@@ -123,7 +123,7 @@ public class Embrasement : Skill
         yield return new WaitForSeconds(0.65f);
         Vector3 pos = target.transform.Find("Ground").transform.position;
         GameObject ignite = GameObject.Instantiate<GameObject>(igniteRessource, pos, Quaternion.identity);
-        if (target.IsAffectedByElementalStatus<BurnStatus>())
+        if (target.IsAffectedByStatus("Brulure"))
         {
             target.TakeDamage(40);
         }
@@ -131,7 +131,7 @@ public class Embrasement : Skill
         {
             target.TakeDamage(20);
         }
-        target.AddElementalStatus(new BurnStatus());
+        CombatManager.Instance.AddStatus(new BurnStatus(), target);
         yield return new WaitForSeconds(1f);
         GameObject.Destroy(ignite);
     }

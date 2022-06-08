@@ -2,18 +2,23 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Status
+public abstract class Status
 {
-    protected int remainingTurns = 0;
+    public enum StatusBehaviour
+    {
+        Replace,
+        Stack,
+        AddDuration
+    }
+
+    public abstract StatusBehaviour statusBehaviour { get; }
+    public abstract string name { get; }
+
+    public int remainingTurns = 0;
 
     public void CleanStatus()
     {
         remainingTurns = 0;
-    }
-
-    public void AddStatus(int turns)
-    {
-        remainingTurns += turns;
     }
 
     public void DecraseTurns()
@@ -34,6 +39,9 @@ public class Status
 
 public class StunStatus : Status
 {
+    public override StatusBehaviour statusBehaviour => StatusBehaviour.Replace;
+    public override string name => "Etourdissement";
+
     public StunStatus()
     {
         remainingTurns = 1;
@@ -42,6 +50,9 @@ public class StunStatus : Status
 
 public class TauntStatus : Status
 {
+    public override StatusBehaviour statusBehaviour => StatusBehaviour.Replace;
+    public override string name => "Provocation";
+
     protected Character taunter;
     public TauntStatus(Character caster)
     {
@@ -55,10 +66,11 @@ public class TauntStatus : Status
     }
 }
 
-public class ElementalStatus : Status {}
-
-public class BurnStatus : ElementalStatus 
+public class BurnStatus : Status 
 {
+    public override StatusBehaviour statusBehaviour => StatusBehaviour.AddDuration;
+    public override string name => "Brulure";
+
     public BurnStatus()
     {
         remainingTurns = 3;
@@ -70,21 +82,11 @@ public class BurnStatus : ElementalStatus
     }
 }
 
-public class PoisonStatus : ElementalStatus
+public class ElectrifiedStatus : Status
 {
-    public PoisonStatus()
-    {
-        remainingTurns = 6;
-    }
+    public override StatusBehaviour statusBehaviour => StatusBehaviour.Stack;
+    public override string name => "Electrocution";
 
-    public PoisonStatus(int turns)
-    {
-        remainingTurns = turns;
-    }
-}
-
-public class ElectrifiedStatus : ElementalStatus
-{
     public ElectrifiedStatus()
     {
         remainingTurns = 4;

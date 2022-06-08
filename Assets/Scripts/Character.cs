@@ -24,9 +24,7 @@ public abstract class Character : MonoBehaviour
 
     protected Dictionary<string, int> inventory = new Dictionary<string, int>();
 
-    protected ElementalStatus elementalStatus;
-    protected StunStatus stunStatus;
-    protected TauntStatus tauntStatus;
+    protected List<Status> statusList = new List<Status>();
 
     [SerializeField]
     protected Animator animator;
@@ -135,114 +133,9 @@ public abstract class Character : MonoBehaviour
         selector.enabled = status;
     }
 
-    public void CleanElementalStatus()
+    public List<Status> GetStatus()
     {
-        elementalStatus = null;
-    }
-
-    public void AddElementalStatus(ElementalStatus status)
-    {
-        if (elementalStatus == null)
-        {
-            elementalStatus = status;
-            AddStatusIcon(status.ToString());
-        }
-    }
-
-    public void DecreaseElementalStatusTurns()
-    {
-        if (elementalStatus != null)
-        {
-            elementalStatus.DecraseTurns();
-            if (!elementalStatus.IsAffected())
-            {
-                DeleteStatusIcon(elementalStatus.ToString());
-                elementalStatus = null;
-            }
-        }
-    }
-
-    public bool HasElementalStatus()
-    {
-        return elementalStatus != null;
-    }
-
-    public bool IsAffectedByElementalStatus<T>() where T : ElementalStatus
-    {
-        if (elementalStatus == null)
-            return false;
-        else
-            return elementalStatus is T;
-    }
-
-    public int GetElementalRemainingTurns()
-    {
-        if (!HasElementalStatus())
-            return 0;
-        else
-            return elementalStatus.GetRemainingTurns();
-    }
-
-    public void CleanStun()
-    {
-        stunStatus = null;
-        DeleteStatusIcon("StunStatus");
-    }
-
-    public void Stun()
-    {
-        if (stunStatus == null)
-        {
-            AddStatusIcon("StunStatus");
-        }
-        stunStatus = new StunStatus();
-    }
-
-    public void CleanTaunt()
-    {
-        tauntStatus = null;
-        DeleteStatusIcon("TauntStatus");
-    }
-
-    public void Taunt(Character caster)
-    {
-        if (tauntStatus == null)
-        {
-            AddStatusIcon("TauntStatus");
-        }
-        tauntStatus = new TauntStatus(caster); 
-    }
-
-    public Character GetTaunter()
-    {
-        if (tauntStatus != null)
-        {
-            return tauntStatus.GetTaunter();
-        }
-        return null;
-    }
-
-    public void DecreaseTauntTurn()
-    {
-        if (tauntStatus != null)
-        {
-            tauntStatus.DecraseTurns();
-            if (tauntStatus.GetRemainingTurns() <= 0)
-            {
-                tauntStatus = null;
-                DeleteStatusIcon("TauntStatus");
-            }
-        }
-    }
-
-    public bool IsStun()
-    {
-        return stunStatus != null;
-    }
-
-    public bool IsTaunt()
-    {
-        return tauntStatus != null;
+        return statusList;
     }
 
     public abstract void AskForAction();
@@ -252,7 +145,17 @@ public abstract class Character : MonoBehaviour
         animator.SetTrigger(animation + "Trigger");
     }
 
-    private void AddStatusIcon(string name)
+    public bool IsAffectedByStatus(string name)
+    {
+        return statusList.Find(s => s.name == name) != null;
+    }
+
+    public void CleanStun()
+    {
+        statusList.RemoveAll(s => s.GetType() == typeof(StunStatus));
+    }
+
+    public void AddStatusIcon(string name)
     {
         GameObject newStatusGameObject = Instantiate(statusUI.Find("StatusExample").gameObject, statusUI, false);
         newStatusGameObject.name = name;
@@ -261,7 +164,7 @@ public abstract class Character : MonoBehaviour
         newStatusImage.sprite = status.Find(elt => elt.name == name);
     }
 
-    private void DeleteStatusIcon(string name)
+    public void DeleteStatusIcon(string name)
     {
         Destroy(statusUI.Find(name).gameObject);
     }

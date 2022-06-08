@@ -52,21 +52,14 @@ public class DungeonManager : MonoBehaviour
         {
             instance = this;
             DontDestroyOnLoad(this);
+            characters = new DungeonCharacterInfo[2];
+            characters[0] = new DungeonCharacterInfo("yott", "Paladin", new string[4] { "Entaille", "Entaille", "Provocation", "Provocation" }, 120);
+            characters[1] = new DungeonCharacterInfo("Firewop1", "Sorcier", new string[4] { "Boule de feu", "Boule de feu", "Embrasement", "Embrasement" }, 100);
         }
         else if (instance != this)
         {
             Destroy(gameObject);
             return;
-        }
-    }
-
-    private void Start()
-    {
-        if (characters == null)
-        {
-            characters = new DungeonCharacterInfo[2];
-            characters[0] = new DungeonCharacterInfo("yott", "Paladin", new string[4] { "Entaille", "Entaille", "Provocation", "Provocation" }, 120);
-            characters[1] = new DungeonCharacterInfo("Firewop1", "Sorcier", new string[4] { "Boule de feu", "Boule de feu", "Embrasement", "Embrasement" }, 100);
         }
     }
 
