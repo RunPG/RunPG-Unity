@@ -3,10 +3,6 @@ using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using UnityEngine.Networking;
-using System.Collections;
-using System.Text;
-using Assets.Scripts;
 
 namespace RunPG.Multi
 {

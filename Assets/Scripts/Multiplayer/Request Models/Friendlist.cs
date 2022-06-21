@@ -4,12 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Assets.Scripts
+namespace RunPG.Multi
 {
     [Serializable]
-    public class Friend
+    public class Friendlist
     {
-        public int userId; 
-        public int friendId;
+        public Friend[] friends;
     }
 }

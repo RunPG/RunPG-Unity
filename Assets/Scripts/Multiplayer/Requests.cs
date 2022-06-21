@@ -9,12 +9,12 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
-namespace Assets.Scripts
+namespace RunPG.Multi
 {
     public static class Requests
     {
         static String rootUrl = "http://178.62.237.73/";
-        public static int? GETPlayerID(String username, GameObject? _errorMessage)
+        public static int? GETPlayerID(String username, GameObject _errorMessage = null)
         {
             if (username.Length != 0)
             {
@@ -43,7 +43,7 @@ namespace Assets.Scripts
             }
             return null;
         }
-        public static String GETPlayerName(int user_id, GameObject? _errorMessage)
+        public static String GETPlayerName(int user_id, GameObject _errorMessage = null)
         {
             
                 using (UnityWebRequest request = UnityWebRequest.Get(rootUrl + "user/" + user_id))
@@ -95,7 +95,7 @@ namespace Assets.Scripts
             }         
             return null;
         }
-        public static IEnumerator POSTNewUser(InputField username, GameObject? _errorMessage)
+        public static IEnumerator POSTNewUser(InputField username, GameObject _errorMessage = null)
         {
             Debug.Log(username.text);
             if (username.text.Length != 0)
@@ -115,10 +115,10 @@ namespace Assets.Scripts
                 }
             }
         }
-        public static IEnumerator POSTAddFriend(int friend_id)
+        public static IEnumerator POSTAddFriend(int userId, int friend_id)
         {
             // var str = "http://178.62.237.73/user/" + PhotonNetwork.NickName + "/friend/7";
-            var str = rootUrl + "user/" + PhotonNetwork.NickName + "/friend/" + friend_id;
+            var str = rootUrl + "user/" + userId + "/friend/" + friend_id;
             Debug.Log(str);
             using (UnityWebRequest request = UnityWebRequest.Post(str, "POST"))
             {
@@ -131,6 +131,60 @@ namespace Assets.Scripts
                     // _errorMessage.GetComponent<Text>().text = "User already exist!";
                 }
             }
+        }
+        public static IEnumerator POSTSendNotification(int senderId, int receiver_id, NotificationType type)
+        {
+            var str = rootUrl + "user/" + receiver_id + "/notification/" + type + "/" + senderId;
+            Debug.Log(str);
+            using (UnityWebRequest request = UnityWebRequest.Post(str, "POST"))
+            {
+                yield return request.SendWebRequest();
+
+                if (request.result != UnityWebRequest.Result.Success)
+                {
+                    Debug.Log(request.error);
+                    // _errorMessage.SetActive(true);
+                    // _errorMessage.GetComponent<Text>().text = "User already exist!";
+                }
+            }
+        }
+        public static IEnumerator DELETENotification(int userId, int friend_id)
+        {
+            // var str = "http://178.62.237.73/user/" + PhotonNetwork.NickName + "/friend/7";
+            var str = rootUrl + "user/" + userId + "/friend/" + friend_id;
+            Debug.Log(str);
+            using (UnityWebRequest request = UnityWebRequest.Delete(str))
+            {
+                yield return request.SendWebRequest();
+
+                if (request.result != UnityWebRequest.Result.Success)
+                {
+                    Debug.Log(request.error);
+                }
+            }
+        }
+        public static Notification[] GETNotificationsByType(int receiver_id, NotificationType type)
+        {
+            using (UnityWebRequest request = UnityWebRequest.Get(rootUrl + "user/" + receiver_id + "/notification/" + type + "/"))
+            {
+                request.SendWebRequest();
+                while (!request.isDone)
+                {
+
+                    //TODO change 
+                    //waiting for request to be done
+                }
+                if (request.result != UnityWebRequest.Result.Success)
+                {
+                    Debug.Log("Cannot get notifications of type: " + type.ToString());
+                }
+                else
+                {
+                    var notifications = JsonConvert.DeserializeObject<Notification[]>(request.downloadHandler.text);
+                    return notifications;
+                }
+            }
+            return null;
         }
     }
 }

@@ -4,9 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Assets
+namespace RunPG.Multi
 {
-    internal class Notification
+    [Serializable]
+    public class Friend
     {
+        public int userId; 
+        public int friendId;
     }
 }
