@@ -18,8 +18,6 @@ namespace RunPG.Multi
         private Text lobbyInvitationsText;
         [SerializeField]
         private Text guildInvitationsText;
-        [SerializeField]
-        private Button friendRequestButton;
         void Start()
         {
             var friendRequests = Requests.GETNotificationsByType(Int32.Parse(PhotonNetwork.NickName), NotificationType.FRIENDLIST);
@@ -36,12 +34,6 @@ namespace RunPG.Multi
             guildInvitationsText.text = "" + guildInvitationsCount;
            
             Debug.Log("Count" + guildInvitations.Length);
-
-            friendRequestButton.onClick.AddListener(AcceptFriendRequest);
-        }
-        void AcceptFriendRequest()
-        {
-
         }
     } 
 }

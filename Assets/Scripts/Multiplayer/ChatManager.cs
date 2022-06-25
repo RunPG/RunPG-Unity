@@ -25,6 +25,9 @@ namespace RunPG.Multi
         //FriendRequest display
         [SerializeField] GameObject friendrequestPrefab;
         [SerializeField] Transform friendrequestPrefabPos;
+        //GuildDisplay display
+        [SerializeField] GameObject guildNotificationPrefab;
+        [SerializeField] Transform guildNotificationPrefabPos;
         //
         [SerializeField] Button addFriendButton;
         [SerializeField] InputField friendTextInput;
@@ -53,7 +56,7 @@ namespace RunPG.Multi
             });
         }
 
-        //Called at the start of the game, Instantiate the prefabs
+        //Called at the start of the game and when a friend request is accepted, Instantiate the prefabs
         public void FriendlistPrefabInstantiation(string[] friends)
         {
             foreach (var friend in friends)
@@ -62,6 +65,13 @@ namespace RunPG.Multi
                 display.transform.GetChild(0).GetComponent<Text>().text = friend;
             }
             _chatClient.AddFriends(friends);
+        }
+
+        public void GuildInvitationPrefabInstantiation(string guild, string sender_id)
+        {
+            var display = Instantiate(guildNotificationPrefab, guildNotificationPrefabPos);
+            display.transform.GetChild(0).GetComponent<Text>().text = sender_id;
+            display.transform.GetChild(1).GetComponent<Text>().text = guild;
         }
         //Sends a notification to the specified user
         public void OnclickAddFriend(string friend)
@@ -72,8 +82,9 @@ namespace RunPG.Multi
                 var coroutine = Requests.POSTSendNotification(Int32.Parse(PhotonNetwork.NickName),friend_id.Value, NotificationType.FRIENDLIST);
                 StartCoroutine(coroutine);
                 Debug.Log("Starting POSTREGISTER" + PhotonNetwork.NickName);
-                RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.All };
-                PhotonNetwork.RaiseEvent(AddedAsFriendEventCode, friend_id, raiseEventOptions, SendOptions.SendReliable);
+                //TODO: test raise event and RPC for notif sending when the 2 players are connected
+                /*RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.All };
+                PhotonNetwork.RaiseEvent(AddedAsFriendEventCode, friend_id, raiseEventOptions, SendOptions.SendReliable);*/
             }
             else
             {
@@ -89,12 +100,20 @@ namespace RunPG.Multi
             List<(String,int)> sendersUsername = new List<(String,int)>();
             foreach (var friendRequest in friendRequests)
             {
-                Debug.Log("Z");
                 var username = Requests.GETPlayerName(friendRequest.senderId, null);
                 sendersUsername.Add((username, friendRequest.senderId));
             }
             FriendRequestPrefabInstantiation(sendersUsername);
-
+        }
+        void GetGuildInvitationAtStart()
+        {
+            var guildInvitations = Requests.GETNotificationsByType(Int32.Parse(PhotonNetwork.NickName), NotificationType.GUILD);
+            foreach (var guildInvitation in guildInvitations)
+            {
+                var username = Requests.GETPlayerName(guildInvitation.senderId, null);
+               
+                GuildInvitationPrefabInstantiation("", username);
+            }
         }
         bool IsNewNotification(Notification notification)
         {
@@ -112,7 +131,7 @@ namespace RunPG.Multi
             {
                 var display = Instantiate(friendrequestPrefab, friendrequestPrefabPos);
                 display.transform.GetChild(0).GetComponent<Text>().text = sender.Item1;
-                display.GetComponent<FriendRequestDisplay>().friend_id = sender.Item2;
+                display.GetComponent<FriendRequestDisplay>().sender_id = sender.Item2;
                 display.GetComponent<FriendRequestDisplay>().chatManager = this;
 
             }

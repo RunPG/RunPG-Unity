@@ -148,10 +148,9 @@ namespace RunPG.Multi
                 }
             }
         }
-        public static IEnumerator DELETENotification(int userId, int friend_id)
+        public static IEnumerator DELETENotification(int userId, int friend_id, NotificationType type)
         {
-            // var str = "http://178.62.237.73/user/" + PhotonNetwork.NickName + "/friend/7";
-            var str = rootUrl + "user/" + userId + "/friend/" + friend_id;
+            var str = rootUrl + "user/" + userId + "/notification/" + type + '/'+ friend_id;
             Debug.Log(str);
             using (UnityWebRequest request = UnityWebRequest.Delete(str))
             {
