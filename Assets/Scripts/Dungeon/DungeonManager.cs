@@ -44,7 +44,11 @@ public class DungeonManager : MonoBehaviour
 
     public int currentFloor = 0;
 
-    public const int maxFloor = 3;
+    public int maxFloor = 3;
+
+    public List<int> path = new List<int>();
+
+    public List<List<Room.RoomType>> map;
 
     private void Awake()
     {
@@ -55,6 +59,9 @@ public class DungeonManager : MonoBehaviour
             characters = new DungeonCharacterInfo[2];
             characters[0] = new DungeonCharacterInfo("yott", "Paladin", new string[4] { "Entaille", "Entaille", "Provocation", "Provocation" }, 120);
             characters[1] = new DungeonCharacterInfo("Firewop1", "Sorcier", new string[4] { "Boule de feu", "Boule de feu", "Embrasement", "Embrasement" }, 100);
+            path.Add(0);
+            map = DungeonMap.GenerateMap(System.Environment.TickCount);
+            maxFloor = map.Count - 1;
         }
         else if (instance != this)
         {
