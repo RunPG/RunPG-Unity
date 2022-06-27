@@ -37,6 +37,8 @@ public class PlayerMovement : MonoBehaviour
 
 	bool _isInitialized;
 
+	private bool[] touchDidMove = new bool[10];
+
 	/// <summary>
 	/// The location provider.
 	/// This is public so you change which concrete <see cref="T:Mapbox.Unity.Location.ILocationProvider"/> to use at runtime.
@@ -92,8 +94,6 @@ public class PlayerMovement : MonoBehaviour
 
 	void Update()
 	{
-		Debug.Log(1.0f / Time.deltaTime);
-
 		Vector3 direction = _targetPosition - transform.position;
 		direction.y = 0;
 		if (direction != Vector3.zero)
@@ -102,10 +102,30 @@ public class PlayerMovement : MonoBehaviour
 		}
 		transform.localPosition = Vector3.Lerp(transform.localPosition, _targetPosition, Time.deltaTime * _positionFollowFactor);
 
-		if (Input.touchCount > 0)
+		foreach (var touch in Input.touches)
         {
-			Touch touch = Input.GetTouch(0);
-			CameraPivot.transform.Rotate(0, 0.05f * touch.deltaPosition.x, 0);
+			if (touch.phase == TouchPhase.Began)
+            {
+				touchDidMove[touch.fingerId] = false;
+            }
+			else if (touch.phase == TouchPhase.Moved)
+            {
+				touchDidMove[touch.fingerId] = true;
+				CameraPivot.transform.Rotate(0, 0.05f * touch.deltaPosition.x, 0);
+			}
+			else if (touch.phase == TouchPhase.Ended && !touchDidMove[touch.fingerId])
+            {
+				Ray ray = Camera.main.ScreenPointToRay(touch.position);
+				RaycastHit hit;
+				if (Physics.Raycast(ray, out hit))
+                {
+					DungeonPortal portal = hit.transform.gameObject.GetComponent<DungeonPortal>();
+					if (portal != null)
+                    {
+						portal.ShowInfo();
+                    }
+                }
+            }
         }
 	}
 }
