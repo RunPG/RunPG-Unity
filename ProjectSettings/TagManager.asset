@@ -4,6 +4,8 @@
 TagManager:
   serializedVersion: 2
   tags:
+  - Team1
+  - Team2
   - Ennemy
   layers:
   - Default
