@@ -8,13 +8,15 @@ using UnityEngine.UI;
 public class DungeonMap : MonoBehaviour
 {
     [SerializeField]
-    private FlexibleGridLayout flexibleGrid;
+    public FlexibleGridLayout flexibleGrid;
 
     private void Start()
     {
         bool alive = false;
         bool? victory = null;
 
+        if (DungeonManager.instance.currentFloor == 0)
+            StartCoroutine(flexibleGrid.AutoScroll(2f, false));
 
         foreach (var character in DungeonManager.instance.characters)
         {

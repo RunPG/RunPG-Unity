@@ -155,7 +155,6 @@ public class FlexibleGridLayout : LayoutGroup
                 }
             }
         }
-        StartCoroutine(AutoScroll(2f, false));
     }
 
     private int getLineStatus(int fromIndex, int toIndex, int currentLine, GameObject target)
