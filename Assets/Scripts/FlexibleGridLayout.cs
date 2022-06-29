@@ -155,6 +155,7 @@ public class FlexibleGridLayout : LayoutGroup
                 }
             }
         }
+        StartCoroutine(AutoScroll(2f, false));
     }
 
     private int getLineStatus(int fromIndex, int toIndex, int currentLine, GameObject target)
@@ -225,14 +226,16 @@ public class FlexibleGridLayout : LayoutGroup
     {
     }
 
-    public IEnumerator AutoScroll(float duration)
+    public IEnumerator AutoScroll(float duration, bool direction = true)
     {
-        yield return new WaitForSeconds(0.5f);
         float t0 = 0.0f;
         while (t0 < 1.0f)
         {
             t0 += Time.deltaTime / duration;
-            scrollRect.verticalNormalizedPosition = Mathf.Lerp(0f, 1f, t0);
+            if (direction)
+                scrollRect.verticalNormalizedPosition = Mathf.Lerp(0f, 1f, t0);
+            else
+                scrollRect.verticalNormalizedPosition = Mathf.Lerp(1f, 0f, t0);
             yield return null;
         }
     }
