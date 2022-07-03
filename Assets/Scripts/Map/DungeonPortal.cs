@@ -6,9 +6,19 @@ using UnityEngine.SceneManagement;
 
 public class DungeonPortal : MonoBehaviour
 {
-    public void EnterDungeon()
+    public bool EnterDungeon()
     {
-        SceneManager.LoadScene("DungeonScene");
+        GameObject player = GameObject.Find("LocationBasedGame/Character");
+        if (Vector3.Distance(player.transform.position, transform.position) < 50)
+        {
+            SceneManager.LoadScene("DungeonScene");
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+        
     }
 
     public void ShowInfo()

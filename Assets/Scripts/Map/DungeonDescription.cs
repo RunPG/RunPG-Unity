@@ -1,11 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class DungeonDescription : MonoBehaviour
 {
     [SerializeField]
     private CanvasGroup descriptionCanvas;
+
+    [SerializeField]
+    private TextMeshProUGUI distanceWarning;
 
     public GameObject dungeon;
 
@@ -15,10 +19,14 @@ public class DungeonDescription : MonoBehaviour
         descriptionCanvas.alpha = 0;
         descriptionCanvas.interactable = false;
         descriptionCanvas.blocksRaycasts = false;
+        distanceWarning.alpha = 0;
     }
 
     public void Enter()
     {
-        dungeon.GetComponent<DungeonPortal>().EnterDungeon();
+        if (!dungeon.GetComponent<DungeonPortal>().EnterDungeon())
+        {
+            distanceWarning.alpha = 1;
+        }
     }
 }
