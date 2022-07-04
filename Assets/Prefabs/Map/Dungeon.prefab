@@ -129,6 +129,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b04bf7d2fa788a4caaf0980335424dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mesh: {fileID: 975873130049456402}
+  originMaterial: {fileID: 2100000, guid: 9d96df3699321e44994677f4bb03f43b, type: 2}
 --- !u!65 &4674030782325875878
 BoxCollider:
   m_ObjectHideFlags: 0

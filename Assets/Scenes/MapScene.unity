@@ -1964,7 +1964,7 @@ MonoBehaviour:
         categories: -1
         nameString: 
         coordinates: []
-        density: 15
+        density: 6
   _tileProvider: {fileID: 0}
   _previewOptions:
     isPreviewEnabled: 0
