@@ -43,6 +43,34 @@ namespace RunPG.Multi
             }
             return null;
         }
+
+        public static int? GETPlayerByName(string username, GameObject _errorMessage = null)
+        {
+            using (UnityWebRequest request = UnityWebRequest.Get(rootUrl + "user/name/" + username))
+            {
+                request.SendWebRequest();
+                while (!request.isDone)
+                {
+                    //TODO change 
+                    //waiting for request to be done
+                }
+                if (request.result != UnityWebRequest.Result.Success)
+                {
+                    Debug.Log(request.result + ":" + username);
+                    _errorMessage.SetActive(true);
+                    if (_errorMessage)
+                        _errorMessage.GetComponent<Text>().text = "User does not exist !";
+                    else
+                        Debug.Log("Error:" + rootUrl + "user/" + username);
+                    return null;
+                }
+                else
+                {
+                    var user = JsonUtility.FromJson<User>(request.downloadHandler.text);
+                    return user.id;
+                }
+            }
+        }
         public static String GETPlayerName(int user_id, GameObject _errorMessage = null)
         {
             

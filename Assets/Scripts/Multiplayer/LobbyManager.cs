@@ -16,15 +16,70 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     [SerializeField]
     private Transform prefabPos;
     [SerializeField]
+    private Button joinButton;
+    [SerializeField]
     private Button leaveButton;
     [SerializeField]
     private Button invitePlayerButton;
+    /// <summary>
+    /// Keep track of the current process. Since connection is asynchronous and is based on several callbacks from Photon,
+    /// we need to keep track of this to properly adjust the behavior when we receive call back by Photon.
+    /// Typically this is used for the OnConnectedToMaster() callback.
+    /// </summary>
+    bool isConnecting;
 
+    string gameVersion = "1";
     public void Start()
     {
-        GetPlayerList();
         leaveButton.onClick.AddListener(LeaveRoom);
+        joinButton.onClick.AddListener(CreateRoom);
+    }
+    public void CreateRoom()
+    {
+        RoomOptions roomOptions = new RoomOptions();
+        roomOptions.IsVisible = true;
+        roomOptions.MaxPlayers = 4;
+        // null means we dont want a special room name
+        PhotonNetwork.CreateRoom(null, roomOptions, TypedLobby.Default);
+    }
 
+    public void ConnectToRoom(string roomName)
+    {
+        if (roomName == null)
+            Debug.Log("Launcher: ConnectToRoom() roomName is null");
+        if (!PhotonNetwork.JoinRoom(roomName))
+            Debug.Log("Launcher: ConnectToRoom() failed");
+        else
+            Debug.Log("Launcher: ConnectToRoom() worked");
+    }
+    /// <summary>
+    /// Start the connection process.
+    /// - If already connected, we attempt joining a random room
+    /// - if not yet connected, Connect this application instance to Photon Cloud Network
+    /// </summary>
+    /// 
+    public override void OnCreatedRoom()
+    {
+        Debug.Log("room created");
+        base.OnCreatedRoom();
+        GetPlayerList();
+    }
+    public void Connect(RoomInfo roomInfo)
+    {
+        Debug.Log("Connect called");
+        // we check if we are connected or not, we join if we are , else we initiate the connection to the server.
+        if (PhotonNetwork.IsConnected)
+        {
+            // #Critical we need at this point to attempt joining a Random Room. If it fails, we'll get notified in OnJoinRandomFailed() and we'll create one.
+            PhotonNetwork.JoinRoom(roomInfo.Name);
+        }
+        else
+        {
+            // #Critical, we must first and foremost connect to Photon Online Server.
+            // keep track of the will to join a room, because when we come back from the game we will get a callback that we are connected, so we need to know what to do then
+            isConnecting = PhotonNetwork.ConnectUsingSettings();
+            PhotonNetwork.GameVersion = gameVersion;
+        }
     }
     private void GetPlayerList()
     {
@@ -76,7 +131,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     /// </summary>
     public override void OnLeftRoom()
     {
-        SceneManager.LoadScene(0);
+        Debug.Log("left room");
     }
 
 
@@ -102,7 +157,10 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     {
         PhotonNetwork.LeaveRoom();
     }
-
+    public override void OnJoinedRoom()
+    {
+        Debug.Log("Now this client is in a room.");
+    }
 
     #endregion
 }

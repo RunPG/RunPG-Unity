@@ -35,6 +35,7 @@ namespace RunPG.Multi
 
         private List<Notification> _notificationList = new List<Notification>();
 
+        private int userId;
         public void DebugReturn(DebugLevel level, string message)
         {
             Debug.Log(message);
@@ -47,6 +48,10 @@ namespace RunPG.Multi
         }
         void Start()
         {
+            var getId = Requests.GETPlayerByName(PhotonNetwork.NickName, null);
+            if (getId.HasValue)
+                userId = getId.Value;
+
             GetFriendsAtStart();
             GetFriendRequestsAtStart();
             sendMsgButton.onClick.AddListener(SendMessage);
@@ -79,9 +84,9 @@ namespace RunPG.Multi
             int? friend_id = Requests.GETPlayerID(friend, null);
             if (friend_id != null)
             {
-                var coroutine = Requests.POSTSendNotification(Int32.Parse(PhotonNetwork.NickName),friend_id.Value, NotificationType.FRIENDLIST);
+                var coroutine = Requests.POSTSendNotification(userId,friend_id.Value, NotificationType.FRIENDLIST);
                 StartCoroutine(coroutine);
-                Debug.Log("Starting POSTREGISTER" + PhotonNetwork.NickName);
+                Debug.Log("Starting POSTREGISTER" + userId);
                 //TODO: test raise event and RPC for notif sending when the 2 players are connected
                 /*RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.All };
                 PhotonNetwork.RaiseEvent(AddedAsFriendEventCode, friend_id, raiseEventOptions, SendOptions.SendReliable);*/
@@ -96,7 +101,7 @@ namespace RunPG.Multi
         //Called at the start of the game, persistence
         void GetFriendRequestsAtStart()
         {
-            var friendRequests = Requests.GETNotificationsByType(Int32.Parse(PhotonNetwork.NickName),NotificationType.FRIENDLIST);
+            var friendRequests = Requests.GETNotificationsByType(userId,NotificationType.FRIENDLIST);
             List<(String,int)> sendersUsername = new List<(String,int)>();
             foreach (var friendRequest in friendRequests)
             {
@@ -107,7 +112,7 @@ namespace RunPG.Multi
         }
         void GetGuildInvitationAtStart()
         {
-            var guildInvitations = Requests.GETNotificationsByType(Int32.Parse(PhotonNetwork.NickName), NotificationType.GUILD);
+            var guildInvitations = Requests.GETNotificationsByType(userId, NotificationType.GUILD);
             foreach (var guildInvitation in guildInvitations)
             {
                 var username = Requests.GETPlayerName(guildInvitation.senderId, null);
@@ -140,7 +145,7 @@ namespace RunPG.Multi
         void GetFriendsAtStart()
         {
 
-            var friendlist =  Requests.GETAllFriends(Int32.Parse(PhotonNetwork.NickName));
+            var friendlist =  Requests.GETAllFriends(userId);
             //list of friends usernames
             List<String> friends = new List<String>();
 

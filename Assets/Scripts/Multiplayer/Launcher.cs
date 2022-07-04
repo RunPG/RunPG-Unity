@@ -72,9 +72,9 @@ namespace RunPG.Multi
                 return;
             _authentificationPannel.SetActive(false);
             _connexionPannel.SetActive(true);
-            PhotonNetwork.NickName = id.Value.ToString();
+            PhotonNetwork.NickName = _username.text;
             PhotonNetwork.JoinLobby();
-            _loadingOperation = SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().buildIndex + 1);
+            _loadingOperation = SceneManager.LoadSceneAsync("Main Menu Scene");
         }
         /// <summary>
         /// MonoBehaviour method called on GameObject by Unity during early initialization phase.
@@ -157,15 +157,6 @@ namespace RunPG.Multi
         {
             Debug.LogWarningFormat("PUN Basics Tutorial/Launcher: OnDisconnected() was called by PUN with reason {0}", cause);
             isConnecting = false;
-        }
-        public void CreateRoom()
-        {
-            RoomOptions roomOptions = new RoomOptions();
-            roomOptions.IsVisible = true;
-            roomOptions.IsVisible = true;
-            roomOptions.MaxPlayers = maxPlayersPerRoom;
-            // null means we dont want a special room name
-            PhotonNetwork.CreateRoom(null, roomOptions, TypedLobby.Default);
         }
 
         public override void OnCreateRoomFailed(short returnCode, string message)
