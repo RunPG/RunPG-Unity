@@ -14,6 +14,7 @@ public class ConnectionManager : MonoBehaviour
 
     public void Start()
     {
+        PlayGamesPlatform.Activate();
         PlayGamesPlatform.Instance.Authenticate(ProcessAuthentication);
     }
 
@@ -25,9 +26,11 @@ public class ConnectionManager : MonoBehaviour
             Social.ReportProgress(GPGSIds.achievement_bienvenue__kheg, 100.0f, null);
             PlayGamesPlatform.Instance.RequestServerSideAccess(false, code => 
             {
-
+                Debug.Log("code: " + code);
+                Debug.Log("User id: " + Social.localUser.id);
+                Debug.Log("User name: " + Social.localUser.userName);
+                SceneManager.LoadScene("DungeonScene");
             });
-            SceneManager.LoadScene("DungeonScene");
         }
         else
         {
