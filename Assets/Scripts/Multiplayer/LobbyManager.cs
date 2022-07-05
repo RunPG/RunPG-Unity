@@ -20,7 +20,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     [SerializeField]
     private Button leaveButton;
     [SerializeField]
-    private Button invitePlayerButton;
+    private Button StartButton;
     /// <summary>
     /// Keep track of the current process. Since connection is asynchronous and is based on several callbacks from Photon,
     /// we need to keep track of this to properly adjust the behavior when we receive call back by Photon.
@@ -33,14 +33,27 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     {
         leaveButton.onClick.AddListener(LeaveRoom);
         joinButton.onClick.AddListener(CreateRoom);
+        StartButton.onClick.AddListener(LoadDungeon);
     }
+    public void LoadDungeon()
+    {
+  
+        this.photonView.RPC("LoadDungeonRPC", RpcTarget.All, "jup", "and jup.");
+    }
+    [PunRPC]
+    public void LoadDungeonRPC(string a, string b)
+    {
+        Debug.LogFormat("PhotonNetwork : Loading Dungeon");
+        PhotonNetwork.LoadLevel("DungeonScene");
+   
+    }
+
     public void CreateRoom()
     {
         RoomOptions roomOptions = new RoomOptions();
         roomOptions.IsVisible = true;
         roomOptions.MaxPlayers = 4;
-        // null means we dont want a special room name
-        PhotonNetwork.CreateRoom(null, roomOptions, TypedLobby.Default);
+        PhotonNetwork.CreateRoom("" + GlobalVariables.userId, roomOptions, TypedLobby.Default);
     }
 
     public void ConnectToRoom(string roomName)
@@ -58,11 +71,11 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     /// - if not yet connected, Connect this application instance to Photon Cloud Network
     /// </summary>
     /// 
+
     public override void OnCreatedRoom()
     {
         Debug.Log("room created");
         base.OnCreatedRoom();
-        GetPlayerList();
     }
     public void Connect(RoomInfo roomInfo)
     {
@@ -98,12 +111,6 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         PlayerDisplay newPlayerText = Instantiate(playerDisplayPrefab, prefabPos);
         newPlayerText.SetPlayerInfo(player);
         playersList.Add(newPlayerText);
-
-        if (PhotonNetwork.IsMasterClient)
-        {
-            Debug.LogFormat("OnPlayerEnteredRoom IsMasterClient {0}", PhotonNetwork.IsMasterClient); // called before OnPlayerLeftRoom
-            LoadLobby();
-        }
     }
     public override void OnPlayerLeftRoom(Player player)
     {
@@ -120,9 +127,13 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         if (PhotonNetwork.IsMasterClient)
         {
             Debug.LogFormat("OnPlayerLeftRoom IsMasterClient {0}", PhotonNetwork.IsMasterClient); // called before OnPlayerLeftRoom
-
-
-            LoadLobby();
+        }
+        else
+        {
+            if (player.IsMasterClient)
+            {
+                LeaveRoom();
+            }
         }
     }
     #endregion
@@ -138,15 +149,6 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     #region Private Methods
 
 
-    void LoadLobby()
-    {
-        if (!PhotonNetwork.IsMasterClient)
-        {
-            Debug.LogError("PhotonNetwork : Trying to Load a level but we are not the master Client");
-        }
-        Debug.LogFormat("PhotonNetwork : Loading Level : {0}", PhotonNetwork.CurrentRoom.PlayerCount);
-        PhotonNetwork.LoadLevel("Lobby");
-    }
 
 
     #endregion
@@ -154,14 +156,18 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 
 
     public void LeaveRoom()
-    {
+    {/*
+        GameObject.Find("DungeonPanel").SetActive(false);
+        GameObject.Find("Main Panel").SetActive(true);
+        */
         PhotonNetwork.LeaveRoom();
     }
     public override void OnJoinedRoom()
     {
+        GetPlayerList();
         Debug.Log("Now this client is in a room.");
     }
-
+    
     #endregion
 }
 

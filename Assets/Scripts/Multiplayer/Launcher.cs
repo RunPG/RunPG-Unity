@@ -70,6 +70,7 @@ namespace RunPG.Multi
             var id = Requests.GETPlayerID(_username.text, _errorMessage);
             if (id == null)
                 return;
+            GlobalVariables.userId = id.Value;
             _authentificationPannel.SetActive(false);
             _connexionPannel.SetActive(true);
             PhotonNetwork.NickName = _username.text;

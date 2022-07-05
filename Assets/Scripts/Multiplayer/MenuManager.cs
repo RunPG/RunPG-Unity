@@ -31,6 +31,10 @@ public class MenuManager : MonoBehaviourPunCallbacks
     private GameObject FriendListPanel;
     [SerializeField]
     private GameObject DungeonPanel;
+    [SerializeField]
+    private GameObject LobbyInvitationPanel;
+    [SerializeField]
+    private Button LobbyInvitationButton;
     // Start is called before the first frame update
     void Start()
     {
@@ -41,12 +45,12 @@ public class MenuManager : MonoBehaviourPunCallbacks
         });
         CancelButton.onClick.AddListener(delegate
         {
-            menuPanel.SetActive(false);
+            menuPanel.SetActive(true);
             GuildPanel.SetActive(false);
             CharacterPanel.SetActive(false);
             FriendListPanel.SetActive(false);
             DungeonPanel.SetActive(false);
-            mainPanel.SetActive(true);
+            LobbyInvitationPanel.SetActive(false);
         });
         guildButton.onClick.AddListener(delegate
         {
@@ -68,5 +72,12 @@ public class MenuManager : MonoBehaviourPunCallbacks
             menuPanel.SetActive(false);
             DungeonPanel.SetActive(true);
         }));
+        LobbyInvitationButton.onClick.AddListener((delegate
+        {
+            menuPanel.SetActive(false);
+            LobbyInvitationPanel.SetActive(true);
+        }));
+
     }
+    
 }

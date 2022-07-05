@@ -8,6 +8,7 @@ using Photon.Pun;
 using System;
 using UnityEngine.Networking;
 using Photon.Realtime;
+using System.Linq;
 
 namespace RunPG.Multi
 {
@@ -19,18 +20,23 @@ namespace RunPG.Multi
         //Messages display
         [SerializeField] GameObject msgPrefab;
         [SerializeField] Transform msgPrefabPos;
-        //Friendlist display 
-        [SerializeField] GameObject friendlistPrefab;
-        [SerializeField] Transform friendlistPrefabPos;
+        //friendDisplay display 
+        [SerializeField] GameObject friendDisplayPrefab;
+        [SerializeField] Transform friendDisplayPrefabPos;
         //FriendRequest display
-        [SerializeField] GameObject friendrequestPrefab;
         [SerializeField] Transform friendrequestPrefabPos;
         //GuildDisplay display
-        [SerializeField] GameObject guildNotificationPrefab;
         [SerializeField] Transform guildNotificationPrefabPos;
-        //
+
+        [SerializeField] Transform lobbyNotificationPrefabPos;
+
         [SerializeField] Button addFriendButton;
         [SerializeField] InputField friendTextInput;
+
+        [SerializeField] GameObject lobbyInvitationPanel;
+        [SerializeField] GameObject DungeonPanel;
+
+        [SerializeField] GameObject notificationPrefab;
         public const byte AddedAsFriendEventCode = 1;
 
         private List<Notification> _notificationList = new List<Notification>();
@@ -54,29 +60,44 @@ namespace RunPG.Multi
 
             GetFriendsAtStart();
             GetFriendRequestsAtStart();
+            GetLobbyInvitationAtStart();
             sendMsgButton.onClick.AddListener(SendMessage);
             addFriendButton.onClick.AddListener(delegate
             {
                 OnclickAddFriend(friendTextInput.text);
             });
+
+
         }
 
         //Called at the start of the game and when a friend request is accepted, Instantiate the prefabs
-        public void FriendlistPrefabInstantiation(string[] friends)
+        public void friendDisplayPrefabInstantiation(List<(String, int)> friends)
         {
             foreach (var friend in friends)
             {
-                var display = Instantiate(friendlistPrefab, friendlistPrefabPos);
-                display.transform.GetChild(0).GetComponent<Text>().text = friend;
+                var display = Instantiate(friendDisplayPrefab, friendDisplayPrefabPos);
+                display.transform.GetChild(0).GetComponent<Text>().text = friend.Item1;
+                display.GetComponent<FriendDisplay>()._friendId = friend.Item2;
             }
-            _chatClient.AddFriends(friends);
+            _chatClient.AddFriends(friends.Select(friend => friend.Item1).ToArray());
         }
 
         public void GuildInvitationPrefabInstantiation(string guild, string sender_id)
         {
-            var display = Instantiate(guildNotificationPrefab, guildNotificationPrefabPos);
+            var display = Instantiate(notificationPrefab, guildNotificationPrefabPos);
             display.transform.GetChild(0).GetComponent<Text>().text = sender_id;
             display.transform.GetChild(1).GetComponent<Text>().text = guild;
+        }
+        public void LobbyInvitationPrefabInstantiation(string senderName, int sender_id)
+        {
+            Debug.Log("SENDER ID" + sender_id);
+            var display = Instantiate(notificationPrefab, lobbyNotificationPrefabPos);
+            display.transform.GetChild(0).GetComponent<Text>().text = senderName;
+            display.AddComponent<LobbyInvitation>();
+            display.GetComponent<LobbyInvitation>().sender_id = sender_id;
+            display.GetComponent<LobbyInvitation>().lobbyInvitationPanel = lobbyInvitationPanel;
+            display.GetComponent<LobbyInvitation>().DungeonPanel = DungeonPanel;
+
         }
         //Sends a notification to the specified user
         public void OnclickAddFriend(string friend)
@@ -120,6 +141,16 @@ namespace RunPG.Multi
                 GuildInvitationPrefabInstantiation("", username);
             }
         }
+        void GetLobbyInvitationAtStart()
+        {
+            var lobbyInvitations = Requests.GETNotificationsByType(userId, NotificationType.LOBBY);
+            foreach (var lobbyInvitation in lobbyInvitations)
+            {
+                var username = Requests.GETPlayerName(lobbyInvitation.senderId, null);
+
+                LobbyInvitationPrefabInstantiation(username, lobbyInvitation.senderId);
+            }
+        }
         bool IsNewNotification(Notification notification)
         {
             foreach (var notif in _notificationList)
@@ -134,10 +165,11 @@ namespace RunPG.Multi
         {
             foreach (var sender in senders)
             {
-                var display = Instantiate(friendrequestPrefab, friendrequestPrefabPos);
+                var display = Instantiate(notificationPrefab, friendrequestPrefabPos);
                 display.transform.GetChild(0).GetComponent<Text>().text = sender.Item1;
-                display.GetComponent<FriendRequestDisplay>().sender_id = sender.Item2;
-                display.GetComponent<FriendRequestDisplay>().chatManager = this;
+                display.AddComponent<FriendRequest>();
+               display.GetComponent<FriendRequest>().sender_id = sender.Item2;
+                display.GetComponent<FriendRequest>().chatManager = this;
 
             }
         }
@@ -145,16 +177,17 @@ namespace RunPG.Multi
         void GetFriendsAtStart()
         {
 
-            var friendlist =  Requests.GETAllFriends(userId);
+            var friendDisplay =  Requests.GETAllFriends(userId);
             //list of friends usernames
-            List<String> friends = new List<String>();
+            List<(String,int)> friends= new List<(String, int)>();
 
-            foreach (var friend in friendlist)
+            foreach (var friend in friendDisplay)
             {
                 var username = Requests.GETPlayerName(friend.friendId, null);
-                friends.Add(username);
+            
+                friends.Add((username,friend.friendId));
             }
-            FriendlistPrefabInstantiation(friends.ToArray());
+            friendDisplayPrefabInstantiation(friends);
         }
         bool GETPlayer(String username)
         {
