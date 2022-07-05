@@ -110,51 +110,51 @@ public class InventoryScript : MonoBehaviour
             items.Add(new List<Item>());
 
         items[0].Add(new Item { equiped = true, level = 15, name = "Epée", rarity = RarityType.Legendary, sprite = Resources.Load<Sprite>("Inventory/sword") });
-        items[2].Add(new Item { equiped = true, level = 15, name = "Chest", rarity = RarityType.Legendary, sprite = Resources.Load<Sprite>("Inventory/sword") });
+        items[2].Add(new Item { equiped = true, level = 13, name = "Chest", rarity = RarityType.Legendary, sprite = Resources.Load<Sprite>("Inventory/sword") });
+        items[2].Add(new Item { equiped = false, level = 15, name = "Chest", rarity = RarityType.Epic, sprite = Resources.Load<Sprite>("Inventory/sword") });
+        items[2].Add(new Item { equiped = false, level = 15, name = "Chest", rarity = RarityType.Common, sprite = Resources.Load<Sprite>("Inventory/sword") });
         items[2].Add(new Item { equiped = false, level = 15, name = "Chest", rarity = RarityType.Legendary, sprite = Resources.Load<Sprite>("Inventory/sword") });
+        items[2].Add(new Item { equiped = false, level = 11, name = "Chest", rarity = RarityType.Legendary, sprite = Resources.Load<Sprite>("Inventory/sword") });
         items[2].Add(new Item { equiped = false, level = 15, name = "Chest", rarity = RarityType.Legendary, sprite = Resources.Load<Sprite>("Inventory/sword") });
+        items[2].Add(new Item { equiped = false, level = 12, name = "Chest", rarity = RarityType.Legendary, sprite = Resources.Load<Sprite>("Inventory/sword") });
+        items[2].Add(new Item { equiped = false, level = 17, name = "Chest", rarity = RarityType.Legendary, sprite = Resources.Load<Sprite>("Inventory/sword") });
         items[2].Add(new Item { equiped = false, level = 15, name = "Chest", rarity = RarityType.Legendary, sprite = Resources.Load<Sprite>("Inventory/sword") });
-        items[2].Add(new Item { equiped = false, level = 15, name = "Chest", rarity = RarityType.Legendary, sprite = Resources.Load<Sprite>("Inventory/sword") });
-        items[2].Add(new Item { equiped = false, level = 15, name = "Chest", rarity = RarityType.Legendary, sprite = Resources.Load<Sprite>("Inventory/sword") });
-        items[2].Add(new Item { equiped = false, level = 15, name = "Chest", rarity = RarityType.Legendary, sprite = Resources.Load<Sprite>("Inventory/sword") });
-        items[2].Add(new Item { equiped = false, level = 15, name = "Chest", rarity = RarityType.Legendary, sprite = Resources.Load<Sprite>("Inventory/sword") });
-        items[2].Add(new Item { equiped = false, level = 15, name = "Chest", rarity = RarityType.Legendary, sprite = Resources.Load<Sprite>("Inventory/sword") });
-        items[2].Add(new Item { equiped = false, level = 15, name = "Chest", rarity = RarityType.Legendary, sprite = Resources.Load<Sprite>("Inventory/sword") });
-        LoadInventory(0);
+        items[2].Add(new Item { equiped = false, level = 9, name = "Chest", rarity = RarityType.Legendary, sprite = Resources.Load<Sprite>("Inventory/sword") });
+        LoadSortedInventory(0);
 
         weaponButton.onClick.AddListener(delegate {
             SelectFilter(weaponBackground);
-            LoadInventory(0);
+            LoadSortedInventory(0);
         });
 
         helmetButton.onClick.AddListener(delegate {
             SelectFilter(helmetBackground);
-            LoadInventory(1);
+            LoadSortedInventory(1);
         });
 
         chestButton.onClick.AddListener(delegate {
             SelectFilter(chestBackground);
-            LoadInventory(2);
+            LoadSortedInventory(2);
         });
 
         glovesButton.onClick.AddListener(delegate {
             SelectFilter(glovesBackground);
-            LoadInventory(3);
+            LoadSortedInventory(3);
         });
 
         bootsButton.onClick.AddListener(delegate {
             SelectFilter(bootsBackground);
-            LoadInventory(4);
+            LoadSortedInventory(4);
         });
 
         consumablesButton.onClick.AddListener(delegate {
             SelectFilter(consumablesBackground);
-            LoadInventory(5);
+            LoadSortedInventory(5);
         });
 
         ressourcesButton.onClick.AddListener(delegate {
             SelectFilter(ressourcesBackground);
-            LoadInventory(6);
+            LoadSortedInventory(6);
         });
 
         SetUsername("ZenSheep");
@@ -213,6 +213,29 @@ public class InventoryScript : MonoBehaviour
                 });
             }
         }
+    }
+
+    private void LoadSortedInventory(int filterIndex)
+    {
+        var filtereditems = items[filterIndex];
+        filtereditems.Sort((a, b) =>
+        {
+            if (a.equiped)
+                return -1;
+            if (b.equiped)
+                return 1;
+            if (b.level - a.level != 0)
+                return b.level - a.level;
+            return b.rarity - a.rarity;
+        });
+
+        LoadInventory(filterIndex);
+    }
+
+    public void ResetInventory()
+    {
+        SelectFilter(weaponBackground);
+        LoadSortedInventory(0);
     }
 
     void SelectFilter(GameObject backgroundFilter)
