@@ -112,6 +112,14 @@ public class InventoryScript : MonoBehaviour
         items[0].Add(new Item { equiped = true, level = 15, name = "Epée", rarity = RarityType.Legendary, sprite = Resources.Load<Sprite>("Inventory/sword") });
         items[2].Add(new Item { equiped = true, level = 15, name = "Chest", rarity = RarityType.Legendary, sprite = Resources.Load<Sprite>("Inventory/sword") });
         items[2].Add(new Item { equiped = false, level = 15, name = "Chest", rarity = RarityType.Legendary, sprite = Resources.Load<Sprite>("Inventory/sword") });
+        items[2].Add(new Item { equiped = false, level = 15, name = "Chest", rarity = RarityType.Legendary, sprite = Resources.Load<Sprite>("Inventory/sword") });
+        items[2].Add(new Item { equiped = false, level = 15, name = "Chest", rarity = RarityType.Legendary, sprite = Resources.Load<Sprite>("Inventory/sword") });
+        items[2].Add(new Item { equiped = false, level = 15, name = "Chest", rarity = RarityType.Legendary, sprite = Resources.Load<Sprite>("Inventory/sword") });
+        items[2].Add(new Item { equiped = false, level = 15, name = "Chest", rarity = RarityType.Legendary, sprite = Resources.Load<Sprite>("Inventory/sword") });
+        items[2].Add(new Item { equiped = false, level = 15, name = "Chest", rarity = RarityType.Legendary, sprite = Resources.Load<Sprite>("Inventory/sword") });
+        items[2].Add(new Item { equiped = false, level = 15, name = "Chest", rarity = RarityType.Legendary, sprite = Resources.Load<Sprite>("Inventory/sword") });
+        items[2].Add(new Item { equiped = false, level = 15, name = "Chest", rarity = RarityType.Legendary, sprite = Resources.Load<Sprite>("Inventory/sword") });
+        items[2].Add(new Item { equiped = false, level = 15, name = "Chest", rarity = RarityType.Legendary, sprite = Resources.Load<Sprite>("Inventory/sword") });
         LoadInventory(0);
 
         weaponButton.onClick.AddListener(delegate {
@@ -164,13 +172,17 @@ public class InventoryScript : MonoBehaviour
 
     void LoadInventory(int filterIndex)
     {
-        print("LoadInventory");
         foreach (Transform child in inventoryLayout.transform)
         {
             Destroy(child.gameObject);
         }
 
         var filterList = items[filterIndex];
+
+        if (filterList.Count == 0)
+            inventoryLayout.GetComponent<VerticalLayoutGroup>().padding.bottom = 0;
+        else
+            inventoryLayout.GetComponent<VerticalLayoutGroup>().padding.bottom = 8;
 
         for (int itemIndex = 0; itemIndex < filterList.Count; itemIndex++)
         {
