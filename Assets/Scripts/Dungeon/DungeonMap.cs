@@ -9,6 +9,8 @@ public class DungeonMap : MonoBehaviour
 {
     [SerializeField]
     public FlexibleGridLayout flexibleGrid;
+    [SerializeField]
+    private Canvas LeavePopup;
 
     private void Start()
     {
@@ -106,4 +108,27 @@ public class DungeonMap : MonoBehaviour
 
         SceneManager.LoadScene("UI");
     }
+
+
+    public void TryLeave()
+    {
+        CanvasGroup group = LeavePopup.GetComponent<CanvasGroup>();
+        group.alpha = 1;
+        group.blocksRaycasts = true;
+        group.interactable = true;
+    }
+
+    public void ClosePopup()
+    {
+        CanvasGroup group = LeavePopup.GetComponent<CanvasGroup>();
+        group.alpha = 0;
+        group.blocksRaycasts = false;
+        group.interactable = false;
+    }
+
+    public void Leave()
+    {
+        SceneManager.LoadScene("MapScene");
+    }
+
 }
