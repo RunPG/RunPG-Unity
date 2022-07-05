@@ -21,6 +21,9 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     private Button leaveButton;
     [SerializeField]
     private Button StartButton;
+    [SerializeField]
+    private GameObject DungeonPanel;
+
     /// <summary>
     /// Keep track of the current process. Since connection is asynchronous and is based on several callbacks from Photon,
     /// we need to keep track of this to properly adjust the behavior when we receive call back by Photon.
@@ -160,7 +163,8 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         GameObject.Find("DungeonPanel").SetActive(false);
         GameObject.Find("Main Panel").SetActive(true);
         */
-        PhotonNetwork.LeaveRoom();
+        if (DungeonPanel.activeSelf)
+            PhotonNetwork.LeaveRoom();
     }
     public override void OnJoinedRoom()
     {

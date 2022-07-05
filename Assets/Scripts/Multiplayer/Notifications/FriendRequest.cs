@@ -9,6 +9,7 @@ namespace RunPG.Multi
 {
     public class FriendRequest : Invitation
     {
+
         public override void OnClickAccept()
         {
             StartCoroutine(Requests.DELETENotification(GlobalVariables.userId, sender_id, NotificationType.FRIENDLIST));
@@ -17,7 +18,7 @@ namespace RunPG.Multi
             Destroy(gameObject);
             List<(String,int)> friend = new List<(String,int)> ();
             friend.Add((transform.GetChild(0).GetComponent<Text>().text, sender_id));
-            chatManager.friendDisplayPrefabInstantiation(friend);
+            GameObject.FindObjectOfType<ChatManager>().friendDisplayPrefabInstantiation(friend);
         }
 
         public override void OnClickRefuse()

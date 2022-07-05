@@ -10,7 +10,7 @@ namespace RunPG.Multi
         public Button acceptButton;
         public Button refuseButton;
 
-        public ChatManager chatManager;
+        public NotificationManager notificationManager;
         public int sender_id;
         // Start is called before the first frame update
         private void Start()
