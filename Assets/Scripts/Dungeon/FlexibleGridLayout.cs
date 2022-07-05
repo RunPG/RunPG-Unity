@@ -14,9 +14,6 @@ public class FlexibleGridLayout : LayoutGroup
     [SerializeField]
     private ScrollRect scrollRect;
 
-    [SerializeField]
-    private GameObject resultText;
-
     private float cellSide = 0;
 
     private bool defeat;
