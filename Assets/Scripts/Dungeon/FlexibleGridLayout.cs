@@ -67,6 +67,9 @@ public class FlexibleGridLayout : LayoutGroup
                 var itemImage = item.AddComponent<Image>();
                 itemImage.sprite = row[j].getRoomSprite();
 
+                item.AddComponent<Button>();
+
+
                 var xPos = (dist / 2) - (cellSize.x / 2) + (dist * columnCount);
                 var yPos = parentHeight - ((cellSize.y * (rowCount + 1) + (spacing * rowCount) + padding.bottom));
 
@@ -168,7 +171,7 @@ public class FlexibleGridLayout : LayoutGroup
         {
             if (fromIndex == path[currentLine] && !defeat)
             {
-                var itemButton = target.AddComponent<Button>();
+                var itemButton = target.GetComponent<Button>();
                 itemButton.onClick.AddListener(delegate {
                     DungeonManager.instance.path.Add(toIndex);
                     DungeonManager.instance.map[path.Count - 1][toIndex].onClickAction();
