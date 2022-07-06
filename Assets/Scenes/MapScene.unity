@@ -1161,6 +1161,11 @@ PrefabInstance:
       propertyPath: _map
       value: 
       objectReference: {fileID: 114105500548048052}
+    - target: {fileID: 8739419039962306133, guid: 2f77a6d5998078242937d8dd35d76709,
+        type: 3}
+      propertyPath: animator
+      value: 
+      objectReference: {fileID: 793983033}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2f77a6d5998078242937d8dd35d76709, type: 3}
 --- !u!1 &141833905
@@ -4903,6 +4908,12 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 75}
   m_SizeDelta: {x: 1150, y: 100}
   m_Pivot: {x: 0.5, y: 0}
+--- !u!95 &793983033 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 5011138419327479699, guid: 2f77a6d5998078242937d8dd35d76709,
+    type: 3}
+  m_PrefabInstance: {fileID: 141054588}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &798295461
 GameObject:
   m_ObjectHideFlags: 0
@@ -10971,7 +10982,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1094529402752776}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -11321,7 +11332,7 @@ MonoBehaviour:
           isActive: 1
           sublayerName: POI
           geometryType: 0
-          layerName: 
+          layerName: poi_label
           snapToTerrain: 1
           combineMeshes: 0
         lineGeometryOptions:
@@ -11332,17 +11343,29 @@ MonoBehaviour:
           CapType: 0
         filterOptions:
           _selectedLayerName: 
-          filters: []
-          combinerType: 0
+          filters:
+          - Key: maki
+            KeyDescription: 
+            PropertyValue: art-gallery,cinema,stadium,museum,library,zoo,music,theatre,amusement-park,cafe,bakery,fast-food,grocery,ice-cream,restaurant,bar,beer,aquarium,campsite,attraction,castle,cemetery,dog-park,drinking-water,garden,golf,monument,park,picnic-site,playground,swimming,bank,dentist,toilet,veterinary,pharmacy,college,school,hospital,place-of-worship,religious-christian,religious-jewish,religious-muslim,police,post,doctor,fire-station,information,town-hall,prison,embassy,fuel,laundry,lodging,alcohol-shop,clothing-store,shop,bus,car,bicycle-share,bicycle,airfield,ferry,harbor,heliport
+            Min: 0
+            Max: 0
+            filterOperator: 0
+          - Key: localrank
+            KeyDescription: 
+            PropertyValue: 
+            Min: 6
+            Max: 0
+            filterOperator: 3
+          combinerType: 1
         extrusionOptions:
           _selectedLayerName: 
           extrusionType: 0
           extrusionGeometryType: 0
-          propertyName: 
+          propertyName: height
           propertyDescription: 
           minimumHeight: 0
           maximumHeight: 0
-          extrusionScaleFactor: 0
+          extrusionScaleFactor: 1
         colliderOptions:
           colliderType: 0
         materialOptions:
@@ -11361,11 +11384,11 @@ MonoBehaviour:
             atlasInfo: {fileID: 0}
             colorPalette: {fileID: 0}
         performanceOptions:
-          isEnabled: 0
-          entityPerCoroutine: 0
+          isEnabled: 1
+          entityPerCoroutine: 20
         honorBuildingIdSetting: 0
         buildingsWithUniqueIds: 0
-        moveFeaturePositionTo: 0
+        moveFeaturePositionTo: 1
         MeshModifiers: []
         GoModifiers: []
         presetFeatureType: 3

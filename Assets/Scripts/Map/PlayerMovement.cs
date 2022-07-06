@@ -28,6 +28,9 @@ public class PlayerMovement : MonoBehaviour
 	[SerializeField]
 	private GameObject Character;
 
+	[SerializeField]
+	private Animator animator;
+
 	/// <summary>
 	/// Use a mock <see cref="T:Mapbox.Unity.Location.TransformLocationProvider"/>,
 	/// rather than a <see cref="T:Mapbox.Unity.Location.EditorLocationProvider"/>. 
@@ -101,6 +104,8 @@ public class PlayerMovement : MonoBehaviour
 			Character.transform.rotation = Quaternion.Lerp(Character.transform.rotation, Quaternion.LookRotation(direction, transform.up), Time.deltaTime * _rotationFollowFactor);
 		}
 		transform.localPosition = Vector3.Lerp(transform.localPosition, _targetPosition, Time.deltaTime * _positionFollowFactor);
+
+		animator.SetFloat("Speed", Vector2.Distance(transform.position, _targetPosition) / 200f);
 
 		foreach (var touch in Input.touches)
         {
