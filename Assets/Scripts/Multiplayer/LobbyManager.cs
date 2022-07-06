@@ -10,12 +10,12 @@ using UnityEngine.UI;
 
 public class LobbyManager : MonoBehaviourPunCallbacks
 {
-    [SerializeField]
-    private PlayerDisplay playerDisplayPrefab;
+   /* [SerializeField]
+    private PlayerDisplay playerDisplayPrefab;*/
     private List<PlayerDisplay> playersList = new List<PlayerDisplay>();
     [SerializeField]
     private Transform prefabPos;
-    [SerializeField]
+    /*[SerializeField]
     private Button joinButton;
     [SerializeField]
     private Button leaveButton;
@@ -23,7 +23,13 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     private Button StartButton;
     [SerializeField]
     private GameObject DungeonPanel;
+    */
+    [SerializeField] RoomDisplay roomDisplayPrefab;
+    [SerializeField] private Button createButton;
+    [SerializeField] private CanvasGroup lobbyList;
+    [SerializeField] private CanvasGroup lobby;
 
+    private List<RoomDisplay> roomDisplayListing = new List<RoomDisplay>();
     /// <summary>
     /// Keep track of the current process. Since connection is asynchronous and is based on several callbacks from Photon,
     /// we need to keep track of this to properly adjust the behavior when we receive call back by Photon.
@@ -32,12 +38,13 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     bool isConnecting;
 
     string gameVersion = "1";
-    public void Start()
-    {
-        leaveButton.onClick.AddListener(LeaveRoom);
-        joinButton.onClick.AddListener(CreateRoom);
-        StartButton.onClick.AddListener(LoadDungeon);
-    }
+      public void Start()
+      {
+        PhotonNetwork.GetCustomRoomList(TypedLobby.Default,"");
+          //leaveButton.onClick.AddListener(LeaveRoom);
+          createButton.onClick.AddListener(CreateRoom);
+         // StartButton.onClick.AddListener(LoadDungeon);
+      }
     public void LoadDungeon()
     {
         if (PhotonNetwork.IsMasterClient)
@@ -62,6 +69,8 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         roomOptions.IsVisible = true;
         roomOptions.MaxPlayers = 4;
         PhotonNetwork.CreateRoom("" + GlobalVariables.userId, roomOptions, TypedLobby.Default);
+        lobbyList.alpha = 0;
+        lobby.alpha = 1;
     }
 
     public void ConnectToRoom(string roomName)
@@ -106,19 +115,22 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     {
         foreach (var player in PhotonNetwork.PlayerList)
         {
-            PlayerDisplay newPlayerText = Instantiate(playerDisplayPrefab, prefabPos);
-            newPlayerText.SetPlayerInfo(player);
-            playersList.Add(newPlayerText);
+            //PlayerDisplay newPlayerText = Instantiate(playerDisplayPrefab, prefabPos);
+         /*   newPlayerText.SetPlayerInfo(player);
+            playersList.Add(newPlayerText);*/
         }
 
     }
     #region Photon Callbacks
     public override void OnPlayerEnteredRoom(Player player)
     {
-        Debug.LogFormat("OnPlayerEnteredRoom() {0}", player.NickName); // not seen if you're the player connecting
-        PlayerDisplay newPlayerText = Instantiate(playerDisplayPrefab, prefabPos);
+        Debug.LogFormat("OnPlayerEnteredRoom() {0}", player.NickName);
+    }
+        
+        // not seen if you're the player connecting
+       /*PlayerDisplay newPlayerText = Instantiate(playerDisplayPrefab, prefabPos);
         newPlayerText.SetPlayerInfo(player);
-        playersList.Add(newPlayerText);
+        playersList.Add(newPlayerText);/*
     }
     public override void OnPlayerLeftRoom(Player player)
     {
@@ -156,19 +168,47 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 
     #region Private Methods
 
-
-
-
     #endregion
     #region Public Methods
+       */
+    public override void OnRoomListUpdate(List<RoomInfo> roomList)
+    {
+        Debug.Log("OnRoomListUpdate");
 
+        foreach (RoomInfo room in roomList)
+        {
+            Debug.Log("SE");
 
-    public void LeaveRoom()
+            if (room.RemovedFromList)
+            {
+                int index = roomDisplayListing.FindIndex(x => x.roomInfo.Name == room.Name);
+                if (index != -1)
+                {
+                    Destroy(roomDisplayListing[index].gameObject);
+                    roomDisplayListing.RemoveAt(index);
+                }
+            }
+            else
+            {
+                RoomDisplay newRoomDisplay = Instantiate(roomDisplayPrefab, prefabPos);
+                if (newRoomDisplay)
+                {
+                    newRoomDisplay.SetRoomInfo(room);
+                    newRoomDisplay.joinLobbyButton.onClick.AddListener(delegate
+                    {
+                        ConnectToRoom(room.Name);
+                    });
+                    roomDisplayListing.Add(newRoomDisplay);
+                }
+            }
+        }
+    }
+public void LeaveRoom()
     {/*
         GameObject.Find("DungeonPanel").SetActive(false);
         GameObject.Find("Main Panel").SetActive(true);
         */
-        if (DungeonPanel.activeSelf)
+      //  if (DungeonPanel.activeSelf)
             PhotonNetwork.LeaveRoom();
     }
     public override void OnJoinedRoom()

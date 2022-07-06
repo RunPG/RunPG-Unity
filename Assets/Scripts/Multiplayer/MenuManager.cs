@@ -3,6 +3,7 @@ using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class MenuManager : MonoBehaviourPunCallbacks
@@ -69,8 +70,7 @@ public class MenuManager : MonoBehaviourPunCallbacks
         });
         dungeonButton.onClick.AddListener((delegate
         {
-            menuPanel.SetActive(false);
-            DungeonPanel.SetActive(true);
+            SceneManager.LoadScene("LobbyBis");
         }));
         LobbyInvitationButton.onClick.AddListener((delegate
         {
