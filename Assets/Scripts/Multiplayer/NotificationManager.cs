@@ -44,11 +44,11 @@ namespace RunPG.Multi
             {
                 OnclickAddFriend(friendTextInput.text);
             });
+            InvokeRepeating(nameof(GetFriendRequests), 0f, 10f);
         }
 
         void Update()
         {
-            GetFriendRequests();
         }
         //Called at the start of the game and when a friend request is accepted, Instantiate the prefabs
         public void GuildInvitationPrefabInstantiation(string guild, string sender_id)
@@ -69,12 +69,12 @@ namespace RunPG.Multi
 
         }
         //Sends a notification to the specified user
-        public void OnclickAddFriend(string friend)
+        public async void OnclickAddFriend(string friendUsername)
         {
-            int? friend_id = Requests.GETPlayerID(friend, null);
-            if (friend_id != null)
+            User friend = await Requests.GETUserByName(friendUsername);
+            if (friend != null)
             {
-                var coroutine = Requests.POSTSendNotification(GlobalVariables.userId, friend_id.Value, NotificationType.FRIENDLIST);
+                var coroutine = Requests.POSTSendNotification(GlobalVariables.userId, friend.id, NotificationType.FRIENDLIST);
                 StartCoroutine(coroutine);
                 Debug.Log("Starting POSTREGISTER" + GlobalVariables.userId);
             }
@@ -84,9 +84,10 @@ namespace RunPG.Multi
                 //TODO: notif error
             }
         }
-        void GetFriendRequests()
+        async void GetFriendRequests()
         {
-            var friendRequests = Requests.GETNotificationsByType(GlobalVariables.userId, NotificationType.FRIENDLIST);
+            Debug.Log("Getting friend requests");
+            var friendRequests = await Requests.GETNotificationsByType(GlobalVariables.userId, NotificationType.FRIENDLIST);
             List<(String, int)> sendersUsername = new List<(String, int)>();
             foreach (var friendRequest in friendRequests)
             {
@@ -94,42 +95,42 @@ namespace RunPG.Multi
                 _friendRequest.receiverId == friendRequest.receiverId && _friendRequest.receiverId == friendRequest.receiverId && _friendRequest.senderId == friendRequest.senderId).Any())
                 {
                     _notifications.Add(friendRequest);
-                    var username = Requests.GETPlayerName(friendRequest.senderId, null);
-                    sendersUsername.Add((username, friendRequest.senderId));
+                    var user = await Requests.GETUserById(friendRequest.senderId);
+                    sendersUsername.Add((user.name, friendRequest.senderId));
                 }
             }
             FriendRequestPrefabInstantiation(sendersUsername);
         }
         //Called at the start of the game, persistence
-        void GetFriendRequestsAtStart()
+        async void GetFriendRequestsAtStart()
         {
-            var friendRequests = Requests.GETNotificationsByType(GlobalVariables.userId, NotificationType.FRIENDLIST);
+            var friendRequests = await Requests.GETNotificationsByType(GlobalVariables.userId, NotificationType.FRIENDLIST);
             List<(String, int)> sendersUsername = new List<(String, int)>();
             foreach (var friendRequest in friendRequests)
             {
-                var username = Requests.GETPlayerName(friendRequest.senderId, null);
-                sendersUsername.Add((username, friendRequest.senderId));
+                var user = await Requests.GETUserById(friendRequest.senderId);
+                sendersUsername.Add((user.name, friendRequest.senderId));
             }
             FriendRequestPrefabInstantiation(sendersUsername);
         }
-        void GetGuildInvitationAtStart()
+        async void GetGuildInvitationAtStart()
         {
-            var guildInvitations = Requests.GETNotificationsByType(GlobalVariables.userId, NotificationType.GUILD);
+            var guildInvitations = await Requests.GETNotificationsByType(GlobalVariables.userId, NotificationType.GUILD);
             foreach (var guildInvitation in guildInvitations)
             {
-                var username = Requests.GETPlayerName(guildInvitation.senderId, null);
+                var user = await Requests.GETUserById(guildInvitation.senderId);
 
-                GuildInvitationPrefabInstantiation("", username);
+                GuildInvitationPrefabInstantiation("", user.name);
             }
         }
-        void GetLobbyInvitationAtStart()
+        async void GetLobbyInvitationAtStart()
         {
-            var lobbyInvitations = Requests.GETNotificationsByType(GlobalVariables.userId, NotificationType.LOBBY);
+            var lobbyInvitations = await Requests.GETNotificationsByType(GlobalVariables.userId, NotificationType.LOBBY);
             foreach (var lobbyInvitation in lobbyInvitations)
             {
-                var username = Requests.GETPlayerName(lobbyInvitation.senderId, null);
+                var user = await Requests.GETUserById(lobbyInvitation.senderId);
 
-                LobbyInvitationPrefabInstantiation(username, lobbyInvitation.senderId);
+                LobbyInvitationPrefabInstantiation(user.name, lobbyInvitation.senderId);
             }
         }
         //Called at the start of the game, Instantiate the prefabs

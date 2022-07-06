@@ -13,102 +13,62 @@ namespace RunPG.Multi
 {
     public static class Requests
     {
-        static String rootUrl = "http://178.62.237.73/";
-        public static int? GETPlayerID(String username, GameObject _errorMessage = null)
+        static readonly string rootUrl = "http://178.62.237.73/";
+        public static async Task<User> GETUserByName(string username)
         {
             if (username.Length != 0)
             {
-                using (UnityWebRequest request = UnityWebRequest.Get(rootUrl + "user/name/" + username))
-                {
-                    request.SendWebRequest();
-                    while (!request.isDone)
-                    {
-                        //TODO change 
-                        //waiting for request to be done
-                    }
-                    if (request.result != UnityWebRequest.Result.Success)
-                    {
-                        Debug.Log(rootUrl + "user/name/" + username);
-                        _errorMessage.SetActive(true);
-                        _errorMessage.GetComponent<Text>().text = "User does not exist !";
-
-                        return null;
-                    }
-                    else
-                    {
-                        var user = JsonUtility.FromJson<User>(request.downloadHandler.text);
-                        return user.id;
-                    }
-                }
-            }
-            return null;
-        }
-
-        public static int? GETPlayerByName(string username, GameObject _errorMessage = null)
-        {
-            using (UnityWebRequest request = UnityWebRequest.Get(rootUrl + "user/name/" + username))
-            {
+                var url = rootUrl + "user/name/" + username;
+                using UnityWebRequest request = UnityWebRequest.Get(url);
                 request.SendWebRequest();
                 while (!request.isDone)
                 {
-                    //TODO change 
-                    //waiting for request to be done
+                    await Task.Yield();
                 }
+
                 if (request.result != UnityWebRequest.Result.Success)
                 {
-                    Debug.Log(request.result + ":" + username);
-                    _errorMessage.SetActive(true);
-                    if (_errorMessage)
-                        _errorMessage.GetComponent<Text>().text = "User does not exist !";
-                    else
-                        Debug.Log("Error:" + rootUrl + "user/" + username);
+                    Debug.LogError(string.Format("Error in request:{0}\nError Message: {1}", url, request.error));
                     return null;
                 }
                 else
                 {
                     var user = JsonUtility.FromJson<User>(request.downloadHandler.text);
-                    return user.id;
+                    return user;
                 }
             }
+            return null;
         }
-        public static String GETPlayerName(int user_id, GameObject _errorMessage = null)
+
+        public static async Task<User> GETUserById(int user_id)
         {
-            
-                using (UnityWebRequest request = UnityWebRequest.Get(rootUrl + "user/" + user_id))
-                {
-                    request.SendWebRequest();
-                    while (!request.isDone)
-                    {
-                        //TODO change 
-                        //waiting for request to be done
-                    }
-                    if (request.result != UnityWebRequest.Result.Success)
-                    {
-                        Debug.Log(request.result + ":" + user_id);
-                            _errorMessage.SetActive(true);
-                        if (_errorMessage)
-                            _errorMessage.GetComponent<Text>().text = "User does not exist !";
-                        else
-                            Debug.Log("Error:" + rootUrl + "user/" + user_id);
-                        return "";
-                    }
-                    else
-                    {
-                    var user = JsonUtility.FromJson<User>(request.downloadHandler.text);
-                        return user.name;
-                    }
-                }        
+            var url = rootUrl + "user/" + user_id;
+            using UnityWebRequest request = UnityWebRequest.Get(url);
+            request.SendWebRequest();
+            while (!request.isDone)
+            {
+                await Task.Yield();
+            }
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogError(string.Format("Error in request:{0}\nError Message: {1}", url, request.error));
+                return null;
+            }
+            else
+            {
+                var user = JsonUtility.FromJson<User>(request.downloadHandler.text);
+                return user;
+            }
         }
-        public static Friend[] GETAllFriends(int user_id)
+        
+        public static async Task<Friendlist> GETAllFriends(int user_id)
         {
             using (UnityWebRequest request = UnityWebRequest.Get(rootUrl + "user/" + user_id + "/friend/"))
             {
                 request.SendWebRequest();
                 while (!request.isDone)
                 {
-
-                    //TODO change 
-                    //waiting for request to be done
+                    await Task.Yield();
                 }
                 if (request.result != UnityWebRequest.Result.Success)
                 {
@@ -117,12 +77,60 @@ namespace RunPG.Multi
                 else
                 {
                     Debug.Log(rootUrl + "user/" + user_id + "/friend/");                 
-                    var test = JsonConvert.DeserializeObject<Friendlist>(request.downloadHandler.text); 
-                    return test.friends;
+                    var friends = JsonConvert.DeserializeObject<Friendlist>(request.downloadHandler.text); 
+                    return friends;
                 }
             }         
             return null;
         }
+
+        public static async Task<Notification[]> GETNotificationsByType(int receiver_id, NotificationType type)
+        {
+            using (UnityWebRequest request = UnityWebRequest.Get(rootUrl + "/user/" + receiver_id + "/notification/" + type))
+            {
+                
+                request.SendWebRequest();
+                while (!request.isDone)
+                {
+                    await Task.Yield();
+                }
+                if (request.result != UnityWebRequest.Result.Success)
+                {
+                    Debug.Log("Cannot get notifications of type: " + type.ToString());
+                }
+                else
+                {
+                    var notifications = JsonConvert.DeserializeObject<Notification[]>(request.downloadHandler.text);
+                    return notifications;
+                }
+            }
+            return null;
+        }
+
+        public static async Task<Inventory[]> GETUserInventory(int user_id)
+        {
+            var url = rootUrl + "/inventory/user/" + user_id;
+            using (UnityWebRequest request = UnityWebRequest.Get(url))
+            {
+                request.SendWebRequest();
+                while (!request.isDone)
+                {
+                    await Task.Yield();
+                }
+                if (request.result != UnityWebRequest.Result.Success)
+                {
+                    Debug.LogError(string.Format("Error in request:{0}\nError Message: {1}", url, request.error));
+                }
+                else
+                {
+                    var inventory = JsonConvert.DeserializeObject<Inventory[]>(request.downloadHandler.text);
+                    return inventory;
+                }
+            }
+            return null;
+        }
+        
+
         public static IEnumerator POSTNewUser(InputField username, GameObject _errorMessage = null)
         {
             Debug.Log(username.text);
@@ -190,29 +198,5 @@ namespace RunPG.Multi
                 }
             }
         }
-        public static Notification[] GETNotificationsByType(int receiver_id, NotificationType type)
-        {
-            using (UnityWebRequest request = UnityWebRequest.Get(rootUrl + "user/" + receiver_id + "/notification/" + type + "/"))
-            {
-                request.SendWebRequest();
-                while (!request.isDone)
-                {
-
-                    //TODO change 
-                    //waiting for request to be done
-                }
-                if (request.result != UnityWebRequest.Result.Success)
-                {
-                    Debug.Log("Cannot get notifications of type: " + type.ToString());
-                }
-                else
-                {
-                    var notifications = JsonConvert.DeserializeObject<Notification[]>(request.downloadHandler.text);
-                    return notifications;
-                }
-            }
-            return null;
-        }
-
     }
 }

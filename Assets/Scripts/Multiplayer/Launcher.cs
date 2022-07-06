@@ -63,14 +63,14 @@ namespace RunPG.Multi
 
         }
       
-        private void GoToMainMenu()
+        private async void GoToMainMenu()
         {
             if (isConnecting)
                 return;
-            var id = Requests.GETPlayerID(_username.text, _errorMessage);
-            if (id == null)
+            User user = await Requests.GETUserByName(_username.text);
+            if (user == null)
                 return;
-            GlobalVariables.userId = id.Value;
+            GlobalVariables.userId = user.id;
             _authentificationPannel.SetActive(false);
             _connexionPannel.SetActive(true);
             PhotonNetwork.NickName = _username.text;

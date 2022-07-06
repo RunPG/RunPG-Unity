@@ -9,6 +9,7 @@ using System;
 using UnityEngine.Networking;
 using Photon.Realtime;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace RunPG.Multi
 {
@@ -35,7 +36,7 @@ namespace RunPG.Multi
         }
         void Start()
         {
-            GetFriendsAtStart();
+            GetFriendsAtStartAsync();
             sendMsgButton.onClick.AddListener(SendMessage);
         }
 
@@ -52,18 +53,18 @@ namespace RunPG.Multi
         }
   
         //Called at the start of the game, persistence
-        void GetFriendsAtStart()
+        async void GetFriendsAtStartAsync()
         {
 
-            var friendDisplay =  Requests.GETAllFriends(GlobalVariables.userId);
+            var friendList = await Requests.GETAllFriends(GlobalVariables.userId);
             //list of friends usernames
             List<(String,int)> friends= new List<(String, int)>();
 
-            foreach (var friend in friendDisplay)
+            foreach (var friend in friendList.friends)
             {
-                var username = Requests.GETPlayerName(friend.friendId, null);
+                var user = await Requests.GETUserById(friend.friendId);
             
-                friends.Add((username,friend.friendId));
+                friends.Add((user.name, friend.friendId));
             }
             friendDisplayPrefabInstantiation(friends);
         }

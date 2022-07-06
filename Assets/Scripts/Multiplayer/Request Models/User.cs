@@ -6,19 +6,25 @@ using System.Threading.Tasks;
 
 namespace RunPG.Multi
 {
-    internal class User
+    public class User
     {
         public int id;
+        public string uid;
         public string name;
-        public int id_guild;
-        public int id_character;
+        public int? guildId;
+        public int? characterId;
+        public string lastCaloriesUpdate;
+        public bool isGuildOwner;
 
-        public User(int id, string name, int id_guild, int id_character)
+        public User(int id, string uid, string name, int guildId, int characterId, string lastCaloriesUpdate, bool isGuildOwner)
         {
             this.id = id;
+            this.uid = uid;
             this.name = name;
-            this.id_guild = id_guild;
-            this.id_character = id_character;
+            this.guildId = guildId;
+            this.characterId = characterId;
+            this.lastCaloriesUpdate = lastCaloriesUpdate;
+            this.isGuildOwner = isGuildOwner;
         }
     }
 
