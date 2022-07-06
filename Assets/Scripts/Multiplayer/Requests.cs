@@ -129,7 +129,30 @@ namespace RunPG.Multi
             }
             return null;
         }
-        
+
+        public static async Task<Equipement[]> GETEquipements()
+        {
+            var url = rootUrl + "/equipementBase";
+            using (UnityWebRequest request = UnityWebRequest.Get(url))
+            {
+                request.SendWebRequest();
+                while (!request.isDone)
+                {
+                    await Task.Yield();
+                }
+                if (request.result != UnityWebRequest.Result.Success)
+                {
+                    Debug.LogError(string.Format("Error in request:{0}\nError Message: {1}", url, request.error));
+                }
+                else
+                {
+                    var equipements = JsonConvert.DeserializeObject<Equipement[]>(request.downloadHandler.text);
+                    return equipements;
+                }
+            }
+            return null;
+        }
+
 
         public static IEnumerator POSTNewUser(InputField username, GameObject _errorMessage = null)
         {
@@ -184,6 +207,23 @@ namespace RunPG.Multi
                 }
             }
         }
+
+        public static IEnumerator POSTInventoryEquipement(int user_id, int equipement_id)
+        {
+            var url = rootUrl + "user/" + user_id + "/inventory/equipement";
+            var str = "{\"equipementId\":\"" + equipement_id + "\"}";
+
+            using UnityWebRequest request = UnityWebRequest.Post(url, "POST");
+            request.SetRequestHeader("Content-Type", "application/json");
+            request.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(str));
+            yield return request.SendWebRequest();
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogError(string.Format("Error in request:{0}\nError Message: {1}", url, request.error));
+            }
+        }
+
+
         public static IEnumerator DELETENotification(int userId, int friend_id, NotificationType type)
         {
             var str = rootUrl + "user/" + userId + "/notification/" + type + '/'+ friend_id;
