@@ -9,14 +9,20 @@ namespace RunPG.Multi
     public class Equipement
     {
         public int id;
-        public int equipementBaseId;
-        public int statisticsId;
+        public string name;
+        public string description;
+        public string rarity;
+        public string heroClass;
+        public string equipementType;
 
-        public Equipement(int id, int equipementBaseId, int statisticsId)
+        public Equipement(int id, string name, string description, string rarity, string heroClass, string equipementType)
         {
             this.id = id;
-            this.equipementBaseId = equipementBaseId;
-            this.statisticsId = statisticsId;
+            this.name = name;
+            this.description = description;
+            this.rarity = rarity;
+            this.heroClass = heroClass;
+            this.equipementType = equipementType;
         }
     }
 }
