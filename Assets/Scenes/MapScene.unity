@@ -1166,6 +1166,11 @@ PrefabInstance:
       propertyPath: animator
       value: 
       objectReference: {fileID: 793983033}
+    - target: {fileID: 8739419039962306133, guid: 2f77a6d5998078242937d8dd35d76709,
+        type: 3}
+      propertyPath: dungeonDescription
+      value: 
+      objectReference: {fileID: 356504483}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2f77a6d5998078242937d8dd35d76709, type: 3}
 --- !u!1 &141833905
