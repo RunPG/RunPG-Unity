@@ -14,19 +14,16 @@ public class FlexibleGridLayout : LayoutGroup
     [SerializeField]
     private ScrollRect scrollRect;
 
-    [SerializeField]
-    private GameObject resultText;
-
     private float cellSide = 0;
 
     private bool defeat;
 
-    public void generateMap(bool? victory)
+    public void displayMap(bool? victory)
     {
         List<List<GameObject>> transforms = new List<List<GameObject>>();
 
         List<int> path = DungeonManager.instance.path;
-        List<List<Room.RoomType>> map = DungeonManager.instance.map;
+        List<List<Room>> map = DungeonManager.instance.map;
 
         defeat = (victory != null && victory == false);
 
@@ -65,7 +62,10 @@ public class FlexibleGridLayout : LayoutGroup
                 DestroyImmediate(gameObject);
 
                 var itemImage = item.AddComponent<Image>();
-                itemImage.sprite = Room.getRoomSprite(row[j]);
+                itemImage.sprite = row[j].getRoomSprite();
+
+                item.AddComponent<Button>();
+
 
                 var xPos = (dist / 2) - (cellSize.x / 2) + (dist * columnCount);
                 var yPos = parentHeight - ((cellSize.y * (rowCount + 1) + (spacing * rowCount) + padding.bottom));
@@ -168,10 +168,10 @@ public class FlexibleGridLayout : LayoutGroup
         {
             if (fromIndex == path[currentLine] && !defeat)
             {
-                var itemButton = target.AddComponent<Button>();
+                var itemButton = target.GetComponent<Button>();
                 itemButton.onClick.AddListener(delegate {
-                    DungeonMap.LoadLevel(DungeonManager.instance.currentFloor + 1);
                     DungeonManager.instance.path.Add(toIndex);
+                    DungeonManager.instance.map[path.Count - 1][toIndex].onClickAction();
                 });
             }
             return fromIndex == path[currentLine] && !defeat ? 2 : 1;

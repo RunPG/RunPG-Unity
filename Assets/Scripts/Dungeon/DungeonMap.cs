@@ -6,12 +6,15 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class DungeonMap : MonoBehaviour
-{
+{ 
+    public static FlexibleGridLayout flexibleGrid;
     [SerializeField]
-    public FlexibleGridLayout flexibleGrid;
+    private Canvas LeavePopup;
 
     private void Start()
     {
+        flexibleGrid = GameObject.Find("Map/Scroll View/FlexibleGrid").GetComponent<FlexibleGridLayout>();
+
         bool alive = false;
         bool? victory = null;
 
@@ -35,75 +38,73 @@ public class DungeonMap : MonoBehaviour
             StartCoroutine(flexibleGrid.AutoScroll(2f));
             victory = true;
         }
-        flexibleGrid.generateMap(victory);
+        flexibleGrid.displayMap(victory);
     }
 
-    public static List<List<Room.RoomType>> GenerateMap(int seed)
+    public static List<List<Room>> GenerateMap(int seed)
     {
         Random.InitState(seed);
-        int dungeonSize = Random.Range(4, 8);
-        List<List<Room.RoomType>> map = new List<List<Room.RoomType>>(dungeonSize);
-        map.Add(new List<Room.RoomType>() { Room.RoomType.Start });
-        for (int i = 0; i < dungeonSize - 1; i++)
+        int dungeonSize = Random.Range(4, 5);
+        List<List<Room>> map = new List<List<Room>>(dungeonSize);
+        map.Add(new List<Room>() { new StartRoom() });
+        for (int i = 1; i < dungeonSize; i++)
         {
             int rowSize = Random.Range(1, 4);
-            List<Room.RoomType> row = new List<Room.RoomType>(rowSize);
+            List<Room> row = new List<Room>(rowSize);
             for (int j = 0; j < rowSize; j++)
             {
                 var r = Random.Range(0, 10);
                 switch (r)
                 {
                     case < 2:
-                        row.Add(Room.RoomType.Heal);
+                        row.Add(new HealRoom());
                         break;
 
-                    case < 4:
-                        row.Add(Room.RoomType.Random);
-                        break;
-
-                    case < 6:
-                        row.Add(Room.RoomType.Bonus);
+                    case < 3:
+                        row.Add(new BonusRoom());
                         break;
 
                     default:
-                        row.Add(Room.RoomType.Fight);
+                        FightRoom room = new FightRoom(DungeonManager.instance.generateFightEnemies(i));
+                        row.Add(room);
                         break;
                 }
             }
             map.Add(row);
         }
-        map.Add(new List<Room.RoomType>() { Room.RoomType.Boss });
+        map.Add(new List<Room>() { new BossRoom(DungeonManager.instance.generateBossEnemies()) });
         return map;
     }
 
-    public static void LoadLevel(int level)
+    public void TryLeave()
     {
-        DungeonManager.DungeonMonsterInfo[] enemies = null;
-        switch (level)
-        {
-            case 1:
-                enemies = new DungeonManager.DungeonMonsterInfo[1];
-                enemies[0] = new DungeonManager.DungeonMonsterInfo("Slime", 50);
-                break;
-            case 2:
-                enemies = new DungeonManager.DungeonMonsterInfo[2];
-                enemies[0] = new DungeonManager.DungeonMonsterInfo("Slime", 50);
-                enemies[1] = new DungeonManager.DungeonMonsterInfo("Slime", 50);
-                break;
-            case 3:
-                enemies = new DungeonManager.DungeonMonsterInfo[3];
-                enemies[0] = new DungeonManager.DungeonMonsterInfo("Slime", 50);
-                enemies[1] = new DungeonManager.DungeonMonsterInfo("Slime", 50);
-                enemies[2] = new DungeonManager.DungeonMonsterInfo("Slime", 50);
-                break;
-            default:
-                enemies = new DungeonManager.DungeonMonsterInfo[1];
-                enemies[0] = new DungeonManager.DungeonMonsterInfo("Slime", 50);
-                break;
-        }
-
-        DungeonManager.instance.SetMonsters(enemies);
-
-        SceneManager.LoadScene("UI");
+        CanvasGroup group = LeavePopup.GetComponent<CanvasGroup>();
+        group.alpha = 1;
+        group.blocksRaycasts = true;
+        group.interactable = true;
     }
+
+    public void ClosePopup()
+    {
+        CanvasGroup group = LeavePopup.GetComponent<CanvasGroup>();
+        group.alpha = 0;
+        group.blocksRaycasts = false;
+        group.interactable = false;
+    }
+
+    public void Leave()
+    {
+        Destroy(DungeonManager.instance);
+        SceneManager.LoadScene("MapScene");
+    }
+
+    public static void RefreshMap()
+    {
+        foreach (Transform child in flexibleGrid.transform)
+        {
+            GameObject.Destroy(child.gameObject);
+        }
+        flexibleGrid.displayMap(null);
+    }
+
 }
