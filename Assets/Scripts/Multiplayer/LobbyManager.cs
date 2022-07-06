@@ -40,17 +40,22 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     }
     public void LoadDungeon()
     {
-  
-        this.photonView.RPC("LoadDungeonRPC", RpcTarget.All, "jup", "and jup.");
-    }
+        if (PhotonNetwork.IsMasterClient)
+        {
+            Debug.LogFormat("PhotonNetwork : Loading Dungeon");
+            PhotonNetwork.AutomaticallySyncScene = true;
+            PhotonNetwork.LoadLevel("DungeonScene");
+        }
+    } /*
     [PunRPC]
-    public void LoadDungeonRPC(string a, string b)
+    public void LoadDungeonRPC()
     {
         Debug.LogFormat("PhotonNetwork : Loading Dungeon");
+        PhotonNetwork.AutomaticallySyncScene = true;
         PhotonNetwork.LoadLevel("DungeonScene");
    
     }
-
+    */
     public void CreateRoom()
     {
         RoomOptions roomOptions = new RoomOptions();

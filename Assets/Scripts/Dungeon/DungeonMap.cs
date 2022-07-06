@@ -1,3 +1,4 @@
+using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -5,42 +6,47 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class DungeonMap : MonoBehaviour
+public class DungeonMap : MonoBehaviourPun
 { 
     public static FlexibleGridLayout flexibleGrid;
     [SerializeField]
     private Canvas LeavePopup;
+    private bool mapLoaded = false;
 
-    private void Start()
+    private void Update()
     {
-        flexibleGrid = GameObject.Find("Map/Scroll View/FlexibleGrid").GetComponent<FlexibleGridLayout>();
-
-        bool alive = false;
-        bool? victory = null;
-
-        if (DungeonManager.instance.currentFloor == 0)
-            StartCoroutine(flexibleGrid.AutoScroll(2f, false));
-
-        foreach (var character in DungeonManager.instance.characters)
+        if (DungeonManager.instance.map != null && !mapLoaded)
         {
-            if (character.currentHP > 0)
-                alive = true;
+            mapLoaded = true;
+            flexibleGrid = GameObject.Find("Map/Scroll View/FlexibleGrid").GetComponent<FlexibleGridLayout>();
+
+
+            bool alive = false;
+            bool? victory = null;
+
+            if (DungeonManager.instance.currentFloor == 0)
+                StartCoroutine(flexibleGrid.AutoScroll(2f, false));
+
+            foreach (var character in DungeonManager.instance.characters)
+            {
+                if (character.currentHP > 0)
+                    alive = true;
+            }
+            if (!alive)
+            {
+                flexibleGrid.createDefeatText();
+                StartCoroutine(flexibleGrid.AutoScroll(2f));
+                victory = false;
+            }
+            else if (DungeonManager.instance.currentFloor == DungeonManager.instance.maxFloor)
+            {
+                flexibleGrid.createVictoryText();
+                StartCoroutine(flexibleGrid.AutoScroll(2f));
+                victory = true;
+            }
+            flexibleGrid.displayMap(victory);
         }
-        if (!alive)
-        {
-            flexibleGrid.createDefeatText();
-            StartCoroutine(flexibleGrid.AutoScroll(2f));
-            victory = false;
-        }
-        else if (DungeonManager.instance.currentFloor == DungeonManager.instance.maxFloor)
-        {
-            flexibleGrid.createVictoryText();
-            StartCoroutine(flexibleGrid.AutoScroll(2f));
-            victory = true;
-        }
-        flexibleGrid.displayMap(victory);
     }
-
     public static List<List<Room>> GenerateMap(int seed)
     {
         Random.InitState(seed);

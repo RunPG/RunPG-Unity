@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class DungeonManager : MonoBehaviour
+public class DungeonManager : MonoBehaviourPunCallbacks
 {
     public class DungeonCharacterInfo
     {
@@ -48,7 +48,7 @@ public class DungeonManager : MonoBehaviour
     public int maxFloor;
 
     public List<int> path = new List<int>();
-
+    private int seed = -1;
     public List<List<Room>> map;
 
     private void Awake()
@@ -61,10 +61,11 @@ public class DungeonManager : MonoBehaviour
             characters[0] = new DungeonCharacterInfo("yott", "Paladin", new string[4] { "Entaille", "Entaille", "Provocation", "Provocation" }, 120);
             characters[1] = new DungeonCharacterInfo("Firewop1", "Sorcier", new string[4] { "Boule de feu", "Boule de feu", "Embrasement", "Embrasement" }, 100);
             path.Add(0);
-            int seed = System.Environment.TickCount;
-            map = DungeonMap.GenerateMap(seed);
-            Debug.Log(seed);
-            maxFloor = map.Count - 1;
+            object objectSeed = System.Environment.TickCount;
+            if (PhotonNetwork.IsMasterClient)
+            {
+                photonView.RPC("SetSeed", RpcTarget.All, objectSeed);
+            }
         }
         else if (instance != this)
         {
@@ -72,7 +73,21 @@ public class DungeonManager : MonoBehaviour
             return;
         }
     }
-
+    private void Update()
+    {
+        //check if RPC was sent
+        if (seed != -1 && map == null)
+        {
+            map = DungeonMap.GenerateMap(seed);
+            Debug.Log("map generated");
+            maxFloor = map.Count - 1;
+        }
+    }
+    [PunRPC]
+    void SetSeed(object objectSeed)
+    {
+        seed = (int) objectSeed;
+    }
     public void StartBattle(DungeonMonsterInfo[] monsters)
     {
         enemies = monsters;
@@ -92,7 +107,14 @@ public class DungeonManager : MonoBehaviour
             }
         }
     }
-
+    public void AddPacours(int toIndex)
+    {
+        if (PhotonNetwork.IsMasterClient)
+        {
+            path.Add(toIndex);
+            map[path.Count - 1][toIndex].onClickAction();
+        }
+    }
     public DungeonMonsterInfo[] generateFightEnemies(int difficulty)
     {
         DungeonManager.DungeonMonsterInfo[] roomEnemies = new DungeonManager.DungeonMonsterInfo[difficulty];
