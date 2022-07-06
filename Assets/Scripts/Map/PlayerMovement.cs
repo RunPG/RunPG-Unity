@@ -28,6 +28,12 @@ public class PlayerMovement : MonoBehaviour
 	[SerializeField]
 	private GameObject Character;
 
+	[SerializeField]
+	private Animator animator;
+
+	[SerializeField]
+	private CanvasGroup dungeonDescription;
+
 	/// <summary>
 	/// Use a mock <see cref="T:Mapbox.Unity.Location.TransformLocationProvider"/>,
 	/// rather than a <see cref="T:Mapbox.Unity.Location.EditorLocationProvider"/>. 
@@ -102,30 +108,34 @@ public class PlayerMovement : MonoBehaviour
 		}
 		transform.localPosition = Vector3.Lerp(transform.localPosition, _targetPosition, Time.deltaTime * _positionFollowFactor);
 
-		foreach (var touch in Input.touches)
-        {
-			if (touch.phase == TouchPhase.Began)
-            {
-				touchDidMove[touch.fingerId] = false;
-            }
-			else if (touch.phase == TouchPhase.Moved)
-            {
-				touchDidMove[touch.fingerId] = true;
-				CameraPivot.transform.Rotate(0, 0.05f * touch.deltaPosition.x, 0);
+		animator.SetFloat("Speed", Vector2.Distance(transform.position, _targetPosition) / 200f);
+		if (dungeonDescription.alpha == 0)
+		{
+			foreach (var touch in Input.touches)
+			{
+				if (touch.phase == TouchPhase.Began)
+				{
+					touchDidMove[touch.fingerId] = false;
+				}
+				else if (touch.phase == TouchPhase.Moved)
+				{
+					touchDidMove[touch.fingerId] = true;
+					CameraPivot.transform.Rotate(0, 0.05f * touch.deltaPosition.x, 0);
+				}
+				else if (touch.phase == TouchPhase.Ended && !touchDidMove[touch.fingerId])
+				{
+					Ray ray = Camera.main.ScreenPointToRay(touch.position);
+					RaycastHit hit;
+					if (Physics.Raycast(ray, out hit))
+					{
+						DungeonPortal portal = hit.transform.gameObject.GetComponent<DungeonPortal>();
+						if (portal != null)
+						{
+							portal.ShowInfo();
+						}
+					}
+				}
 			}
-			else if (touch.phase == TouchPhase.Ended && !touchDidMove[touch.fingerId])
-            {
-				Ray ray = Camera.main.ScreenPointToRay(touch.position);
-				RaycastHit hit;
-				if (Physics.Raycast(ray, out hit))
-                {
-					DungeonPortal portal = hit.transform.gameObject.GetComponent<DungeonPortal>();
-					if (portal != null)
-                    {
-						portal.ShowInfo();
-                    }
-                }
-            }
-        }
+		}
 	}
 }

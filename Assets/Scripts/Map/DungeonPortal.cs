@@ -16,23 +16,23 @@ public class DungeonPortal : MonoBehaviour
     private void Start()
     {
         id = long.Parse(transform.name);
-        Material material = new Material(originMaterial);
-        switch (id % 4)
-        {
-            case 0:
-                material.color = Color.red;
-                break;
-            case 1:
-                material.color = Color.grey;
-                break;
-            case 2:
-                material.color = Color.blue;
-                break;
-            case 3:
-                material.color = Color.green;
-                break;
-        }
-        mesh.GetComponent<MeshRenderer>().material = material;
+        //Material material = new Material(originMaterial);
+        //switch (id % 4)
+        //{
+        //    case 0:
+        //        material.color = Color.red;
+        //        break;
+        //    case 1:
+        //        material.color = Color.grey;
+        //        break;
+        //    case 2:
+        //        material.color = Color.blue;
+        //        break;
+        //    case 3:
+        //        material.color = Color.green;
+        //        break;
+        //}
+        //mesh.GetComponent<MeshRenderer>().material = material;
     }
 
     public bool EnterDungeon()

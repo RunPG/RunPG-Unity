@@ -1161,6 +1161,16 @@ PrefabInstance:
       propertyPath: _map
       value: 
       objectReference: {fileID: 114105500548048052}
+    - target: {fileID: 8739419039962306133, guid: 2f77a6d5998078242937d8dd35d76709,
+        type: 3}
+      propertyPath: animator
+      value: 
+      objectReference: {fileID: 793983033}
+    - target: {fileID: 8739419039962306133, guid: 2f77a6d5998078242937d8dd35d76709,
+        type: 3}
+      propertyPath: dungeonDescription
+      value: 
+      objectReference: {fileID: 356504483}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2f77a6d5998078242937d8dd35d76709, type: 3}
 --- !u!1 &141833905
@@ -1218,15 +1228,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.3091136, g: 0.33060333, b: 0.3584906, a: 1}
+  m_Color: {r: 0.1764706, g: 0.19215687, b: 0.25882354, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
-  m_Type: 0
+  m_Sprite: {fileID: 21300000, guid: 39b2855ecea4107419d8a32d10c90289, type: 3}
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -1984,7 +1994,7 @@ Canvas:
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 25
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_TargetDisplay: 0
 --- !u!114 &299272963
 MonoBehaviour:
@@ -2179,7 +2189,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 300, y: 300}
+  m_SizeDelta: {x: 600, y: 600}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &318641284
 MonoBehaviour:
@@ -2257,7 +2267,7 @@ RectTransform:
   - {fileID: 318641283}
   - {fileID: 729089910}
   m_Father: {fileID: 832354594}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -2350,12 +2360,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
+  m_ReferenceResolution: {x: 1800, y: 2400}
   m_ScreenMatchMode: 0
-  m_MatchWidthOrHeight: 0
+  m_MatchWidthOrHeight: 0.5
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
@@ -2380,7 +2390,7 @@ Canvas:
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 25
   m_SortingLayerID: 0
-  m_SortingOrder: 1
+  m_SortingOrder: 100
   m_TargetDisplay: 0
 --- !u!225 &318763128
 CanvasGroup:
@@ -2533,7 +2543,7 @@ Canvas:
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 25
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_TargetDisplay: 0
 --- !u!224 &356504481
 RectTransform:
@@ -2548,8 +2558,8 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 141833906}
-  m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_Father: {fileID: 832354594}
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -3750,7 +3760,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &629564539
 GameObject:
@@ -4134,7 +4144,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.039215688, g: 0.27058825, b: 0.34117648, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -4662,8 +4672,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -102}
-  m_SizeDelta: {x: 800, y: 50}
+  m_AnchoredPosition: {x: 0, y: -145}
+  m_SizeDelta: {x: 1200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &729089911
 MonoBehaviour:
@@ -4712,8 +4722,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 80
-  m_fontSizeBase: 80
+  m_fontSize: 125
+  m_fontSizeBase: 125
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -4901,8 +4911,14 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
   m_AnchoredPosition: {x: 0, y: 75}
-  m_SizeDelta: {x: 1150, y: 100}
+  m_SizeDelta: {x: 1000, y: 100}
   m_Pivot: {x: 0.5, y: 0}
+--- !u!95 &793983033 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 5011138419327479699, guid: 2f77a6d5998078242937d8dd35d76709,
+    type: 3}
+  m_PrefabInstance: {fileID: 141054588}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &798295461
 GameObject:
   m_ObjectHideFlags: 0
@@ -5130,9 +5146,10 @@ Transform:
   - {fileID: 1049330825}
   - {fileID: 1676289133}
   - {fileID: 299272956}
+  - {fileID: 356504481}
   - {fileID: 318763123}
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &876295656
 GameObject:
@@ -6306,8 +6323,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -25, y: -25}
-  m_SizeDelta: {x: 160, y: 160}
+  m_AnchoredPosition: {x: -50, y: -50}
+  m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 1, y: 1}
 --- !u!114 &1115764353
 MonoBehaviour:
@@ -6385,7 +6402,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 91b780dd292390c49b16e221bb745632, type: 3}
+  m_Sprite: {fileID: 21300000, guid: e80a181783f84374095a5aed3d79a609, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -6438,7 +6455,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0, y: -200}
+  m_AnchoredPosition: {x: 0, y: -220}
   m_SizeDelta: {x: 1000, y: 70}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1133367923
@@ -6470,8 +6487,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+    rgba: 4294309876
+  m_fontColor: {r: 0.95686275, g: 0.96862745, b: 0.9607843, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -7445,8 +7462,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4281479730
-  m_fontColor: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+    rgba: 4294309876
+  m_fontColor: {r: 0.95686275, g: 0.96862745, b: 0.9607843, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -7806,8 +7823,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.9138312, y: 1}
   m_AnchorMax: {x: 0.9138312, y: 1}
-  m_AnchoredPosition: {x: -2, y: -147}
-  m_SizeDelta: {x: 87.44, y: 90.53}
+  m_AnchoredPosition: {x: 0, y: -150}
+  m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1513931034
 MonoBehaviour:
@@ -10971,7 +10988,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1094529402752776}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -11321,7 +11338,7 @@ MonoBehaviour:
           isActive: 1
           sublayerName: POI
           geometryType: 0
-          layerName: 
+          layerName: poi_label
           snapToTerrain: 1
           combineMeshes: 0
         lineGeometryOptions:
@@ -11332,17 +11349,29 @@ MonoBehaviour:
           CapType: 0
         filterOptions:
           _selectedLayerName: 
-          filters: []
-          combinerType: 0
+          filters:
+          - Key: maki
+            KeyDescription: 
+            PropertyValue: art-gallery,cinema,stadium,museum,library,zoo,music,theatre,amusement-park,cafe,bakery,fast-food,grocery,ice-cream,restaurant,bar,beer,aquarium,campsite,attraction,castle,cemetery,dog-park,drinking-water,garden,golf,monument,park,picnic-site,playground,swimming,bank,dentist,toilet,veterinary,pharmacy,college,school,hospital,place-of-worship,religious-christian,religious-jewish,religious-muslim,police,post,doctor,fire-station,information,town-hall,prison,embassy,fuel,laundry,lodging,alcohol-shop,clothing-store,shop,bus,car,bicycle-share,bicycle,airfield,ferry,harbor,heliport
+            Min: 0
+            Max: 0
+            filterOperator: 0
+          - Key: localrank
+            KeyDescription: 
+            PropertyValue: 
+            Min: 6
+            Max: 0
+            filterOperator: 3
+          combinerType: 1
         extrusionOptions:
           _selectedLayerName: 
           extrusionType: 0
           extrusionGeometryType: 0
-          propertyName: 
+          propertyName: height
           propertyDescription: 
           minimumHeight: 0
           maximumHeight: 0
-          extrusionScaleFactor: 0
+          extrusionScaleFactor: 1
         colliderOptions:
           colliderType: 0
         materialOptions:
@@ -11361,11 +11390,11 @@ MonoBehaviour:
             atlasInfo: {fileID: 0}
             colorPalette: {fileID: 0}
         performanceOptions:
-          isEnabled: 0
-          entityPerCoroutine: 0
+          isEnabled: 1
+          entityPerCoroutine: 20
         honorBuildingIdSetting: 0
         buildingsWithUniqueIds: 0
-        moveFeaturePositionTo: 0
+        moveFeaturePositionTo: 1
         MeshModifiers: []
         GoModifiers: []
         presetFeatureType: 3
