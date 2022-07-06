@@ -24,9 +24,13 @@ public class DungeonDescription : MonoBehaviour
 
     public void Enter()
     {
-        if (!dungeon.GetComponent<DungeonPortal>().EnterDungeon())
+        if (!dungeon.GetComponent<DungeonPortal>().FindDungeonLobbies())
         {
             distanceWarning.alpha = 1;
+        }
+        else
+        {
+            Hide();
         }
     }
 }

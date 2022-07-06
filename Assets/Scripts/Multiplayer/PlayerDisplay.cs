@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 namespace RunPG.Multi
@@ -11,7 +12,7 @@ namespace RunPG.Multi
     public class PlayerDisplay : MonoBehaviour
     {
         [SerializeField]
-        private Text playerInfo;
+        private TextMeshProUGUI playerInfo;
         public Player player { get; private set; }
         public void SetPlayerInfo(Player newPlayer)
         {

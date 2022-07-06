@@ -100,6 +100,7 @@ public class DungeonMap : MonoBehaviourPun
 
     public void Leave()
     {
+        DungeonManager.instance.LeaveRoom();
         Destroy(DungeonManager.instance);
         SceneManager.LoadScene("MapScene");
     }

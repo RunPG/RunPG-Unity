@@ -10,25 +10,26 @@ using UnityEngine.UI;
 
 public class LobbyManager : MonoBehaviourPunCallbacks
 {
-   /* [SerializeField]
-    private PlayerDisplay playerDisplayPrefab;*/
-    private List<PlayerDisplay> playersList = new List<PlayerDisplay>();
-    [SerializeField]
-    private Transform prefabPos;
-    /*[SerializeField]
-    private Button joinButton;
-    [SerializeField]
-    private Button leaveButton;
-    [SerializeField]
-    private Button StartButton;
-    [SerializeField]
-    private GameObject DungeonPanel;
-    */
+
     [SerializeField] RoomDisplay roomDisplayPrefab;
     [SerializeField] private Button createButton;
+    [SerializeField] private Button leaveButtonRoom;
+    [SerializeField] private Button closeButton;
+    [SerializeField] private Button startButton;
+
     [SerializeField] private CanvasGroup lobbyList;
     [SerializeField] private CanvasGroup lobby;
+    [SerializeField] private CanvasGroup DungeonDescription;
+    [SerializeField] private CanvasGroup InventoryCanvas;
+    [SerializeField] private CanvasGroup canvas;
 
+    [SerializeField]
+    private Transform lobbyPrefabPos;
+    [SerializeField]
+    private Transform playerPrefabPos;
+    [SerializeField]
+    private PlayerDisplay playerDisplayPrefab;
+    private List<PlayerDisplay> playersList = new List<PlayerDisplay>();
     private List<RoomDisplay> roomDisplayListing = new List<RoomDisplay>();
     /// <summary>
     /// Keep track of the current process. Since connection is asynchronous and is based on several callbacks from Photon,
@@ -38,12 +39,44 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     bool isConnecting;
 
     string gameVersion = "1";
-      public void Start()
+
+    public static  LobbyManager instance;
+    public void Awake()
+    {
+        if (!instance)
+            instance = this;
+        else
+            Destroy(gameObject);
+
+        isConnecting = PhotonNetwork.ConnectUsingSettings();
+        PhotonNetwork.GameVersion = gameVersion;
+        // #Critical
+        // this makes sure we can use PhotonNetwork.LoadLevel() on the master client and all clients in the same room sync their level automatically
+        PhotonNetwork.AutomaticallySyncScene = true;
+      
+    }
+    public void FindDungeonLobbies()
+    {
+        lobbyList.alpha = 1;
+        lobbyList.interactable = true;
+        lobbyList.blocksRaycasts = true;
+        lobby.alpha = 0;
+        lobby.interactable = false;
+        lobby.blocksRaycasts = false;
+        DungeonDescription.alpha = 0;
+        DungeonDescription.interactable = false;
+        DungeonDescription.blocksRaycasts = false;
+        canvas.alpha = 0;
+        canvas.interactable = false;
+        canvas.blocksRaycasts = false;
+    }
+
+    public void Start()
       {
-        PhotonNetwork.GetCustomRoomList(TypedLobby.Default,"");
-          //leaveButton.onClick.AddListener(LeaveRoom);
-          createButton.onClick.AddListener(CreateRoom);
-         // StartButton.onClick.AddListener(LoadDungeon);
+        leaveButtonRoom.onClick.AddListener(LeaveRoom);
+        closeButton.onClick.AddListener(Close);
+        createButton.onClick.AddListener(CreateRoom);
+        startButton.onClick.AddListener(LoadDungeon);
       }
     public void LoadDungeon()
     {
@@ -53,7 +86,22 @@ public class LobbyManager : MonoBehaviourPunCallbacks
             PhotonNetwork.AutomaticallySyncScene = true;
             PhotonNetwork.LoadLevel("DungeonScene");
         }
-    } /*
+    }
+    public void Close()
+    {
+        lobbyList.alpha = 0;
+        lobbyList.interactable = false;
+        lobbyList.blocksRaycasts = false;
+
+        DungeonDescription.alpha = 1;
+        DungeonDescription.interactable = true;
+        DungeonDescription.blocksRaycasts = true;
+
+        canvas.alpha = 1;
+        canvas.interactable = true;
+        canvas.blocksRaycasts = true;
+    }
+    /*
     [PunRPC]
     public void LoadDungeonRPC()
     {
@@ -68,9 +116,23 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         RoomOptions roomOptions = new RoomOptions();
         roomOptions.IsVisible = true;
         roomOptions.MaxPlayers = 4;
-        PhotonNetwork.CreateRoom("" + GlobalVariables.userId, roomOptions, TypedLobby.Default);
+        //todo change room name
+        PhotonNetwork.CreateRoom(null, roomOptions, TypedLobby.Default);
+    }
+     
+    public void Displaylobby()
+    {
         lobbyList.alpha = 0;
+        lobbyList.interactable = false;
+        lobby.blocksRaycasts = false;
+
+        canvas.alpha = 0;
+        canvas.interactable = false;
+        canvas.blocksRaycasts = false;
+
         lobby.alpha = 1;
+        lobby.interactable = true;
+        lobby.blocksRaycasts = true;
     }
 
     public void ConnectToRoom(string roomName)
@@ -88,10 +150,17 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     /// - if not yet connected, Connect this application instance to Photon Cloud Network
     /// </summary>
     /// 
+    public override void OnConnectedToMaster()
+    {
+        Debug.Log("OnConnectedToMaster() was called by PUN");
+        PhotonNetwork.JoinLobby();
+        isConnecting = false;
+    }
 
     public override void OnCreatedRoom()
     {
         Debug.Log("room created");
+        
         base.OnCreatedRoom();
     }
     public void Connect(RoomInfo roomInfo)
@@ -115,23 +184,26 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     {
         foreach (var player in PhotonNetwork.PlayerList)
         {
-            //PlayerDisplay newPlayerText = Instantiate(playerDisplayPrefab, prefabPos);
-         /*   newPlayerText.SetPlayerInfo(player);
-            playersList.Add(newPlayerText);*/
+            PlayerDisplay newPlayerText = Instantiate(playerDisplayPrefab, playerPrefabPos);
+            newPlayerText.SetPlayerInfo(player);
+            playersList.Add(newPlayerText);
         }
 
     }
     #region Photon Callbacks
     public override void OnPlayerEnteredRoom(Player player)
     {
-        Debug.LogFormat("OnPlayerEnteredRoom() {0}", player.NickName);
+        Debug.LogFormat("OnPlayerEnteredRoom() {0}", player.NickName); // not seen if you're the player connecting
+        PlayerDisplay newPlayerText = Instantiate(playerDisplayPrefab, playerPrefabPos);
+        newPlayerText.SetPlayerInfo(player);
+        playersList.Add(newPlayerText);
     }
         
         // not seen if you're the player connecting
-       /*PlayerDisplay newPlayerText = Instantiate(playerDisplayPrefab, prefabPos);
+       /*layerDisplay newPlayerText = Instantiate(playerDisplayPrefab, prefabPos);
         newPlayerText.SetPlayerInfo(player);
         playersList.Add(newPlayerText);/*
-    }
+    }*/
     public override void OnPlayerLeftRoom(Player player)
     {
         Debug.LogFormat("OnPlayerLeftRoom() {0}", player.NickName); // seen when other disconnects
@@ -164,13 +236,11 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     {
         Debug.Log("left room");
     }
-
-
     #region Private Methods
 
     #endregion
     #region Public Methods
-       */
+       
     public override void OnRoomListUpdate(List<RoomInfo> roomList)
     {
         Debug.Log("OnRoomListUpdate");
@@ -190,7 +260,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
             }
             else
             {
-                RoomDisplay newRoomDisplay = Instantiate(roomDisplayPrefab, prefabPos);
+                RoomDisplay newRoomDisplay = Instantiate(roomDisplayPrefab, lobbyPrefabPos);
                 if (newRoomDisplay)
                 {
                     newRoomDisplay.SetRoomInfo(room);
@@ -203,18 +273,18 @@ public class LobbyManager : MonoBehaviourPunCallbacks
             }
         }
     }
-public void LeaveRoom()
-    {/*
-        GameObject.Find("DungeonPanel").SetActive(false);
-        GameObject.Find("Main Panel").SetActive(true);
-        */
-      //  if (DungeonPanel.activeSelf)
-            PhotonNetwork.LeaveRoom();
+    public void LeaveRoom()
+    {
+        Debug.Log("Leave room");
+        PhotonNetwork.LeaveRoom();
+        FindDungeonLobbies();
     }
     public override void OnJoinedRoom()
     {
-        GetPlayerList();
+        //GetPlayerList();
+        Displaylobby();
         Debug.Log("Now this client is in a room.");
+        GetPlayerList();
     }
     
     #endregion

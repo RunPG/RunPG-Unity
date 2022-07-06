@@ -9,29 +9,6 @@ namespace RunPG.Multi
     public class Launcher : MonoBehaviourPunCallbacks
     {
         #region Private Serializable Fields
- 
-
-        [Tooltip("The UI Label to inform the user that the loading is in progress")]
-        [SerializeField]
-        byte maxPlayersPerRoom = 4;
-        private AsyncOperation _loadingOperation;
-        [SerializeField]
-        private Slider _progressSilder;
-        [SerializeField]
-        private InputField _username;
-        [SerializeField]
-        private Button _connexionButton;
-        [SerializeField]
-        private Button _registerButton;
-        [SerializeField]
-        private GameObject _connexionPannel;
-        [SerializeField]
-        private GameObject _authentificationPannel;
-        [SerializeField]
-        private GameObject _errorMessage ;
-        /// <summary>
-        /// The maximum number of players per room. When a room is full, it can't be joined by new players, and so new room will be created.
-        /// </summary>
 
         #endregion
 
@@ -57,26 +34,9 @@ namespace RunPG.Multi
 
         private void Start()
         {
-            _connexionButton.onClick.AddListener(GoToMainMenu);
-            var coroutine = Requests.POSTNewUser(_username, _errorMessage);
-            _registerButton.onClick.AddListener(() => StartCoroutine(coroutine));
 
         }
-      
-        private async void GoToMainMenu()
-        {
-            if (isConnecting)
-                return;
-            User user = await Requests.GETUserByName(_username.text);
-            if (user == null)
-                return;
-            GlobalVariables.userId = user.id;
-            _authentificationPannel.SetActive(false);
-            _connexionPannel.SetActive(true);
-            PhotonNetwork.NickName = _username.text;
-            PhotonNetwork.JoinLobby();
-            _loadingOperation = SceneManager.LoadSceneAsync("Main Menu Scene");
-        }
+
         /// <summary>
         /// MonoBehaviour method called on GameObject by Unity during early initialization phase.
         /// </summary>
@@ -110,7 +70,7 @@ namespace RunPG.Multi
         public override void OnCreatedRoom()
         {
             Debug.Log("room created");
-           base.OnCreatedRoom();
+            base.OnCreatedRoom();
         }
         /// <summary>
         /// Start the connection process.
@@ -130,7 +90,7 @@ namespace RunPG.Multi
             {
                 // #Critical, we must first and foremost connect to Photon Online Server.
                 // keep track of the will to join a room, because when we come back from the game we will get a callback that we are connected, so we need to know what to do then
-                isConnecting = PhotonNetwork.ConnectUsingSettings(); 
+                isConnecting = PhotonNetwork.ConnectUsingSettings();
                 PhotonNetwork.GameVersion = gameVersion;
             }
         }
@@ -138,55 +98,22 @@ namespace RunPG.Multi
         #region MonoBehaviourPunCallbacks Callbacks
 
         public override void OnConnectedToMaster()
-        {          
-
+        {
             Debug.Log("PUN Basics Tutorial/Launcher: OnConnectedToMaster() was called by PUN");
             isConnecting = false;
-            
-
         }
 
-        private void Update()
-        {
-            //Now that we are connected, we can load the main scene.
-            if (_loadingOperation != null)
-                _progressSilder.value = _loadingOperation.progress;
-
-
-        }
+        /* private void Update()
+         {
+             //Now that we are connected, we can load the main scene.
+             if (_loadingOperation != null)
+                 _progressSilder.value = _loadingOperation.progress;
+         }*/
         public override void OnDisconnected(DisconnectCause cause)
         {
             Debug.LogWarningFormat("PUN Basics Tutorial/Launcher: OnDisconnected() was called by PUN with reason {0}", cause);
             isConnecting = false;
         }
-
-        public override void OnCreateRoomFailed(short returnCode, string message)
-        {
-            print("Launcher: CreateRoom failed: " + message + " return code:" + returnCode); 
-        }
-     
-        public override void OnJoinRandomFailed(short returnCode, string message)
-        {
-            Debug.Log("PUN Basics Tutorial/Launcher:OnJoinRandomFailed() was called by PUN. No random room available, so we create one.\nCalling: PhotonNetwork.CreateRoom");
-    
-            // #Critical: we failed to join a random room, maybe none exists or they are all full. No worries, we create a new room.
-            PhotonNetwork.CreateRoom(null, new RoomOptions { MaxPlayers = maxPlayersPerRoom });
-        }
-
-       public override void OnJoinedRoom()
-        {
-            Debug.Log("PUN Basics Tutorial/Launcher: OnJoinedRoom() called by PUN. Now this client is in a room.");
-            // #Critical: We only load if we are the first player, else we rely on `PhotonNetwork.AutomaticallySyncScene` to sync our instance scene.
-            if (PhotonNetwork.CurrentRoom.PlayerCount == 1)
-            {
-                Debug.Log("We load the Lobby");
-
-
-                // #Critical
-                // Load the lobby.
-                PhotonNetwork.LoadLevel("Lobby");
-            }
-        }
-        #endregion
     }
+    #endregion
 }

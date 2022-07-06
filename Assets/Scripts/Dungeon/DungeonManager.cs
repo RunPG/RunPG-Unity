@@ -136,5 +136,8 @@ public class DungeonManager : MonoBehaviourPunCallbacks
     {
         enemies = monsters;
     }
-
+    public void LeaveRoom()
+    {
+        PhotonNetwork.LeaveRoom();
+    }
 }
