@@ -16,6 +16,7 @@ namespace RunPG.Multi
         public Player player { get; private set; }
         public void SetPlayerInfo(Player newPlayer)
         {
+            player = newPlayer;
             playerInfo.text = newPlayer.NickName;
         }
     }

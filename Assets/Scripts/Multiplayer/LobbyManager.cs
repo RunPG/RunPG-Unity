@@ -1,6 +1,7 @@
 using Photon.Pun;
 using Photon.Realtime;
 using RunPG.Multi;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -53,7 +54,6 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         // #Critical
         // this makes sure we can use PhotonNetwork.LoadLevel() on the master client and all clients in the same room sync their level automatically
         PhotonNetwork.AutomaticallySyncScene = true;
-      
     }
     public void FindDungeonLobbies()
     {
@@ -72,12 +72,12 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     }
 
     public void Start()
-      {
+    {
         leaveButtonRoom.onClick.AddListener(LeaveRoom);
         closeButton.onClick.AddListener(Close);
         createButton.onClick.AddListener(CreateRoom);
         startButton.onClick.AddListener(LoadDungeon);
-      }
+    }
     public void LoadDungeon()
     {
         if (PhotonNetwork.IsMasterClient)
@@ -116,8 +116,9 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         RoomOptions roomOptions = new RoomOptions();
         roomOptions.IsVisible = true;
         roomOptions.MaxPlayers = 4;
+        roomOptions.PlayerTtl = 0;
         //todo change room name
-        PhotonNetwork.CreateRoom(null, roomOptions, TypedLobby.Default);
+        PhotonNetwork.CreateRoom(PhotonNetwork.NickName, roomOptions, TypedLobby.Default);
     }
      
     public void Displaylobby()
@@ -153,6 +154,11 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     public override void OnConnectedToMaster()
     {
         Debug.Log("OnConnectedToMaster() was called by PUN");
+
+        if (PlayerProfile.pseudo != null)
+            PhotonNetwork.NickName =  PlayerProfile.pseudo;
+        else
+            PhotonNetwork.NickName = "test dev";
         PhotonNetwork.JoinLobby();
         isConnecting = false;
     }
@@ -194,11 +200,14 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     public override void OnPlayerEnteredRoom(Player player)
     {
         Debug.LogFormat("OnPlayerEnteredRoom() {0}", player.NickName); // not seen if you're the player connecting
-        PlayerDisplay newPlayerText = Instantiate(playerDisplayPrefab, playerPrefabPos);
-        newPlayerText.SetPlayerInfo(player);
-        playersList.Add(newPlayerText);
+        int index = playersList.FindIndex(playerDisplay => playerDisplay.player == player);
+        if (index == -1)
+        {
+            PlayerDisplay newPlayerText = Instantiate(playerDisplayPrefab, playerPrefabPos);
+            newPlayerText.SetPlayerInfo(player);
+            playersList.Add(newPlayerText);
+        }
     }
-        
         // not seen if you're the player connecting
        /*layerDisplay newPlayerText = Instantiate(playerDisplayPrefab, prefabPos);
         newPlayerText.SetPlayerInfo(player);
@@ -214,7 +223,6 @@ public class LobbyManager : MonoBehaviourPunCallbacks
             Destroy(playersList[index].gameObject);
             playersList.RemoveAt(index);
         }
-
 
         if (PhotonNetwork.IsMasterClient)
         {
@@ -235,6 +243,10 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     public override void OnLeftRoom()
     {
         Debug.Log("left room");
+        roomDisplayListing.ForEach(roomDisplay => roomDisplay.gameObject.Destroy());
+        roomDisplayListing.Clear();
+        playersList.ForEach(roomDisplay => roomDisplay.gameObject.Destroy());
+        playersList.Clear();
     }
     #region Private Methods
 
@@ -247,8 +259,6 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 
         foreach (RoomInfo room in roomList)
         {
-            Debug.Log("SE");
-
             if (room.RemovedFromList)
             {
                 int index = roomDisplayListing.FindIndex(x => x.roomInfo.Name == room.Name);
@@ -260,15 +270,18 @@ public class LobbyManager : MonoBehaviourPunCallbacks
             }
             else
             {
-                RoomDisplay newRoomDisplay = Instantiate(roomDisplayPrefab, lobbyPrefabPos);
-                if (newRoomDisplay)
+                if (!roomDisplayListing.Find(roomDisplay => roomDisplay.roomInfo.Name == room.Name))
                 {
-                    newRoomDisplay.SetRoomInfo(room);
-                    newRoomDisplay.joinLobbyButton.onClick.AddListener(delegate
+                    RoomDisplay newRoomDisplay = Instantiate(roomDisplayPrefab, lobbyPrefabPos);
+                    if (newRoomDisplay)
                     {
-                        ConnectToRoom(room.Name);
-                    });
-                    roomDisplayListing.Add(newRoomDisplay);
+                        newRoomDisplay.SetRoomInfo(room);
+                        newRoomDisplay.joinLobbyButton.onClick.AddListener(delegate
+                        {
+                            ConnectToRoom(room.Name);
+                        });
+                        roomDisplayListing.Add(newRoomDisplay);
+                    }
                 }
             }
         }
@@ -277,6 +290,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     {
         Debug.Log("Leave room");
         PhotonNetwork.LeaveRoom();
+
         FindDungeonLobbies();
     }
     public override void OnJoinedRoom()
