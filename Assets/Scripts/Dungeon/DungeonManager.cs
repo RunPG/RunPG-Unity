@@ -88,6 +88,11 @@ public class DungeonManager : MonoBehaviourPunCallbacks
     {
         seed = (int) objectSeed;
     }
+    [PunRPC]
+    void SetPath(object path)
+    {
+        path = (List<int>)path;
+    }
     public void StartBattle(DungeonMonsterInfo[] monsters)
     {
         enemies = monsters;
@@ -112,6 +117,7 @@ public class DungeonManager : MonoBehaviourPunCallbacks
         if (PhotonNetwork.IsMasterClient)
         {
             path.Add(toIndex);
+            photonView.RPC("SetPath", RpcTarget.All, path);
             map[path.Count - 1][toIndex].onClickAction();
         }
     }
