@@ -31,9 +31,6 @@ public class PlayerMovement : MonoBehaviour
 	[SerializeField]
 	private Animator animator;
 
-	[SerializeField]
-	private CanvasGroup dungeonDescription;
-
 	/// <summary>
 	/// Use a mock <see cref="T:Mapbox.Unity.Location.TransformLocationProvider"/>,
 	/// rather than a <see cref="T:Mapbox.Unity.Location.EditorLocationProvider"/>. 
@@ -44,6 +41,8 @@ public class PlayerMovement : MonoBehaviour
 	bool _isInitialized;
 
 	private bool[] touchDidMove = new bool[10];
+
+	private bool isUIActive = false;
 
 	/// <summary>
 	/// The location provider.
@@ -109,7 +108,7 @@ public class PlayerMovement : MonoBehaviour
 		transform.localPosition = Vector3.Lerp(transform.localPosition, _targetPosition, Time.deltaTime * _positionFollowFactor);
 
 		animator.SetFloat("Speed", Vector2.Distance(transform.position, _targetPosition) / 200f);
-		if (dungeonDescription.alpha == 0)
+		if (!isUIActive)
 		{
 			foreach (var touch in Input.touches)
 			{
@@ -131,6 +130,7 @@ public class PlayerMovement : MonoBehaviour
 						DungeonPortal portal = hit.transform.gameObject.GetComponent<DungeonPortal>();
 						if (portal != null)
 						{
+							isUIActive = true;
 							portal.ShowInfo();
 						}
 					}
@@ -138,4 +138,9 @@ public class PlayerMovement : MonoBehaviour
 			}
 		}
 	}
+
+	public void SetUIState(bool state)
+    {
+		isUIActive = state;
+    }
 }
