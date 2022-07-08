@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace RunPG.Multi
 {
@@ -14,6 +15,36 @@ namespace RunPG.Multi
         ROGUE,
         PALADIN
     }
+    
+    static class HeroClassMethods
+    {
+        public static string GetName(this HeroClass heroClass)
+        {
+            return heroClass switch
+            {
+                HeroClass.MAGE => "Sorcier",
+                HeroClass.BERSERKER => "Berserk",
+                HeroClass.PRIEST => "Prètre",
+                HeroClass.ROGUE => "Assassin",
+                HeroClass.PALADIN => "Paladin",
+                _ => "",
+            };
+        }
+
+        public static Sprite GetSprite(this HeroClass heroclass)
+        {
+            return heroclass switch
+            {
+                HeroClass.MAGE => Resources.Load<Sprite>("Classes/Sorcier"),
+                HeroClass.BERSERKER => Resources.Load<Sprite>("Classes/Berserk"),
+                HeroClass.PRIEST => Resources.Load<Sprite>("Classes/Pretre"),
+                HeroClass.ROGUE => Resources.Load<Sprite>("Classes/Assassin"),
+                HeroClass.PALADIN => Resources.Load<Sprite>("Classes/Paladin"),
+                _ => null,
+            };
+        }
+    }
+
     public class CharacterModel
     {
         public int id;
