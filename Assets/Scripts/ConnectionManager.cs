@@ -1,7 +1,9 @@
 using GooglePlayGames;
 using GooglePlayGames.BasicApi;
+using RunPG.Multi;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -15,16 +17,22 @@ public class ConnectionManager : MonoBehaviour
     public void Start()
     {
         PlayGamesPlatform.Activate();
-        PlayGamesPlatform.Instance.Authenticate(ProcessAuthentication);
+        PlayGamesPlatform.Instance.Authenticate(ProcessAuthenticationAsync);
     }
 
-    internal void ProcessAuthentication(SignInStatus status)
+    internal async void ProcessAuthenticationAsync(SignInStatus status)
     {
         if (status == SignInStatus.Success)
         {
             Social.ReportProgress(GPGSIds.achievement_bienvenue__kheg, 100.0f, null);
 
-            PlayerProfile.pseudo = Social.localUser.userName;
+            var username = Social.localUser.userName;
+            PlayerProfile.pseudo = username;
+            var user = await Requests.GETUserByName(username);
+            if (user != null)
+            {
+                PlayerProfile.id = user.id;
+            }
 
             SceneManager.LoadScene("MapScene");
         }
@@ -36,6 +44,6 @@ public class ConnectionManager : MonoBehaviour
 
     public void Connect()
     {
-        PlayGamesPlatform.Instance.ManuallyAuthenticate(ProcessAuthentication);
+        PlayGamesPlatform.Instance.ManuallyAuthenticate(ProcessAuthenticationAsync);
     }
 }
