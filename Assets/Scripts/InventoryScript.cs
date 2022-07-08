@@ -1,4 +1,7 @@
+using RunPG.Multi;
+using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -99,9 +102,11 @@ public class InventoryScript : MonoBehaviour
     private GameObject selectedFilterBackground;
     private List<List<Item>> items;
 
+    private EquipementModel[] equipements;
+
 
     // Start is called before the first frame update
-    void Start()
+    async void Start()
     {
         selectedFilterBackground = weaponBackground;
         items = new List<List<Item>>();
@@ -109,17 +114,43 @@ public class InventoryScript : MonoBehaviour
         for (int i = 0; i < 7; i++)
             items.Add(new List<Item>());
 
-        items[0].Add(new Item { equiped = true, level = 15, name = "Epée", rarity = RarityType.Legendary, sprite = Resources.Load<Sprite>("Inventory/sword") });
-        items[2].Add(new Item { equiped = true, level = 13, name = "Chest", rarity = RarityType.Legendary, sprite = Resources.Load<Sprite>("Inventory/sword") });
-        items[2].Add(new Item { equiped = false, level = 15, name = "Chest", rarity = RarityType.Epic, sprite = Resources.Load<Sprite>("Inventory/sword") });
-        items[2].Add(new Item { equiped = false, level = 15, name = "Chest", rarity = RarityType.Common, sprite = Resources.Load<Sprite>("Inventory/sword") });
-        items[2].Add(new Item { equiped = false, level = 15, name = "Chest", rarity = RarityType.Legendary, sprite = Resources.Load<Sprite>("Inventory/sword") });
-        items[2].Add(new Item { equiped = false, level = 11, name = "Chest", rarity = RarityType.Legendary, sprite = Resources.Load<Sprite>("Inventory/sword") });
-        items[2].Add(new Item { equiped = false, level = 15, name = "Chest", rarity = RarityType.Legendary, sprite = Resources.Load<Sprite>("Inventory/sword") });
-        items[2].Add(new Item { equiped = false, level = 12, name = "Chest", rarity = RarityType.Legendary, sprite = Resources.Load<Sprite>("Inventory/sword") });
-        items[2].Add(new Item { equiped = false, level = 17, name = "Chest", rarity = RarityType.Legendary, sprite = Resources.Load<Sprite>("Inventory/sword") });
-        items[2].Add(new Item { equiped = false, level = 15, name = "Chest", rarity = RarityType.Legendary, sprite = Resources.Load<Sprite>("Inventory/sword") });
-        items[2].Add(new Item { equiped = false, level = 9, name = "Chest", rarity = RarityType.Legendary, sprite = Resources.Load<Sprite>("Inventory/sword") });
+        if (PlayerProfile.id != -1)
+        {
+            InventoryModel[] inventory = await Requests.GETUserInventory(PlayerProfile.id);
+            foreach (InventoryModel inventoryItem in inventory)
+            {
+                if (inventoryItem.equipementId != null)
+                {
+                    Debug.Log("equipements ==> " + equipements);
+                    var equipement = await Requests.GETEquipementById(inventoryItem.equipementId ?? 1);
+                    var equipementBase = equipement.equipementBase;
+                    var equipementType = equipementBase.equipementType;
+                    var rarity = equipementBase.rarity;
+                    Item newItem = new() { equiped = false, level = equipement.statistics.level, name = equipementBase.name, rarity = rarity };
+
+                    switch (equipementType)
+                    {
+                        case EquipementType.HELMET:
+                            newItem.sprite = Resources.Load<Sprite>("Inventory/Helmet");
+                            items[1].Add(newItem);
+                            break;
+
+                        case EquipementType.WEAPON:
+                            newItem.sprite = Resources.Load<Sprite>("Inventory/Sword");
+                            items[0].Add(newItem);
+                            break;
+
+                        default:
+                            break;
+                    }
+                }
+                else if (inventoryItem.itemId != null)
+                {
+                    //TODO
+                }
+            }
+        }
+
         LoadSortedInventory(0);
 
         weaponButton.onClick.AddListener(delegate {

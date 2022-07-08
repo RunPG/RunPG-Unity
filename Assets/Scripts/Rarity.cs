@@ -10,22 +10,22 @@ public class Rarity
 {
     public enum RarityType
     {
-        Common,
-        Rare,
-        Epic,
-        Legendary,
-        Relic
+        COMMON,
+        RARE,
+        EPIC,
+        LEGENDARY,
+        RELIC
     }
 
     public static Color getRarityColor(RarityType rarity)
     {
         return rarity switch
         {
-            RarityType.Common => new Color(0, 255, 0),
-            RarityType.Rare => new Color(0, 0, 255),
-            RarityType.Epic => new Color(102, 0, 204),
-            RarityType.Legendary => new Color(255, 128, 0),
-            RarityType.Relic => new Color(255, 0, 0),
+            RarityType.COMMON => new Color(0, 255, 0),
+            RarityType.RARE => new Color(0, 0, 255),
+            RarityType.EPIC => new Color(102, 0, 204),
+            RarityType.LEGENDARY => new Color(255, 128, 0),
+            RarityType.RELIC => new Color(255, 0, 0),
             _ => new Color(0, 0, 0)
         };
     }
