@@ -35,7 +35,7 @@ namespace RunPG.Multi
 
         [SerializeField] GameObject notificationPrefab;
 
-        public List<Notification> _notifications = new List<Notification>();
+        public List<NotificationModel> _notifications = new List<NotificationModel>();
 
         void Start()
         {
@@ -71,7 +71,7 @@ namespace RunPG.Multi
         //Sends a notification to the specified user
         public async void OnclickAddFriend(string friendUsername)
         {
-            User friend = await Requests.GETUserByName(friendUsername);
+            UserModel friend = await Requests.GETUserByName(friendUsername);
             if (friend != null)
             {
                 var coroutine = Requests.POSTSendNotification(GlobalVariables.userId, friend.id, NotificationType.FRIENDLIST);

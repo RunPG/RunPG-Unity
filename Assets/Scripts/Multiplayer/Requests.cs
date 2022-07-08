@@ -14,7 +14,7 @@ namespace RunPG.Multi
     public static class Requests
     {
         static readonly string rootUrl = "http://178.62.237.73/";
-        public static async Task<User> GETUserByName(string username)
+        public static async Task<UserModel> GETUserByName(string username)
         {
             if (username.Length != 0)
             {
@@ -33,14 +33,14 @@ namespace RunPG.Multi
                 }
                 else
                 {
-                    var user = JsonUtility.FromJson<User>(request.downloadHandler.text);
+                    var user = JsonUtility.FromJson<UserModel>(request.downloadHandler.text);
                     return user;
                 }
             }
             return null;
         }
 
-        public static async Task<User> GETUserById(int user_id)
+        public static async Task<UserModel> GETUserById(int user_id)
         {
             var url = rootUrl + "user/" + user_id;
             using UnityWebRequest request = UnityWebRequest.Get(url);
@@ -56,12 +56,12 @@ namespace RunPG.Multi
             }
             else
             {
-                var user = JsonUtility.FromJson<User>(request.downloadHandler.text);
+                var user = JsonUtility.FromJson<UserModel>(request.downloadHandler.text);
                 return user;
             }
         }
         
-        public static async Task<Friendlist> GETAllFriends(int user_id)
+        public static async Task<FriendlistModel> GETAllFriends(int user_id)
         {
             using (UnityWebRequest request = UnityWebRequest.Get(rootUrl + "user/" + user_id + "/friend/"))
             {
@@ -77,16 +77,16 @@ namespace RunPG.Multi
                 else
                 {
                     Debug.Log(rootUrl + "user/" + user_id + "/friend/");                 
-                    var friends = JsonConvert.DeserializeObject<Friendlist>(request.downloadHandler.text); 
+                    var friends = JsonConvert.DeserializeObject<FriendlistModel>(request.downloadHandler.text); 
                     return friends;
                 }
             }         
             return null;
         }
 
-        public static async Task<Notification[]> GETNotificationsByType(int receiver_id, NotificationType type)
+        public static async Task<NotificationModel[]> GETNotificationsByType(int receiver_id, NotificationType type)
         {
-            using (UnityWebRequest request = UnityWebRequest.Get(rootUrl + "/user/" + receiver_id + "/notification/" + type))
+            using (UnityWebRequest request = UnityWebRequest.Get(rootUrl + "user/" + receiver_id + "/notification/" + type))
             {
                 
                 request.SendWebRequest();
@@ -100,16 +100,16 @@ namespace RunPG.Multi
                 }
                 else
                 {
-                    var notifications = JsonConvert.DeserializeObject<Notification[]>(request.downloadHandler.text);
+                    var notifications = JsonConvert.DeserializeObject<NotificationModel[]>(request.downloadHandler.text);
                     return notifications;
                 }
             }
             return null;
         }
 
-        public static async Task<Inventory[]> GETUserInventory(int user_id)
+        public static async Task<InventoryModel[]> GETUserInventory(int user_id)
         {
-            var url = rootUrl + "/inventory/user/" + user_id;
+            var url = rootUrl + "inventory/user/" + user_id;
             using (UnityWebRequest request = UnityWebRequest.Get(url))
             {
                 request.SendWebRequest();
@@ -123,16 +123,16 @@ namespace RunPG.Multi
                 }
                 else
                 {
-                    var inventory = JsonConvert.DeserializeObject<Inventory[]>(request.downloadHandler.text);
+                    var inventory = JsonConvert.DeserializeObject<InventoryModel[]>(request.downloadHandler.text);
                     return inventory;
                 }
             }
             return null;
         }
 
-        public static async Task<Equipement[]> GETEquipements()
+        public static async Task<EquipementModel[]> GETEquipements()
         {
-            var url = rootUrl + "/equipementBase";
+            var url = rootUrl + "equipementBase";
             using (UnityWebRequest request = UnityWebRequest.Get(url))
             {
                 request.SendWebRequest();
@@ -146,8 +146,31 @@ namespace RunPG.Multi
                 }
                 else
                 {
-                    var equipements = JsonConvert.DeserializeObject<Equipement[]>(request.downloadHandler.text);
+                    var equipements = JsonConvert.DeserializeObject<EquipementModel[]>(request.downloadHandler.text);
                     return equipements;
+                }
+            }
+            return null;
+        }
+
+        public static async Task<EquipementModel> GETEquipementById(int equipement_id)
+        {
+            var url = rootUrl + "equipement/" + equipement_id;
+            using (UnityWebRequest request = UnityWebRequest.Get(url))
+            {
+                request.SendWebRequest();
+                while (!request.isDone)
+                {
+                    await Task.Yield();
+                }
+                if (request.result != UnityWebRequest.Result.Success)
+                {
+                    Debug.LogError(string.Format("Error in request:{0}\nError Message: {1}", url, request.error));
+                }
+                else
+                {
+                    var equipement = JsonConvert.DeserializeObject<EquipementModel>(request.downloadHandler.text);
+                    return equipement;
                 }
             }
             return null;
