@@ -104,6 +104,8 @@ public class InventoryScript : MonoBehaviour
 
     private EquipementModel[] equipements;
 
+    private CharacterModel character;
+
 
     // Start is called before the first frame update
     async void Start()
@@ -117,41 +119,43 @@ public class InventoryScript : MonoBehaviour
         if (PlayerProfile.id != -1)
         {
             InventoryModel[] inventory = await Requests.GETUserInventory(PlayerProfile.id);
+            character = await Requests.GETUserCharacter(PlayerProfile.id);
+
             foreach (InventoryModel inventoryItem in inventory)
             {
                 if (inventoryItem.equipementId != null)
                 {
-                    Debug.Log("equipements ==> " + equipements);
                     var equipement = await Requests.GETEquipementById(inventoryItem.equipementId ?? 1);
-                    var equipementBase = equipement.equipementBase;
-                    var equipementType = equipementBase.equipementType;
-                    var rarity = equipementBase.rarity;
-                    Item newItem = new() { equiped = false, level = equipement.statistics.level, name = equipementBase.name, rarity = rarity };
-
-                    switch (equipementType)
-                    {
-                        case EquipementType.HELMET:
-                            newItem.sprite = Resources.Load<Sprite>("Inventory/Helmet");
-                            items[1].Add(newItem);
-                            break;
-
-                        case EquipementType.WEAPON:
-                            newItem.sprite = Resources.Load<Sprite>("Inventory/Sword");
-                            items[0].Add(newItem);
-                            break;
-
-                        default:
-                            break;
-                    }
+                    AddEquipement(equipement);
                 }
                 else if (inventoryItem.itemId != null)
                 {
                     //TODO
                 }
             }
+
+            AddEquipement(await Requests.GETEquipementById(character.weapondId), true);
+            AddEquipement(await Requests.GETEquipementById(character.helmetId), true);
+            AddEquipement(await Requests.GETEquipementById(character.chestplateId), true);
+            AddEquipement(await Requests.GETEquipementById(character.glovesId), true);
+            AddEquipement(await Requests.GETEquipementById(character.leggingsId), true);
+
+            SetUsername(PlayerProfile.pseudo);
+            SetLevelClasse(15, character.heroClass);
+            SetVitality(10);
+            SetForce(20);
+            SetDefense(5);
+            SetResistance(7);
+            SetPuissance(15);
+            SetAgilite(30);
+            SetPrecision(2);
+            SetImage(character.heroClass);
+
+            SetXp(400, 960);
         }
 
         LoadSortedInventory(0);
+        
 
         weaponButton.onClick.AddListener(delegate {
             SelectFilter(weaponBackground);
@@ -187,18 +191,6 @@ public class InventoryScript : MonoBehaviour
             SelectFilter(ressourcesBackground);
             LoadSortedInventory(6);
         });
-
-        SetUsername("ZenSheep");
-        SetLevelClasse(5, "Paladin");
-        SetVitality(10);
-        SetForce(20);
-        SetDefense(5);
-        SetResistance(7);
-        SetPuissance(15);
-        SetAgilite(30);
-        SetPrecision(2);
-
-        SetXp(400, 960);
     }
 
     void LoadInventory(int filterIndex)
@@ -225,7 +217,7 @@ public class InventoryScript : MonoBehaviour
 
             var rarity = newItem.Find("Rarity").GetComponent<TextMeshProUGUI>();
             rarity.text = item.rarity.ToString();
-            rarity.color = getRarityColor(item.rarity);
+            rarity.color = item.rarity.GetColor();
 
             if (!item.equiped)
             {
@@ -284,9 +276,9 @@ public class InventoryScript : MonoBehaviour
         usernameTextMesh.text = username;
     }
 
-    void SetLevelClasse(int level, string classe)
-    {
-        levelClasseTextMesh.text = string.Format("Lv.{0} - {1}", level, classe);
+    void SetLevelClasse(int level, HeroClass classe)
+    {        
+        levelClasseTextMesh.text = string.Format("Lv.{0} - {1}", level, classe.GetName());
     }
 
     void SetXp(int currentXP, int maxXP)
@@ -329,13 +321,34 @@ public class InventoryScript : MonoBehaviour
     {
         agiliteTextMesh.text = agilite.ToString();
     }
+
+    void SetImage(HeroClass classe)
+    {
+        classeImage.sprite = classe.GetSprite();
+    }
+
+    void AddEquipement(EquipementModel equipement, bool equiped =false)
+    {
+        var equipementBase = equipement.equipementBase;
+        var equipementType = equipementBase.equipementType;
+        var rarity = equipementBase.rarity;
+        Item newItem = new()
+        {
+            equiped = equiped,
+            level = equipement.statistics.level,
+            name = equipement.equipementBase.name,
+            rarity = rarity,
+            sprite = equipementType.GetSprite()
+        };
+        items[equipementType.GetIndex()].Add(newItem);
+    }
 }
 
 public struct Item
 {
     public string name { get; set; }
     public Sprite sprite { get; set; }
-    public RarityType rarity { get; set; }
+    public Rarity rarity { get; set; }
     public int level { get; set; }
     public bool equiped { get; set; }
 }
