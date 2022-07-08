@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RunPG.Multi
 {
-    public class Inventory
+    public class InventoryModel
     {
         public int id;
         public int userId;
@@ -14,7 +14,7 @@ namespace RunPG.Multi
         public int? equipementId;
         public int? itemId;
 
-        public Inventory(int id, int userId, int stackSize, int? equipementId, int? itemId)
+        public InventoryModel(int id, int userId, int stackSize, int? equipementId, int? itemId)
         {
             this.id = id;
             this.userId = userId;

@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 namespace RunPG.Multi
 {
     [Serializable]
-    public class Friendlist
+    public class FriendlistModel
     {
-        public Friend[] friends;
+        public FriendModel[] friends;
     }
 }

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace RunPG.Multi
 {
     [Serializable]
-    public class Friend
+    public class FriendModel
     {
         public int userId; 
         public int friendId;

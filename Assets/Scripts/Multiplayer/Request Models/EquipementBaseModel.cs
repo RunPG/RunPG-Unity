@@ -3,19 +3,30 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Rarity;
 
 namespace RunPG.Multi
 {
-    public class Equipement
+    public enum EquipementType
     {
+        WEAPON,
+        HELMET,
+        CHESTPLATE,
+        LEGGINGS,
+        GLOVES
+    }
+
+    public class EquipementBaseModel
+    {
+        
         public int id;
         public string name;
         public string description;
-        public string rarity;
+        public RarityType rarity;
         public string heroClass;
-        public string equipementType;
+        public EquipementType equipementType;
 
-        public Equipement(int id, string name, string description, string rarity, string heroClass, string equipementType)
+        public EquipementBaseModel(int id, string name, string description, RarityType rarity, string heroClass, EquipementType equipementType)
         {
             this.id = id;
             this.name = name;

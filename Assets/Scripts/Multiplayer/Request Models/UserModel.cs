@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RunPG.Multi
 {
-    public class User
+    public class UserModel
     {
         public int id;
         public string uid;
@@ -16,7 +16,7 @@ namespace RunPG.Multi
         public string lastCaloriesUpdate;
         public bool isGuildOwner;
 
-        public User(int id, string uid, string name, int guildId, int characterId, string lastCaloriesUpdate, bool isGuildOwner)
+        public UserModel(int id, string uid, string name, int guildId, int characterId, string lastCaloriesUpdate, bool isGuildOwner)
         {
             this.id = id;
             this.uid = uid;
