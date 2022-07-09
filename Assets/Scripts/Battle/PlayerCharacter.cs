@@ -1,3 +1,4 @@
+using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -100,14 +101,22 @@ public class PlayerCharacter : Character
                         ShowSelected(false);
                         ResetInterface();
                         CombatManager.Instance.HidePossibleTarget();
-                        CombatManager.Instance.AddAction(selectedAction);
+                        selectAction(selectedAction);
                     }
                 }
             }
         }
     }
+
+    public void selectAction(CombatAction selectedAction)
+    {
+        CombatManager.Instance.AddAction(selectedAction);
+        isReady = true;
+    }
+
     public override void AskForAction()
     {
+
         if (!isAlive())
         {
             CombatManager.Instance.AddAction(null);

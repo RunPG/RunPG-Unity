@@ -6,11 +6,12 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using Photon.Pun;
 
-public abstract class Character : MonoBehaviour
+public abstract class Character : MonoBehaviourPunCallbacks, IPunObservable
 {
     [SerializeField]
-    protected int maxHealth = 100;
+    protected int maxHealth ;
     public int currentHealth { get; protected set; }
 
     public string characterName { get; protected set; }
@@ -40,7 +41,8 @@ public abstract class Character : MonoBehaviour
     private GameObject healthBarGameObject;
 
     protected GameObject healthBarInstance;
-
+    private string animationName;
+    public bool isReady = false;
 
     protected virtual void Awake()
     {
@@ -51,8 +53,6 @@ public abstract class Character : MonoBehaviour
         healthBar = healthBarInstance.GetComponentInChildren<HealthBar>();
         selector = healthBarInstance.transform.Find("Selector").GetComponent<Image>();
         statusUI = healthBarInstance.transform.Find("StatusLayout");
-
-        
     }
 
     private void Start()
@@ -62,6 +62,7 @@ public abstract class Character : MonoBehaviour
         float y = RectTransformUtility.WorldToScreenPoint(Camera.main, healthBarPosition.position).y;
 
         healthBarInstance.transform.position = new Vector2(x, y);
+        healthBar.SetHealth(currentHealth);
     }
 
     public bool isAlive()
@@ -137,12 +138,22 @@ public abstract class Character : MonoBehaviour
     {
         return statusList;
     }
-
+    
     public abstract void AskForAction();
 
+    //TODO see with photon animation view
+   /* [PunRPC]
+    public void PlayAnimationRPC(string animation,int id)
+    {
+        Debug.Log("Playing animation");
+        if (photonView.GetInstanceID() == id)
+            animator.SetTrigger(animation + "Trigger");
+    }*/
     public void PlayAnimation(string animation)
     {
+        Debug.Log("Playing animation");
         animator.SetTrigger(animation + "Trigger");
+       // photonView.RPC("PlayAnimationRPC", RpcTarget.All, animation, photonView.GetInstanceID());
     }
 
     public bool IsAffectedByStatus(string name)
@@ -167,5 +178,36 @@ public abstract class Character : MonoBehaviour
     public void DeleteStatusIcon(string name)
     {
         Destroy(statusUI.Find(name).gameObject);
+    }
+
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
+        if (stream.IsWriting)
+        {
+            // We own this player: send the others our data
+            stream.SendNext(currentHealth); 
+            stream.SendNext(animationName);
+            stream.SendNext(isReady);
+
+        }
+        else
+        {
+            Debug.Log(currentHealth);
+
+            // Network player, receive data
+            this.currentHealth = (int)stream.ReceiveNext();
+            this.animationName = (string)stream.ReceiveNext();
+            this.isReady = (bool)stream.ReceiveNext();
+
+            if (animationName != null)
+                PlayAnimation(animationName);
+            animationName = null;
+            if (currentHealth <= 0)
+            {
+                gameObject.SetActive(false);
+                healthBarInstance.SetActive(false);
+            }
+            healthBar.SetHealth(currentHealth);
+        }
     }
 }

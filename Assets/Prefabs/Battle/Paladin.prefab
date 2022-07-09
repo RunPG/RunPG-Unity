@@ -91,12 +91,6 @@ MonoBehaviour:
   head: {fileID: 2921802546892446423}
   healthBarGameObject: {fileID: 5442145643889852401, guid: 58fb3f8a85fa6e346bd0c3a075d4a7b9,
     type: 3}
-  name: 
-  skillNames:
-  - Entaille
-  - Entaille
-  - Provocation
-  - Provocation
 --- !u!136 &895006624564519602
 CapsuleCollider:
   m_ObjectHideFlags: 0

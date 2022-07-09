@@ -73,6 +73,7 @@ GameObject:
   - component: {fileID: 7043387920726131580}
   - component: {fileID: 5967306823999429537}
   - component: {fileID: 1932481685353180089}
+  - component: {fileID: 6576708318097317524}
   m_Layer: 0
   m_Name: Wizard
   m_TagString: Team1
@@ -122,6 +123,8 @@ MonoBehaviour:
   head: {fileID: 1006908850054742157}
   healthBarGameObject: {fileID: 5442145643889852401, guid: 58fb3f8a85fa6e346bd0c3a075d4a7b9,
     type: 3}
+  isReady: 0
+  isReady: 0
 --- !u!136 &1932481685353180089
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -136,6 +139,30 @@ CapsuleCollider:
   m_Height: 0.23
   m_Direction: 1
   m_Center: {x: 0, y: 0.11, z: 0}
+--- !u!114 &6576708318097317524
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2047305514895275081}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents:
+  - {fileID: 5967306823999429537}
+  - {fileID: 4635185482406298716}
+  sceneViewId: 0
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
 --- !u!1 &2752531874865601594
 GameObject:
   m_ObjectHideFlags: 0
@@ -283,6 +310,30 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &4635185482406298716
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7321434366144473933}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b8c4a61274f60b4ea5fb4299cfdbf14, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShowLayerWeightsInspector: 1
+  ShowParameterInspector: 1
+  m_SynchronizeParameters:
+  - Type: 9
+    SynchronizeType: 2
+    Name: BouleDeFeuTrigger
+  - Type: 9
+    SynchronizeType: 2
+    Name: EmbrasementTrigger
+  m_SynchronizeLayers:
+  - SynchronizeType: 2
+    LayerIndex: 0
 --- !u!4 &7985204774768259575 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 941c38682a0aa854ba34915669475e60,

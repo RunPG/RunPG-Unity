@@ -1,3 +1,4 @@
+using Photon.Pun;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 
-public class CombatManager : MonoBehaviour
+public class CombatManager : MonoBehaviourPun
 {
     private static readonly Vector3[][] PlayerPositions = new Vector3[4][] { new Vector3[1] { new Vector3(0, 0, -0.175f) }, new Vector3[2] { new Vector3(-0.15f, 0, -0.175f), new Vector3(0.15f, 0, -0.175f) }, new Vector3[] { new Vector3(-0.2f, 0, -0.175f), new Vector3(0, 0, 0), new Vector3(0.2f, 0, -0.175f) }, new Vector3[4] {new Vector3(-0.3f, 0, 0), new Vector3(-0.15f, 0, -0.175f), new Vector3(0.15f, 0, -0.175f), new Vector3(0.3f, 0, 0) } };
     // TODO: Add positions for monsters up to 6
@@ -44,6 +45,8 @@ public class CombatManager : MonoBehaviour
 
     private DungeonManager dungeonManager;
 
+    PlayerCharacter playerCharacter;
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -65,7 +68,6 @@ public class CombatManager : MonoBehaviour
     }
     private void Start()
     {
-        
         dungeonManager = GameObject.FindObjectOfType<DungeonManager>();
 
         characters = new List<Character>();
@@ -74,22 +76,30 @@ public class CombatManager : MonoBehaviour
         {
             InitPlayer(i);
         }
-
-        for (int i = 0; i < dungeonManager.enemies.Length; i++)
-        {
-            InitMonster(i);
+        if (PhotonNetwork.IsMasterClient)
+        {            
+            for (int i = 0; i < dungeonManager.enemies.Length; i++)
+            {
+                InitMonster(i);
+            } 
         }
-
-        StartCoroutine(Combat());
-        
+        StartCoroutine(Combat());       
     }
-
+    private void Update()
+    {
+        var _characters = GameObject.FindObjectsOfType<Character>();
+        foreach (var character in _characters)
+        {
+            if (!characters.Contains(character))
+                characters.Add(character);
+        }
+    }
     public void AddAction(CombatAction action)
     {
+        action.caster.isReady = true;
         queue.Add(action);
     }
 
-    
     public List<Character> GetMyAllies(Character myCharacter)
     {
         List<Character> allies = new List<Character>();
@@ -160,40 +170,80 @@ public class CombatManager : MonoBehaviour
         while (true)
         {
             queue.Clear();
-            for (int i = 0; i < characters.Count; i++)
+            var allies = GetMyAllies(playerCharacter);
+            for (int i = 0; i < allies.Count; i++)
             {
-                if (!characters[i].isAlive())
+                if (!allies[i].isAlive())
                 {
                     Attendre idle = new Attendre();
-                    idle.target = characters[i];
-                    idle.caster = characters[i];
+                    idle.target = allies[i];
+                    idle.caster = allies[i];
                     queue.Add(idle);
                     continue;
                 }
-
-                if (characters[i].IsAffectedByStatus("etourdissement"))
+                if (allies[i].characterName != PlayerProfile.pseudo)
                 {
-                    characters[i].CleanStun();
+                    continue;
+                }
+
+                if (allies[i].IsAffectedByStatus("etourdissement"))
+                {
+                    allies[i].CleanStun();
                     Attendre idle = new Attendre();
-                    idle.target = characters[i];
-                    idle.caster = characters[i];
+                    idle.target = allies[i];
+                    idle.caster = allies[i];
                     queue.Add(idle);
                     continue;
                 }
 
                 logger.Log("asking character " + i);
-                characters[i].AskForAction();
-                while (queue.Count < i + 1)
+                allies[i].AskForAction();
+                while(!allies[i].isReady)
                     yield return null;
-                PlayerCharacter character = characters[i] as PlayerCharacter;
+                PlayerCharacter character = allies[i] as PlayerCharacter;
                 if (character != null)
                 {
                     character.DecreaseCooldownTurns();
                 }
             }
+            //WAIT ALL PLAYERS
+            while (GetMyAllies(playerCharacter).Find(ally => !ally.isReady))
+            {
+                Debug.Log("waiting for allies");
+                yield return null;
+            }
+            //DO SLIME ACTIONS
+            var enemies = GetMyEnemies(playerCharacter);
+            for (int i = 0; i < enemies.Count(); i++)
+            {
+                if (!enemies[i].isAlive())
+                {
+                    Attendre idle = new Attendre();
+                    idle.target = enemies[i];
+                    idle.caster = enemies[i];
+                    queue.Add(idle);
+                    continue;
+                }
 
+                if (enemies[i].IsAffectedByStatus("etourdissement"))
+                {
+                    enemies[i].CleanStun();
+                    Attendre idle = new Attendre();
+                    idle.target = enemies[i];
+                    idle.caster = enemies[i];
+                    queue.Add(idle);
+                    continue;
+                }
+
+                logger.Log("asking slime " + i);
+                enemies[i].AskForAction();
+                while (!enemies[i].isReady)
+                    yield return null;
+            }
+            //DO ALL ACTIONS
             foreach (var action in queue.OrderByDescending(action => action.speed))
             {
+                Debug.Log(action.caster);
                 // Later some spell may target dead characters (revive)
                 if (!action.caster.isAlive() || !action.target.isAlive())
                     continue;
@@ -230,7 +280,9 @@ public class CombatManager : MonoBehaviour
 
                 if (action as Consumable != null)
                     action.caster.UseConsumable(action.name);
+                action.caster.isReady = false;
                 action.PlayAction();
+
                 yield return new WaitForSeconds(action.duration);
             }
 
@@ -392,51 +444,57 @@ public class CombatManager : MonoBehaviour
 
         return null;
     }
-
     private void InitPlayer(int index)
     {
         if (dungeonManager.characters[index].currentHP <= 0)
             return;
-        GameObject character;
-        switch (dungeonManager.characters[index].classType)
+        if (dungeonManager.characters[index].name == PlayerProfile.pseudo)
         {
-            case "Paladin":
-                character = Instantiate(paladinPrefab, PlayerPositions[dungeonManager.characters.Length - 1][index], Quaternion.identity);
-                break;
-            case "Sorcier":
-                character = Instantiate(wizardPrefab, PlayerPositions[dungeonManager.characters.Length - 1][index], Quaternion.identity);
-                break;
-            default:
-                throw new Exception("Class doesn't exist: " + dungeonManager.characters[index].classType);
+            GameObject character;
+            switch (dungeonManager.characters[index].classType)
+            {
+                case "Paladin":
+                    character = PhotonNetwork.Instantiate(paladinPrefab.name, PlayerPositions[dungeonManager.characters.Length - 1][index], Quaternion.identity, 0);
+                    break;
+                case "Sorcier":
+                    character = PhotonNetwork.Instantiate(wizardPrefab.name, PlayerPositions[dungeonManager.characters.Length - 1][index] ,Quaternion.identity, 0);
+                    break;
+                default:
+                    throw new Exception("Class doesn't exist: " + dungeonManager.characters[index].classType);
+            }
+
+            playerCharacter = character.GetComponent<PlayerCharacter>();
+
+            playerCharacter.Init(dungeonManager.characters[index].name, dungeonManager.characters[index].skillNames, dungeonManager.characters[index].maxHP, dungeonManager.characters[index].currentHP);
+
+            playerCharacter.tag = "Team1";
+
+            characters.Add(playerCharacter);
         }
-
-        PlayerCharacter playerCharacter = character.GetComponent<PlayerCharacter>();
-
-        playerCharacter.Init(dungeonManager.characters[index].name, dungeonManager.characters[index].skillNames, dungeonManager.characters[index].maxHP, dungeonManager.characters[index].currentHP);
-
-        playerCharacter.tag = "Team1";
-
-        characters.Add(playerCharacter);
     }
-
+    
     private void InitMonster(int index)
     {
-        GameObject monster;
-        switch (dungeonManager.enemies[index].name)
+        if (PhotonNetwork.IsMasterClient)
         {
-            case "Slime":
-                monster = Instantiate(slimePrefab, EnemyPositions[dungeonManager.enemies.Length - 1][index], Quaternion.identity);
-                break;
-            default:
-                throw new Exception("Monster doesn't exist: " + dungeonManager.enemies[index].name);
+            GameObject monster;
+            switch (dungeonManager.enemies[index].name)
+            {
+                case "Slime":
+                    monster = PhotonNetwork.Instantiate(slimePrefab.name, EnemyPositions[dungeonManager.enemies.Length - 1][index], Quaternion.identity, 0);
+                    //monster = Instantiate(slimePrefab, EnemyPositions[dungeonManager.enemies.Length - 1][index], Quaternion.identity);
+                    break;
+                default:
+                    throw new Exception("Monster doesn't exist: " + dungeonManager.enemies[index].name);
+            }
+
+            AICharacter AICharacter = monster.GetComponent<AICharacter>();
+            AICharacter.Init(dungeonManager.enemies[index].name, dungeonManager.enemies[index].maxHP);
+
+            AICharacter.tag = "Team2";
+
+            characters.Add(AICharacter);
         }
-
-        AICharacter AICharacter = monster.GetComponent<AICharacter>();
-        AICharacter.Init(dungeonManager.enemies[index].name, dungeonManager.enemies[index].maxHP);
-
-        AICharacter.tag = "Team2";
-
-        characters.Add(AICharacter);
     }
 }
 

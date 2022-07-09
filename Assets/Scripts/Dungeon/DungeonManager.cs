@@ -1,4 +1,5 @@
 using Photon.Pun;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -59,7 +60,7 @@ public class DungeonManager : MonoBehaviourPunCallbacks
             DontDestroyOnLoad(this);
             characters = new DungeonCharacterInfo[2];
             characters[0] = new DungeonCharacterInfo("yott", "Paladin", new string[4] { "Entaille", "Entaille", "Provocation", "Provocation" }, 120);
-            characters[1] = new DungeonCharacterInfo("Firewop1", "Sorcier", new string[4] { "Boule de feu", "Boule de feu", "Embrasement", "Embrasement" }, 100);
+            characters[1] = new DungeonCharacterInfo("Firewop", "Sorcier", new string[4] { "Boule de feu", "Boule de feu", "Embrasement", "Embrasement" }, 100);
             path.Add(0);
             object objectSeed = System.Environment.TickCount;
             if (PhotonNetwork.IsMasterClient)
@@ -91,7 +92,10 @@ public class DungeonManager : MonoBehaviourPunCallbacks
     [PunRPC]
     void SetPath(object path)
     {
-        path = (List<int>)path;
+        Debug.Log("set path");
+        int []tmp = (int[]) path;
+        Debug.Log("int []");
+        this.path = tmp.ToList();
     }
     public void StartBattle(DungeonMonsterInfo[] monsters)
     {
@@ -117,7 +121,11 @@ public class DungeonManager : MonoBehaviourPunCallbacks
         if (PhotonNetwork.IsMasterClient)
         {
             path.Add(toIndex);
-            photonView.RPC("SetPath", RpcTarget.All, path);
+            object pathObject = path.ToArray();
+            Debug.Log("done");
+
+            photonView.RPC("SetPath", RpcTarget.All, pathObject);
+
             map[path.Count - 1][toIndex].onClickAction();
         }
     }

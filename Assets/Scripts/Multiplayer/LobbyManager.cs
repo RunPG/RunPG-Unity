@@ -155,10 +155,9 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     {
         Debug.Log("OnConnectedToMaster() was called by PUN");
 
-        if (PlayerProfile.pseudo != null)
-            PhotonNetwork.NickName =  PlayerProfile.pseudo;
-        else
-            PhotonNetwork.NickName = "test dev";
+        if (PlayerProfile.pseudo == null)
+            PlayerProfile.pseudo = "yott";
+        PhotonNetwork.NickName =  PlayerProfile.pseudo;
         PhotonNetwork.JoinLobby();
         isConnecting = false;
     }
