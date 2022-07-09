@@ -35,11 +35,11 @@ namespace RunPG.Multi
         {
             return heroclass switch
             {
-                HeroClass.MAGE => Resources.Load<Sprite>("Classes/Sorcier"),
-                HeroClass.BERSERKER => Resources.Load<Sprite>("Classes/Berserk"),
-                HeroClass.PRIEST => Resources.Load<Sprite>("Classes/Pretre"),
-                HeroClass.ROGUE => Resources.Load<Sprite>("Classes/Assassin"),
-                HeroClass.PALADIN => Resources.Load<Sprite>("Classes/Paladin"),
+                HeroClass.MAGE => Resources.Load<Sprite>("Classe/Sorcier"),
+                HeroClass.BERSERKER => Resources.Load<Sprite>("Classe/Berserk"),
+                HeroClass.PRIEST => Resources.Load<Sprite>("Classe/Pretre"),
+                HeroClass.ROGUE => Resources.Load<Sprite>("Classe/Assassin"),
+                HeroClass.PALADIN => Resources.Load<Sprite>("Classe/Paladin"),
                 _ => null,
             };
         }
@@ -51,30 +51,30 @@ namespace RunPG.Multi
         public int experience;
         public int statisticsId;
         public int firstSpellId;
-        public int secondSepllId;
+        public int secondSpellId;
         public int thirdSpellId;
-        public int fourthSepllId;
+        public int fourthSpellId;
         public int helmetId;
         public int chestplateId;
         public int leggingsId;
         public int glovesId;
-        public int weapondId;
+        public int weaponId;
         public HeroClass heroClass;
 
-        public CharacterModel(int id, int experience, int statisticsId, int firstSpellId, int secondSepllId, int thirdSpellId, int fourthSepllId, int helmetId, int chestplateId, int leggingsId, int glovesId, int weapondId, HeroClass heroClass)
+        public CharacterModel(int id, int experience, int statisticsId, int firstSpellId, int secondSpellId, int thirdSpellId, int fourthSpellId, int helmetId, int chestplateId, int leggingsId, int glovesId, int weaponId, HeroClass heroClass)
         {
             this.id = id;
             this.experience = experience;
             this.statisticsId = statisticsId;
             this.firstSpellId = firstSpellId;
-            this.secondSepllId = secondSepllId;
+            this.secondSpellId = secondSpellId;
             this.thirdSpellId = thirdSpellId;
-            this.fourthSepllId = fourthSepllId;
+            this.fourthSpellId = fourthSpellId;
             this.helmetId = helmetId;
             this.chestplateId = chestplateId;
             this.leggingsId = leggingsId;
             this.glovesId = glovesId;
-            this.weapondId = weapondId;
+            this.weaponId = weaponId;
             this.heroClass = heroClass;
     }
 }

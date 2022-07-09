@@ -134,7 +134,7 @@ public class InventoryScript : MonoBehaviour
                 }
             }
 
-            AddEquipement(await Requests.GETEquipementById(character.weapondId), true);
+            AddEquipement(await Requests.GETEquipementById(character.weaponId), true);
             AddEquipement(await Requests.GETEquipementById(character.helmetId), true);
             AddEquipement(await Requests.GETEquipementById(character.chestplateId), true);
             AddEquipement(await Requests.GETEquipementById(character.glovesId), true);
