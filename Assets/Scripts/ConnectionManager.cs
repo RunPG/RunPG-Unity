@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Android;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -26,7 +27,17 @@ public class ConnectionManager : MonoBehaviour
 
             PlayerProfile.pseudo = Social.localUser.userName;
 
-            SceneManager.LoadScene("MapScene");
+            if (!Permission.HasUserAuthorizedPermission(Permission.FineLocation))
+            {
+                var callback = new PermissionCallbacks();
+                callback.PermissionDenied += PermissionDenied;
+                callback.PermissionGranted += PermissionGranted;
+                Permission.RequestUserPermission(Permission.FineLocation, callback);
+            }
+            else
+            {
+                SceneManager.LoadScene("MapScene");
+            }
         }
         else
         {
@@ -37,5 +48,21 @@ public class ConnectionManager : MonoBehaviour
     public void Connect()
     {
         PlayGamesPlatform.Instance.ManuallyAuthenticate(ProcessAuthentication);
+    }
+
+
+    internal void PermissionDenied(string permissionName)
+    {
+        Application.Quit();
+    }
+
+    internal void PermissionGranted(string permissionName)
+    {
+        SceneManager.LoadScene("MapScene");
+    }
+
+    internal void PermissionDeniedAndDontAskAgain(string permissionName)
+    {
+        Application.Quit();
     }
 }
