@@ -28,7 +28,7 @@ public class PlayerCharacter : Character
     private Button buttonObjectBack;
     private Transform objects;
 
-    private Skill[] skills = new Skill[4];
+    public Skill[] skills = new Skill[4];
 
     private bool isSelected = false;
     private CombatAction selectedAction = null;
