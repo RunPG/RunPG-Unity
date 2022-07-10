@@ -6,12 +6,6 @@ using System.Threading.Tasks;
 
 namespace RunPG.Multi
 {
-    public enum NotificationType
-    {
-        FRIENDLIST,
-        LOBBY,
-        GUILD
-    }
     public class NotificationModel
     {
         public int senderId;
