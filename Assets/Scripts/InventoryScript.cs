@@ -120,6 +120,7 @@ public class InventoryScript : MonoBehaviour
         {
             InventoryModel[] inventory = await Requests.GETUserInventory(PlayerProfile.id);
             character = await Requests.GETUserCharacter(PlayerProfile.id);
+            PlayerProfile.character = character;
 
             foreach (InventoryModel inventoryItem in inventory)
             {

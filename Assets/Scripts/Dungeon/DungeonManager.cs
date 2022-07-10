@@ -66,7 +66,12 @@ public class DungeonManager : MonoBehaviourPunCallbacks
 
             Dictionary<string, string> dic = new Dictionary<string, string>();
             dic.Add("username", PlayerProfile.pseudo);
-            dic.Add("classe", "Sorcier");
+            var classe = "Sorcier";
+            if (PlayerProfile.character != null)
+            {
+                classe = PlayerProfile.character.heroClass.GetName();
+            }
+            dic.Add("classe", classe);
 
             photonView.RPC("AddCharacter", RpcTarget.All, dic);
             path.Add(0);
