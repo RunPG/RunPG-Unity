@@ -42,6 +42,11 @@ MonoBehaviour:
   - AddFriendAskConfirmation
   - LoadDungeonRPC
   - SetSeed
+  - SetPath
+  - SetAction
+  - AddMonster
+  - AddCharacter
+  - HealAll
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
