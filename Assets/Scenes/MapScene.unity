@@ -1540,12 +1540,29 @@ PrefabInstance:
         type: 3}
       propertyPath: animator
       value: 
-      objectReference: {fileID: 793983033}
+      objectReference: {fileID: 0}
+    - target: {fileID: 8739419039962306133, guid: 2f77a6d5998078242937d8dd35d76709,
+        type: 3}
+      propertyPath: meshes.Array.size
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 8739419039962306133, guid: 2f77a6d5998078242937d8dd35d76709,
         type: 3}
       propertyPath: dungeonDescription
       value: 
       objectReference: {fileID: 356504483}
+    - target: {fileID: 8739419039962306133, guid: 2f77a6d5998078242937d8dd35d76709,
+        type: 3}
+      propertyPath: meshes.Array.data[0]
+      value: 
+      objectReference: {fileID: 5873071946129964434, guid: b53a1a9bd972aa146a65d98b2ccfcc88,
+        type: 3}
+    - target: {fileID: 8739419039962306133, guid: 2f77a6d5998078242937d8dd35d76709,
+        type: 3}
+      propertyPath: meshes.Array.data[1]
+      value: 
+      objectReference: {fileID: 7680776375271168325, guid: 6b667e9c0990bdd4b8243ef1d88c0eed,
+        type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2f77a6d5998078242937d8dd35d76709, type: 3}
 --- !u!1 &141833905
@@ -4058,7 +4075,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: b79f46858aec9ad499a2a046a08b1069, type: 3}
+  m_Sprite: {fileID: 21300000, guid: ee70d5c35c445f04294074b6cb032bc4, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -5798,12 +5815,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 75}
   m_SizeDelta: {x: 1000, y: 100}
   m_Pivot: {x: 0.5, y: 0}
---- !u!95 &793983033 stripped
-Animator:
-  m_CorrespondingSourceObject: {fileID: 5011138419327479699, guid: 2f77a6d5998078242937d8dd35d76709,
-    type: 3}
-  m_PrefabInstance: {fileID: 141054588}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &798295461
 GameObject:
   m_ObjectHideFlags: 0

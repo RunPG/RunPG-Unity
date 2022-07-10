@@ -28,7 +28,7 @@ namespace RunPG.Multi
 
                 if (request.result != UnityWebRequest.Result.Success)
                 {
-                    Debug.LogError(string.Format("Error in request:{0}\nError Message: {1}", url, request.error));
+                    Debug.LogWarning(string.Format("Error in request:{0}\nError Message: {1}", url, request.error));
                     return null;
                 }
                 else
@@ -177,26 +177,29 @@ namespace RunPG.Multi
         }
 
 
-        public static IEnumerator POSTNewUser(InputField username, GameObject _errorMessage = null)
+        public static async Task<bool> POSTNewUser(NewUserModel newUser)
         {
-            Debug.Log(username.text);
-            if (username.text.Length != 0)
+            var url = rootUrl + "user";
+            var content = JsonConvert.SerializeObject(newUser);
+            Debug.Log(content);
+            using (UnityWebRequest request = UnityWebRequest.Post(url, "POST"))
             {
-                var str = "{\"name\":\"" + username.text + "\"}";
-                Debug.Log(str);
-                using (UnityWebRequest request = UnityWebRequest.Post(rootUrl +"user/", "POST"))
+                request.SetRequestHeader("Content-Type", "application/json");
+                request.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(content)) as UploadHandler;
+                request.SendWebRequest();
+                while (!request.isDone)
                 {
-                    request.SetRequestHeader("Content-Type", "application/json");
-                    request.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(str)) as UploadHandler;
-                    yield return request.SendWebRequest();
-                    if (request.result != UnityWebRequest.Result.Success)
-                    {
-                        _errorMessage.SetActive(true);
-                        _errorMessage.GetComponent<Text>().text = "User already exist!";
-                    }
+                    await Task.Yield();
                 }
+                if (request.result != UnityWebRequest.Result.Success)
+                {
+                    Debug.LogError(string.Format("Error in request:{0}\nError Message: {1}", url, request.error));
+                    return false;
+                }
+                return true;
             }
         }
+
         public static IEnumerator POSTAddFriend(int userId, int friend_id)
         {
             // var str = "http://178.62.237.73/user/" + PhotonNetwork.NickName + "/friend/7";

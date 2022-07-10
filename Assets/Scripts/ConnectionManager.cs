@@ -12,7 +12,12 @@ using UnityEngine.UI;
 public class ConnectionManager : MonoBehaviour
 {
     [SerializeField]
-    private GameObject connectionButton;
+    private GameObject signupButton;
+
+    [SerializeField]
+    private CanvasGroup connectionGroup;
+    [SerializeField]
+    private CanvasGroup classGroup;
 
     public void Start()
     {
@@ -28,22 +33,49 @@ public class ConnectionManager : MonoBehaviour
 
             var username = Social.localUser.userName;
             PlayerProfile.pseudo = username;
+            PlayerProfile.guid = Social.localUser.id;
             var user = await Requests.GETUserByName(username);
             if (user != null)
             {
                 PlayerProfile.id = user.id;
+                SceneManager.LoadScene("MapScene");
             }
-
-            SceneManager.LoadScene("MapScene");
+            else
+            {
+                signupButton.SetActive(true);
+            }
         }
         else
         {
-            connectionButton.SetActive(true);
+            if (Application.isEditor)
+            {
+                PlayerProfile.pseudo = "UnityEditor";
+                PlayerProfile.guid = "UnityEditor";
+                var user = await Requests.GETUserByName("UnityEditor");
+                if (user != null)
+                {
+                    PlayerProfile.id = user.id;
+                    SceneManager.LoadScene("MapScene");
+                }
+                else
+                {
+                    signupButton.SetActive(true);
+                }
+            }
+            else
+            {
+                Debug.LogError("Can't connect to Google Play Games");
+            }
         }
     }
 
-    public void Connect()
+    public void SignUp()
     {
-        PlayGamesPlatform.Instance.ManuallyAuthenticate(ProcessAuthenticationAsync);
+        connectionGroup.alpha = 0;
+        connectionGroup.interactable = false;
+        connectionGroup.blocksRaycasts = false;
+        classGroup.alpha = 1;
+        classGroup.interactable = true;
+        classGroup.blocksRaycasts = true;
     }
 }
