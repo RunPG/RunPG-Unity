@@ -102,9 +102,15 @@ public class CombatManager : MonoBehaviourPun
     void SetAction(object dataToShare)
     {
         var evt = (Dictionary<string, string>)dataToShare;
+        var caster = characters.First(c => c.characterName == evt["name"]);
+        var profileCharacter = caster as PlayerCharacter;
         var combatAction = combatActions[evt["action"]]();
+        if (profileCharacter != null)
+        {
+            combatAction = profileCharacter.skills.First(s => s.name == evt["action"] && s.cooldown == 0);
+        }
         combatAction.target = characters.First(c => c.characterName == evt["target"]);
-        combatAction.caster = characters.First(c => c.characterName == evt["name"]);
+        combatAction.caster = caster;
         queue.Add(combatAction);
     }
 
