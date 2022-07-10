@@ -107,7 +107,7 @@ public class CombatManager : MonoBehaviourPun
         var combatAction = combatActions[evt["action"]]();
         if (profileCharacter != null)
         {
-            combatAction = profileCharacter.skills.First(s => s.name == evt["action"] && s.cooldown == 0);
+            combatAction = profileCharacter.skills.First(s => s.name == evt["action"] && s.remainingCooldownTurns == 0);
         }
         combatAction.target = characters.First(c => c.characterName == evt["target"]);
         combatAction.caster = caster;
