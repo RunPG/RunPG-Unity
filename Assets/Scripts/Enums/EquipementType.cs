@@ -11,8 +11,8 @@ public enum EquipementType
     WEAPON,
     HELMET,
     CHESTPLATE,
-    LEGGINGS,
-    GLOVES
+    GLOVES,
+    LEGGINGS
 }
 
 static class EquipementTypeMethods
@@ -37,8 +37,8 @@ static class EquipementTypeMethods
             EquipementType.WEAPON => 0,
             EquipementType.HELMET => 1,
             EquipementType.CHESTPLATE => 2,
-            EquipementType.LEGGINGS => 3,
-            EquipementType.GLOVES => 4,
+            EquipementType.GLOVES => 3,
+            EquipementType.LEGGINGS => 4,
             _ => -1,
         };
     }
