@@ -13,5 +13,6 @@ public class AISlime : AICharacter
         bond.target = enemies[Random.Range(0, enemies.Count)];
 
         CombatManager.Instance.AddAction(bond);
+        isReady = true;
     }
 }

@@ -17,7 +17,7 @@ public class EntityManager : MonoBehaviour
     void Start()
     {
         currentHealth = maxHealth;
-        healthBar.SetMaxHealth(maxHealth);
+      //  healthBar.SetMaxHealth(maxHealth);
     }
 
     public void TakeDamage(int damage)

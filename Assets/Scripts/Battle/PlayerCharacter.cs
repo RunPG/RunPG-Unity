@@ -80,8 +80,8 @@ public class PlayerCharacter : Character
 
         maxHealth = maxHP;
         currentHealth = currentHP;
-        healthBar.SetMaxHealth(maxHP);
-        healthBar.SetHealth(currentHP);
+       // healthBar.SetMaxHealth(maxHP);
+        healthBar.SetHealth(currentHealth / maxHealth);
     }
 
     private void Update()

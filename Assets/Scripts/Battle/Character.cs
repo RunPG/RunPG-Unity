@@ -62,7 +62,7 @@ public abstract class Character : MonoBehaviourPunCallbacks, IPunObservable
         float y = RectTransformUtility.WorldToScreenPoint(Camera.main, healthBarPosition.position).y;
 
         healthBarInstance.transform.position = new Vector2(x, y);
-        healthBar.SetHealth(currentHealth);
+        healthBar.SetMaxHealth(currentHealth);
     }
 
     public bool isAlive()
@@ -140,20 +140,10 @@ public abstract class Character : MonoBehaviourPunCallbacks, IPunObservable
     }
     
     public abstract void AskForAction();
-
-    //TODO see with photon animation view
-   /* [PunRPC]
-    public void PlayAnimationRPC(string animation,int id)
-    {
-        Debug.Log("Playing animation");
-        if (photonView.GetInstanceID() == id)
-            animator.SetTrigger(animation + "Trigger");
-    }*/
     public void PlayAnimation(string animation)
     {
         Debug.Log("Playing animation");
         animator.SetTrigger(animation + "Trigger");
-       // photonView.RPC("PlayAnimationRPC", RpcTarget.All, animation, photonView.GetInstanceID());
     }
 
     public bool IsAffectedByStatus(string name)
@@ -180,6 +170,11 @@ public abstract class Character : MonoBehaviourPunCallbacks, IPunObservable
         Destroy(statusUI.Find(name).gameObject);
     }
 
+    [PunRPC]
+    private void SetReady()
+    {
+        isReady = true;
+    }
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
         if (stream.IsWriting)
@@ -188,17 +183,17 @@ public abstract class Character : MonoBehaviourPunCallbacks, IPunObservable
             stream.SendNext(currentHealth); 
             stream.SendNext(animationName);
             stream.SendNext(isReady);
+            stream.SendNext(maxHealth);
 
         }
         else
         {
-            Debug.Log(currentHealth);
 
             // Network player, receive data
             this.currentHealth = (int)stream.ReceiveNext();
             this.animationName = (string)stream.ReceiveNext();
             this.isReady = (bool)stream.ReceiveNext();
-
+            this.maxHealth = (int)stream.ReceiveNext();
             if (animationName != null)
                 PlayAnimation(animationName);
             animationName = null;
@@ -207,6 +202,7 @@ public abstract class Character : MonoBehaviourPunCallbacks, IPunObservable
                 gameObject.SetActive(false);
                 healthBarInstance.SetActive(false);
             }
+            healthBar.SetMaxHealth(maxHealth);
             healthBar.SetHealth(currentHealth);
         }
     }

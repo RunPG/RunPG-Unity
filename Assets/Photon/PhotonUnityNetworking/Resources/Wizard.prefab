@@ -124,7 +124,6 @@ MonoBehaviour:
   healthBarGameObject: {fileID: 5442145643889852401, guid: 58fb3f8a85fa6e346bd0c3a075d4a7b9,
     type: 3}
   isReady: 0
-  isReady: 0
 --- !u!136 &1932481685353180089
 CapsuleCollider:
   m_ObjectHideFlags: 0

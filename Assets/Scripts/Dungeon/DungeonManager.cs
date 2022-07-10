@@ -24,6 +24,8 @@ public class DungeonManager : MonoBehaviourPunCallbacks
         public int maxHP { get; private set; }
         public int currentHP { get; set; }
         // level, stats and equipement when it'll be needed
+        [SerializeField]
+        private PhotonView view;
     }
 
     public class DungeonMonsterInfo
@@ -63,9 +65,10 @@ public class DungeonManager : MonoBehaviourPunCallbacks
             characters[1] = new DungeonCharacterInfo("Firewop", "Sorcier", new string[4] { "Boule de feu", "Boule de feu", "Embrasement", "Embrasement" }, 100);
             path.Add(0);
             object objectSeed = System.Environment.TickCount;
+
             if (PhotonNetwork.IsMasterClient)
             {
-                photonView.RPC("SetSeed", RpcTarget.All, objectSeed);
+                this.photonView.RPC("SetSeed", RpcTarget.All, objectSeed);
             }
         }
         else if (instance != this)
@@ -92,9 +95,7 @@ public class DungeonManager : MonoBehaviourPunCallbacks
     [PunRPC]
     void SetPath(object path)
     {
-        Debug.Log("set path");
         int []tmp = (int[]) path;
-        Debug.Log("int []");
         this.path = tmp.ToList();
     }
     public void StartBattle(DungeonMonsterInfo[] monsters)
@@ -122,7 +123,6 @@ public class DungeonManager : MonoBehaviourPunCallbacks
         {
             path.Add(toIndex);
             object pathObject = path.ToArray();
-            Debug.Log("done");
 
             photonView.RPC("SetPath", RpcTarget.All, pathObject);
 

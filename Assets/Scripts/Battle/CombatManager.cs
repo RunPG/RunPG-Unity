@@ -46,7 +46,8 @@ public class CombatManager : MonoBehaviourPun
     private DungeonManager dungeonManager;
 
     PlayerCharacter playerCharacter;
-
+    float timer;
+    bool combatStarted = false;
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -71,19 +72,18 @@ public class CombatManager : MonoBehaviourPun
         dungeonManager = GameObject.FindObjectOfType<DungeonManager>();
 
         characters = new List<Character>();
-
+                
         for (int i = 0; i < dungeonManager.characters.Length; i++)
         {
             InitPlayer(i);
         }
         if (PhotonNetwork.IsMasterClient)
-        {            
+        {
             for (int i = 0; i < dungeonManager.enemies.Length; i++)
             {
                 InitMonster(i);
-            } 
+            }
         }
-        StartCoroutine(Combat());       
     }
     private void Update()
     {
@@ -92,6 +92,15 @@ public class CombatManager : MonoBehaviourPun
         {
             if (!characters.Contains(character))
                 characters.Add(character);
+        }
+        if (timer > 3f && !combatStarted)
+        {
+            combatStarted = true;
+            StartCoroutine(Combat());
+        }
+        else
+        {
+            timer += Time.deltaTime;
         }
     }
     public void AddAction(CombatAction action)
@@ -164,6 +173,15 @@ public class CombatManager : MonoBehaviourPun
     {
         return combatActions[name]();
     }
+    public bool AreCharactersReady(List<Character> _characters)
+    {
+        foreach (var character in _characters)
+        {
+            if (!character.isReady)
+                return false;
+        }
+        return true;
+    }
 
     private IEnumerator Combat()
     {
@@ -207,38 +225,50 @@ public class CombatManager : MonoBehaviourPun
                 }
             }
             //WAIT ALL PLAYERS
-            while (GetMyAllies(playerCharacter).Find(ally => !ally.isReady))
+            //while (allies.Find(ally => !ally.isReady))
+            while (!AreCharactersReady(allies))
             {
-                Debug.Log("waiting for allies");
+                    Debug.Log("waiting for allies");
                 yield return null;
             }
-            //DO SLIME ACTIONS
             var enemies = GetMyEnemies(playerCharacter);
-            for (int i = 0; i < enemies.Count(); i++)
+            //DO SLIME ACTIONS
+            if (PhotonNetwork.IsMasterClient)
             {
-                if (!enemies[i].isAlive())
+                for (int i = 0; i < enemies.Count(); i++)
                 {
-                    Attendre idle = new Attendre();
-                    idle.target = enemies[i];
-                    idle.caster = enemies[i];
-                    queue.Add(idle);
-                    continue;
-                }
+                    if (!enemies[i].isAlive())
+                    {
+                        Attendre idle = new Attendre();
+                        idle.target = enemies[i];
+                        idle.caster = enemies[i];
+                        queue.Add(idle);
+                        continue;
+                    }
 
-                if (enemies[i].IsAffectedByStatus("etourdissement"))
-                {
-                    enemies[i].CleanStun();
-                    Attendre idle = new Attendre();
-                    idle.target = enemies[i];
-                    idle.caster = enemies[i];
-                    queue.Add(idle);
-                    continue;
-                }
+                    if (enemies[i].IsAffectedByStatus("etourdissement"))
+                    {
+                        enemies[i].CleanStun();
+                        Attendre idle = new Attendre();
+                        idle.target = enemies[i];
+                        idle.caster = enemies[i];
+                        queue.Add(idle);
+                        continue;
+                    }
 
-                logger.Log("asking slime " + i);
-                enemies[i].AskForAction();
-                while (!enemies[i].isReady)
-                    yield return null;
+                    logger.Log("asking slime " + i);
+                    enemies[i].AskForAction();
+                    while (!enemies[i].isReady)
+                        yield return null;
+                }
+            }
+            timer = 0;
+            //WAIT ALL SLIMES
+            while (!AreCharactersReady(enemies) || timer < 2f)
+            {
+                enemies = GetMyEnemies(playerCharacter);
+                Debug.Log("waiting for enemy" + enemies.Count);
+                yield return null;
             }
             //DO ALL ACTIONS
             foreach (var action in queue.OrderByDescending(action => action.speed))
@@ -474,27 +504,24 @@ public class CombatManager : MonoBehaviourPun
     }
     
     private void InitMonster(int index)
-    {
-        if (PhotonNetwork.IsMasterClient)
+    {      
+        GameObject monster;
+        switch (dungeonManager.enemies[index].name)
         {
-            GameObject monster;
-            switch (dungeonManager.enemies[index].name)
-            {
-                case "Slime":
-                    monster = PhotonNetwork.Instantiate(slimePrefab.name, EnemyPositions[dungeonManager.enemies.Length - 1][index], Quaternion.identity, 0);
-                    //monster = Instantiate(slimePrefab, EnemyPositions[dungeonManager.enemies.Length - 1][index], Quaternion.identity);
-                    break;
-                default:
-                    throw new Exception("Monster doesn't exist: " + dungeonManager.enemies[index].name);
-            }
-
-            AICharacter AICharacter = monster.GetComponent<AICharacter>();
-            AICharacter.Init(dungeonManager.enemies[index].name, dungeonManager.enemies[index].maxHP);
-
-            AICharacter.tag = "Team2";
-
-            characters.Add(AICharacter);
+            case "Slime":
+                monster = PhotonNetwork.Instantiate(slimePrefab.name, EnemyPositions[dungeonManager.enemies.Length - 1][index], Quaternion.identity, 0);
+                //monster = Instantiate(slimePrefab, EnemyPositions[dungeonManager.enemies.Length - 1][index], Quaternion.identity);
+                break;
+            default:
+                throw new Exception("Monster doesn't exist: " + dungeonManager.enemies[index].name);
         }
+
+        AICharacter AICharacter = monster.GetComponent<AICharacter>();
+        AICharacter.Init(dungeonManager.enemies[index].name, dungeonManager.enemies[index].maxHP);
+
+        AICharacter.tag = "Team2";
+
+        characters.Add(AICharacter);     
     }
 }
 

@@ -9,6 +9,6 @@ public abstract class AICharacter : Character
         characterName = name;
         maxHealth = maxHP;
         currentHealth = maxHP;
-        healthBar.SetMaxHealth(maxHealth);
+        //healthBar.SetMaxHealth(maxHealth);
     }
 }
