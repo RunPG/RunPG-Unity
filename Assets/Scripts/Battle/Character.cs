@@ -13,7 +13,7 @@ public abstract class Character : MonoBehaviour
     protected int maxHealth = 100;
     public int currentHealth { get; protected set; }
 
-    public string characterName { get; protected set; }
+    public string characterName { get; set; }
 
     protected HealthBar healthBar;
 

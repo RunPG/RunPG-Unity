@@ -176,6 +176,28 @@ namespace RunPG.Multi
             return null;
         }
 
+        public static async Task<CharacterModel> GETUserCharacter(int user_id)
+        {
+            var url = rootUrl + "user/" + user_id + "/character";
+            using (UnityWebRequest request = UnityWebRequest.Get(url))
+            {
+                request.SendWebRequest();
+                while (!request.isDone)
+                {
+                    await Task.Yield();
+                }
+                if (request.result != UnityWebRequest.Result.Success)
+                {
+                    Debug.LogError(string.Format("Error in request:{0}\nError Message: {1}", url, request.error));
+                }
+                else
+                {
+                    var character = JsonConvert.DeserializeObject<CharacterModel>(request.downloadHandler.text);
+                    return character;
+                }
+            }
+            return null;
+        }
 
         public static async Task<bool> POSTNewUser(NewUserModel newUser)
         {
