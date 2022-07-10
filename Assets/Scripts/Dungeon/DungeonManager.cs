@@ -1,4 +1,5 @@
 using Photon.Pun;
+using RunPG.Multi;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,7 +42,7 @@ public class DungeonManager : MonoBehaviourPunCallbacks
 
     public static DungeonManager instance;
 
-    public DungeonCharacterInfo[] characters { get; private set; }
+    public List<DungeonCharacterInfo> characters { get; private set; }
     public DungeonMonsterInfo[] enemies { get; private set; }
 
     public int currentFloor = 0;
@@ -60,9 +61,14 @@ public class DungeonManager : MonoBehaviourPunCallbacks
             DontDestroyOnLoad(this);
             var phtnView = gameObject.AddComponent<PhotonView>();
             phtnView.ViewID = 1;
-            characters = new DungeonCharacterInfo[2];
-            characters[0] = new DungeonCharacterInfo("yott", "Paladin", new string[4] { "Entaille", "Entaille", "Provocation", "Provocation" }, 120);
-            characters[1] = new DungeonCharacterInfo("LeMoutonZen", "Sorcier", new string[4] { "Boule de feu", "Boule de feu", "Embrasement", "Embrasement" }, 100);
+
+            characters = new List<DungeonCharacterInfo>();
+
+            Dictionary<string, string> dic = new Dictionary<string, string>();
+            dic.Add("username", PlayerProfile.pseudo);
+            dic.Add("classe", "Sorcier");
+
+            photonView.RPC("AddCharacter", RpcTarget.All, dic);
             path.Add(0);
             object objectSeed = System.Environment.TickCount;
             if (PhotonNetwork.IsMasterClient)
@@ -97,6 +103,15 @@ public class DungeonManager : MonoBehaviourPunCallbacks
         this.path = ((int[])path).ToList();
         DungeonMap.RefreshMap();
     }
+    [PunRPC]
+    void AddCharacter(object obj)
+    {
+        Dictionary<string, string> dic = (Dictionary<string, string>)obj;
+        if (dic["classe"] == "Paladin")
+            characters.Add(new DungeonCharacterInfo(dic["username"], "Paladin", new string[4] { "Entaille", "Entaille", "Provocation", "Provocation" }, 120));
+        else
+            characters.Add(new DungeonCharacterInfo(dic["username"], "Sorcier", new string[4] { "Boule de feu", "Boule de feu", "Embrasement", "Embrasement" }, 100));
+    }
     public void StartBattle(DungeonMonsterInfo[] monsters)
     {
         enemies = monsters;
@@ -104,6 +119,11 @@ public class DungeonManager : MonoBehaviourPunCallbacks
     }
 
     public void HealParty()
+    {
+        photonView.RPC("HealAll", RpcTarget.All);
+    }
+    [PunRPC]
+    void HealAll()
     {
         foreach (DungeonCharacterInfo character in characters)
         {

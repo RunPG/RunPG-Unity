@@ -72,7 +72,7 @@ public class CombatManager : MonoBehaviourPun
 
         characters = new List<Character>();
 
-        for (int i = 0; i < dungeonManager.characters.Length; i++)
+        for (int i = 0; i < dungeonManager.characters.Count; i++)
         {
             InitPlayer(i);
         }
@@ -427,10 +427,10 @@ public class CombatManager : MonoBehaviourPun
         switch (dungeonManager.characters[index].classType)
         {
             case "Paladin":
-                character = Instantiate(paladinPrefab, PlayerPositions[dungeonManager.characters.Length - 1][index], Quaternion.identity);
+                character = Instantiate(paladinPrefab, PlayerPositions[dungeonManager.characters.Count - 1][index], Quaternion.identity);
                 break;
             case "Sorcier":
-                character = Instantiate(wizardPrefab, PlayerPositions[dungeonManager.characters.Length - 1][index], Quaternion.identity);
+                character = Instantiate(wizardPrefab, PlayerPositions[dungeonManager.characters.Count - 1][index], Quaternion.identity);
                 break;
             default:
                 throw new Exception("Class doesn't exist: " + dungeonManager.characters[index].classType);
