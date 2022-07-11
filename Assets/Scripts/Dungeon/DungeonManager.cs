@@ -169,6 +169,33 @@ public class DungeonManager : MonoBehaviourPunCallbacks
             }
         }
     }
+
+    public void HideHealMessage()
+    {
+        if (PhotonNetwork.IsMasterClient)
+        {
+            photonView.RPC("HideHealCanvas", RpcTarget.All);
+        }
+    }
+    [PunRPC]
+    public void HideHealCanvas()
+    {
+        DungeonMap.DisableCanvasGroup(GameObject.Find("HealPopUp").GetComponent<CanvasGroup>());
+    }
+
+    public void HideBonusMessage()
+    {
+        if (PhotonNetwork.IsMasterClient)
+        {
+            photonView.RPC("HideBonusCanvas", RpcTarget.All);
+        }
+    }
+    [PunRPC]
+    public void HideBonusCanvas()
+    {
+        DungeonMap.DisableCanvasGroup(GameObject.Find("HealPopUp").GetComponent<CanvasGroup>());
+    }
+
     public void AddPacours(int toIndex)
     {
         if (PhotonNetwork.IsMasterClient)

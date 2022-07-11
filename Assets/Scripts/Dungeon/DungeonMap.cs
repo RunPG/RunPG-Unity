@@ -159,4 +159,14 @@ public class DungeonMap : MonoBehaviourPun
         canvasGroup.blocksRaycasts = true;
         canvasGroup.interactable = true;
     }
+
+    public static void HideHeal()
+    {
+        DungeonManager.instance.HideHealMessage();
+    }
+
+    public static void HideBonus()
+    {
+        DungeonManager.instance.HideBonusMessage();
+    }
 }
