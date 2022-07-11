@@ -13,10 +13,13 @@ namespace RunPG.Multi
     {
         [SerializeField]
         private TextMeshProUGUI playerInfo;
+        [SerializeField]
+        private Image classImage;
         public Player player { get; private set; }
         public void SetPlayerInfo(Player newPlayer)
         {
             player = newPlayer;
+            classImage.sprite = ((HeroClass)newPlayer.CustomProperties["heroClass"]).GetSprite();
             playerInfo.text = newPlayer.NickName;
         }
     }

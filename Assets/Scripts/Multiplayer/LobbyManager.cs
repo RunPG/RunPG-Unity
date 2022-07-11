@@ -8,6 +8,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 public class LobbyManager : MonoBehaviourPunCallbacks
 {
@@ -125,7 +126,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     {
         lobbyList.alpha = 0;
         lobbyList.interactable = false;
-        lobby.blocksRaycasts = false;
+        lobbyList.blocksRaycasts = false;
 
         canvas.alpha = 0;
         canvas.interactable = false;
@@ -156,7 +157,12 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         Debug.Log("OnConnectedToMaster() was called by PUN");
 
         if (PlayerProfile.pseudo != null)
-            PhotonNetwork.NickName =  PlayerProfile.pseudo;
+        {
+            PhotonNetwork.NickName = PlayerProfile.pseudo;
+            Hashtable hash = new Hashtable();
+            hash.Add("heroClass", PlayerProfile.character.heroClass);
+            PhotonNetwork.LocalPlayer.SetCustomProperties(hash);
+        }
         else
             PhotonNetwork.NickName = "test dev";
         PhotonNetwork.JoinLobby();
