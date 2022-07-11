@@ -193,7 +193,7 @@ public class DungeonManager : MonoBehaviourPunCallbacks
     [PunRPC]
     public void HideBonusCanvas()
     {
-        DungeonMap.DisableCanvasGroup(GameObject.Find("HealPopUp").GetComponent<CanvasGroup>());
+        DungeonMap.DisableCanvasGroup(GameObject.Find("BonusPopUp").GetComponent<CanvasGroup>());
     }
 
     public void AddPacours(int toIndex)
