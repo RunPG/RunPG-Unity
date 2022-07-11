@@ -24,7 +24,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1246306714135032292}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.22, z: 0}
+  m_LocalPosition: {x: 0, y: 0.36, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -43,7 +43,7 @@ GameObject:
   - component: {fileID: 8936676413986411418}
   - component: {fileID: 5628190122929305539}
   m_Layer: 0
-  m_Name: Slime
+  m_Name: King Slime
   m_TagString: Team2
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -90,7 +90,7 @@ MonoBehaviour:
   animator: {fileID: 5557697072198407527}
   healthBarPosition: {fileID: 3385739984359271368}
   head: {fileID: 2841123729269123785}
-  healthBarGameObject: {fileID: 1044444335957610319, guid: fcceddaefddce504bbcd4ca487aa797a,
+  healthBarGameObject: {fileID: 1044444335957610319, guid: cb094f37373ff1e40aae4a65bcf949f5,
     type: 3}
 --- !u!135 &5628190122929305539
 SphereCollider:
@@ -182,17 +182,17 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: 0ec1841d1569b0644afbc70e7e9dc05c,
         type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.06
+      value: 0.12
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0ec1841d1569b0644afbc70e7e9dc05c,
         type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.06
+      value: 0.12
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0ec1841d1569b0644afbc70e7e9dc05c,
         type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.06
+      value: 0.12
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0ec1841d1569b0644afbc70e7e9dc05c,
         type: 3}

@@ -5074,6 +5074,8 @@ MonoBehaviour:
     type: 3}
   slimePrefab: {fileID: 2650298994664610122, guid: b9378826c4382234bb5a32fb130b0623,
     type: 3}
+  kingSilmePrefab: {fileID: 2650298994664610122, guid: 94a141d250dcc8e4cbb55157150334f4,
+    type: 3}
   Items:
   - {fileID: 21300000, guid: 2c80f5f41d98a264e84fc927cb197814, type: 3}
   - {fileID: 21300000, guid: 3e0e868aa7f2ac24cb4b72011f279451, type: 3}

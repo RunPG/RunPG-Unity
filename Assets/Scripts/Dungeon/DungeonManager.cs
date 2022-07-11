@@ -101,7 +101,7 @@ public class DungeonManager : MonoBehaviourPunCallbacks
     [PunRPC]
     void SetSeed(object objectSeed)
     {
-        seed = (int) objectSeed;
+        seed = (int)objectSeed;
     }
     [PunRPC]
     void SetPath(object path)
@@ -133,7 +133,7 @@ public class DungeonManager : MonoBehaviourPunCallbacks
     async void GiveAll()
     {
         this.currentFloor++;
-        
+
         var bonusCanvas = GameObject.Find("BonusPopUp");
         DungeonMap.ActiveCanvasGroup(bonusCanvas.GetComponent<CanvasGroup>());
 
@@ -218,7 +218,7 @@ public class DungeonManager : MonoBehaviourPunCallbacks
     public DungeonMonsterInfo[] generateBossEnemies()
     {
         DungeonManager.DungeonMonsterInfo[] bossEnemies = new DungeonManager.DungeonMonsterInfo[1];
-        bossEnemies[0] = new DungeonManager.DungeonMonsterInfo("Slime", 200);
+        bossEnemies[0] = new DungeonManager.DungeonMonsterInfo("King Slime", 200);
         return bossEnemies;
     }
 
@@ -244,7 +244,7 @@ public class DungeonManager : MonoBehaviourPunCallbacks
     public void Leave()
     {
         LeaveRoom();
-        SceneManager.LoadScene("MapScene");
         Destroy(gameObject);
+        SceneManager.LoadScene("MapScene");
     }
 }
