@@ -51,7 +51,7 @@ public class DungeonMap : MonoBehaviourPun
                 DisableCanvasGroup(MapCanvasGroup, false);
                 LeaveButton.SetActive(false);
                 StatusButton.SetActive(false);
-                ResultText.text = "D?faite";
+                ResultText.text = "Défaite";
                 ResultText.color = Color.yellow;
                 ActiveCanvasGroup(ResultCanvasGroup);
                 
@@ -67,7 +67,8 @@ public class DungeonMap : MonoBehaviourPun
                 ResultText.text = "Victoire";
                 ResultText.color = Color.yellow;
                 ActiveCanvasGroup(ResultCanvasGroup);
-                
+                Social.ReportProgress(GPGSIds.achievement_ctait_a_le_boss, 100.0f, null);
+
                 StartCoroutine(flexibleGrid.AutoScroll(2f));
                 victory = true;
             }
