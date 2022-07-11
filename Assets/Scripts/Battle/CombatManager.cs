@@ -11,7 +11,7 @@ using UnityEngine.UI;
 
 public class CombatManager : MonoBehaviourPun
 {
-    private static readonly Vector3[][] PlayerPositions = new Vector3[4][] { new Vector3[1] { new Vector3(0, 0, -0.175f) }, new Vector3[2] { new Vector3(-0.15f, 0, -0.175f), new Vector3(0.15f, 0, -0.175f) }, new Vector3[] { new Vector3(-0.2f, 0, -0.175f), new Vector3(0, 0, 0), new Vector3(0.2f, 0, -0.175f) }, new Vector3[4] {new Vector3(-0.3f, 0, 0), new Vector3(-0.15f, 0, -0.175f), new Vector3(0.15f, 0, -0.175f), new Vector3(0.3f, 0, 0) } };
+    private static readonly Vector3[][] PlayerPositions = new Vector3[4][] { new Vector3[1] { new Vector3(0, 0, -0.175f) }, new Vector3[2] { new Vector3(-0.15f, 0, -0.175f), new Vector3(0.15f, 0, -0.175f) }, new Vector3[] { new Vector3(-0.2f, 0, -0.175f), new Vector3(0, 0, 0), new Vector3(0.2f, 0, -0.175f) }, new Vector3[4] { new Vector3(-0.3f, 0, 0), new Vector3(-0.15f, 0, -0.175f), new Vector3(0.15f, 0, -0.175f), new Vector3(0.3f, 0, 0) } };
     // TODO: Add positions for monsters up to 6
     private static readonly Vector3[][] EnemyPositions = new Vector3[3][] { new Vector3[1] { new Vector3(0, 0, 0.9f) }, new Vector3[2] { new Vector3(-0.25f, 0, 0.9f), new Vector3(0.25f, 0, 0.9f) }, new Vector3[3] { new Vector3(-0.3f, 0, 1.15f), new Vector3(0, 0, 0.85f), new Vector3(0.3f, 0, 1.15f) } };
 
@@ -34,6 +34,8 @@ public class CombatManager : MonoBehaviourPun
     // Enemies
     [SerializeField]
     private GameObject slimePrefab;
+    [SerializeField]
+    private GameObject kingSilmePrefab;
 
     [SerializeField]
     private List<Sprite> Items = new List<Sprite>();
@@ -67,7 +69,7 @@ public class CombatManager : MonoBehaviourPun
     }
     private void Start()
     {
-        
+
         dungeonManager = GameObject.FindObjectOfType<DungeonManager>();
 
         characters = new List<Character>();
@@ -85,7 +87,7 @@ public class CombatManager : MonoBehaviourPun
         }
 
         StartCoroutine(Combat());
-        
+
     }
 
     public void AddAction(CombatAction action)
@@ -259,7 +261,7 @@ public class CombatManager : MonoBehaviourPun
                             action.caster.DeleteStatusIcon("Provocation");
                         }
                     }
-                    
+
                 }
 
                 if (action as Consumable != null)
@@ -403,7 +405,7 @@ public class CombatManager : MonoBehaviourPun
                         if (possibleTargets.Count() > 0)
                         {
                             int x = UnityEngine.Random.Range(0, possibleTargets.Count);
-                             CombatManager.Instance.AddStatus(new ElectrifiedStatus(statusList[i].remainingTurns - 1), possibleTargets[x]);
+                            CombatManager.Instance.AddStatus(new ElectrifiedStatus(statusList[i].remainingTurns - 1), possibleTargets[x]);
                         }
                     }
                     statusList.RemoveAt(i);
@@ -474,13 +476,14 @@ public class CombatManager : MonoBehaviourPun
         var index = int.Parse(dic["index"]);
         var length = int.Parse(dic["length"]);
         var maxHp = int.Parse(dic["maxHp"]);
-        
+
         GameObject monster = name switch
         {
             "Slime" => Instantiate(slimePrefab, EnemyPositions[length - 1][index], Quaternion.identity),
+            "King Slime" => Instantiate(kingSilmePrefab, EnemyPositions[length - 1][index], Quaternion.identity),
             _ => throw new Exception("Monster doesn't exist: " + name),
         };
-        
+
         AICharacter AICharacter = monster.GetComponent<AICharacter>();
         AICharacter.Init(name, maxHp);
 
