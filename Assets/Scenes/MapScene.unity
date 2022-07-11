@@ -1544,7 +1544,7 @@ PrefabInstance:
     - target: {fileID: 8739419039962306133, guid: 2f77a6d5998078242937d8dd35d76709,
         type: 3}
       propertyPath: meshes.Array.size
-      value: 2
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 8739419039962306133, guid: 2f77a6d5998078242937d8dd35d76709,
         type: 3}
@@ -1560,6 +1560,24 @@ PrefabInstance:
     - target: {fileID: 8739419039962306133, guid: 2f77a6d5998078242937d8dd35d76709,
         type: 3}
       propertyPath: meshes.Array.data[1]
+      value: 
+      objectReference: {fileID: 7680776375271168325, guid: 6b667e9c0990bdd4b8243ef1d88c0eed,
+        type: 3}
+    - target: {fileID: 8739419039962306133, guid: 2f77a6d5998078242937d8dd35d76709,
+        type: 3}
+      propertyPath: meshes.Array.data[2]
+      value: 
+      objectReference: {fileID: 7680776375271168325, guid: 6b667e9c0990bdd4b8243ef1d88c0eed,
+        type: 3}
+    - target: {fileID: 8739419039962306133, guid: 2f77a6d5998078242937d8dd35d76709,
+        type: 3}
+      propertyPath: meshes.Array.data[3]
+      value: 
+      objectReference: {fileID: 7680776375271168325, guid: 6b667e9c0990bdd4b8243ef1d88c0eed,
+        type: 3}
+    - target: {fileID: 8739419039962306133, guid: 2f77a6d5998078242937d8dd35d76709,
+        type: 3}
+      propertyPath: meshes.Array.data[4]
       value: 
       objectReference: {fileID: 7680776375271168325, guid: 6b667e9c0990bdd4b8243ef1d88c0eed,
         type: 3}
@@ -4444,7 +4462,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Launch
+  m_text: Commencer
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -11158,7 +11176,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Creer un salle
+  m_text: Creer une salle
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}

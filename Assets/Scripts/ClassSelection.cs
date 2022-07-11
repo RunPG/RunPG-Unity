@@ -44,6 +44,7 @@ public class ClassSelection : MonoBehaviour
         {
             UserModel user = await Requests.GETUserByName(PlayerProfile.pseudo);
             PlayerProfile.id = user.id;
+            PlayerProfile.character = await Requests.GETUserCharacter(PlayerProfile.id);
             SceneManager.LoadScene("MapScene");
         }
         else
