@@ -47,6 +47,10 @@ MonoBehaviour:
   - AddMonster
   - AddCharacter
   - HealAll
+  - GiveAll
+  - Leave
+  - HideBonusCanvas
+  - HideHealCanvas
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
