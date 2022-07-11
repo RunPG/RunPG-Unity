@@ -127,14 +127,7 @@ public class DungeonMap : MonoBehaviourPun
 
     public void Leave()
     {
-        if (PhotonNetwork.IsMasterClient)
-        {
-            DungeonManager.instance.LeaveDungeon();
-        }
-        else
-        {
-            DungeonManager.instance.Leave();
-        }
+        DungeonManager.instance.LeaveDungeon();
     }
 
     public static void RefreshMap()

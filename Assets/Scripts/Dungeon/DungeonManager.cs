@@ -233,7 +233,12 @@ public class DungeonManager : MonoBehaviourPunCallbacks
 
     public void LeaveDungeon()
     {
-        photonView.RPC("Leave", RpcTarget.All);
+        if (PhotonNetwork.IsMasterClient)
+        {
+            photonView.RPC("Leave", RpcTarget.All);
+        }
+        else
+            Leave();
     }
     [PunRPC]
     public void Leave()
