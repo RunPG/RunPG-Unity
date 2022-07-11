@@ -244,7 +244,7 @@ public class DungeonManager : MonoBehaviourPunCallbacks
     public void Leave()
     {
         LeaveRoom();
-        Destroy(gameObject);
         SceneManager.LoadScene("MapScene");
+        Destroy(gameObject);
     }
 }
