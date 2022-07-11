@@ -24,6 +24,7 @@
 
 public static class GPGSIds
 {
+        public const string achievement_ctait_a_le_boss = "CgkI1tuQscQYEAIQAw"; // <GPGSID>
         public const string achievement_bienvenue__kheg = "CgkI1tuQscQYEAIQAQ"; // <GPGSID>
 
 }
