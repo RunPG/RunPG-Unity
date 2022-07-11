@@ -47,6 +47,8 @@ MonoBehaviour:
   - AddMonster
   - AddCharacter
   - HealAll
+  - GiveAll
+  - Leave
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

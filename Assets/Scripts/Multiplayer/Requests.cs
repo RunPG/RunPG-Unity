@@ -130,7 +130,7 @@ namespace RunPG.Multi
             return null;
         }
 
-        public static async Task<EquipementModel[]> GETEquipements()
+        public static async Task<EquipementBaseModel[]> GETEquipements()
         {
             var url = rootUrl + "equipementBase";
             using (UnityWebRequest request = UnityWebRequest.Get(url))
@@ -146,7 +146,7 @@ namespace RunPG.Multi
                 }
                 else
                 {
-                    var equipements = JsonConvert.DeserializeObject<EquipementModel[]>(request.downloadHandler.text);
+                    var equipements = JsonConvert.DeserializeObject<EquipementBaseModel[]>(request.downloadHandler.text);
                     return equipements;
                 }
             }
@@ -256,19 +256,25 @@ namespace RunPG.Multi
             }
         }
 
-        public static IEnumerator POSTInventoryEquipement(int user_id, int equipement_id)
+        public static async Task<bool> POSTInventoryEquipement(int user_id, NewEquipementModel newUser)
         {
             var url = rootUrl + "user/" + user_id + "/inventory/equipement";
-            var str = "{\"equipementId\":\"" + equipement_id + "\"}";
+            var content = JsonConvert.SerializeObject(newUser);
 
             using UnityWebRequest request = UnityWebRequest.Post(url, "POST");
             request.SetRequestHeader("Content-Type", "application/json");
-            request.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(str));
-            yield return request.SendWebRequest();
+            request.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(content));
+            request.SendWebRequest();
+            while (!request.isDone)
+            {
+                await Task.Yield();
+            }
             if (request.result != UnityWebRequest.Result.Success)
             {
                 Debug.LogError(string.Format("Error in request:{0}\nError Message: {1}", url, request.error));
+                return false;
             }
+            return true;
         }
 
 
