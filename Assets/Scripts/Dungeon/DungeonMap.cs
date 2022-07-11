@@ -11,6 +11,19 @@ public class DungeonMap : MonoBehaviourPun
     public static FlexibleGridLayout flexibleGrid;
     [SerializeField]
     private Canvas LeavePopup;
+
+    [SerializeField]
+    private CanvasGroup MapCanvasGroup;
+    [SerializeField]
+    private CanvasGroup ResultCanvasGroup;
+    [SerializeField]
+    private TextMeshProUGUI ResultText;
+    [SerializeField]
+    private GameObject LeaveButton;
+    [SerializeField]
+    private GameObject StatusButton;
+
+
     private bool mapLoaded = false;
 
     private void Update()
@@ -34,13 +47,27 @@ public class DungeonMap : MonoBehaviourPun
             }
             if (!alive)
             {
-                flexibleGrid.createDefeatText();
+                //flexibleGrid.createDefeatText();
+                DisableCanvasGroup(MapCanvasGroup, false);
+                LeaveButton.SetActive(false);
+                StatusButton.SetActive(false);
+                ResultText.text = "D?faite";
+                ResultText.color = Color.yellow;
+                ActiveCanvasGroup(ResultCanvasGroup);
+                
                 StartCoroutine(flexibleGrid.AutoScroll(2f));
                 victory = false;
             }
             else if (DungeonManager.instance.currentFloor == DungeonManager.instance.maxFloor)
             {
-                flexibleGrid.createVictoryText();
+                //flexibleGrid.createVictoryText();
+                DisableCanvasGroup(MapCanvasGroup, false);
+                LeaveButton.SetActive(false);
+                StatusButton.SetActive(false);
+                ResultText.text = "Victoire";
+                ResultText.color = Color.yellow;
+                ActiveCanvasGroup(ResultCanvasGroup);
+                
                 StartCoroutine(flexibleGrid.AutoScroll(2f));
                 victory = true;
             }
@@ -100,9 +127,7 @@ public class DungeonMap : MonoBehaviourPun
 
     public void Leave()
     {
-        Destroy(DungeonManager.instance.gameObject);
-        DungeonManager.instance.LeaveRoom();
-        SceneManager.LoadScene("MapScene");
+        DungeonManager.instance.LeaveDungeon();
     }
 
     public static void RefreshMap()
@@ -114,4 +139,27 @@ public class DungeonMap : MonoBehaviourPun
         flexibleGrid.displayMap(null);
     }
 
+    public static void DisableCanvasGroup(CanvasGroup canvasGroup, bool alpha = true)
+    {
+        canvasGroup.alpha = alpha ? 0 : 1;
+        canvasGroup.blocksRaycasts = false;
+        canvasGroup.interactable = false;
+    }
+
+    public static void ActiveCanvasGroup(CanvasGroup canvasGroup)
+    {
+        canvasGroup.alpha = 1;
+        canvasGroup.blocksRaycasts = true;
+        canvasGroup.interactable = true;
+    }
+
+    public static void HideHeal()
+    {
+        DungeonManager.instance.HideHealMessage();
+    }
+
+    public static void HideBonus()
+    {
+        DungeonManager.instance.HideBonusMessage();
+    }
 }

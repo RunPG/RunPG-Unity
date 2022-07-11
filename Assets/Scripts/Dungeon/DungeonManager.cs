@@ -3,6 +3,7 @@ using RunPG.Multi;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -123,6 +124,31 @@ public class DungeonManager : MonoBehaviourPunCallbacks
         SceneManager.LoadScene("UI");
     }
 
+
+    public void GiveParty()
+    {
+        photonView.RPC("GiveAll", RpcTarget.All);
+    }
+    [PunRPC]
+    async void GiveAll()
+    {
+        this.currentFloor++;
+        
+        var bonusCanvas = GameObject.Find("BonusPopUp");
+        DungeonMap.ActiveCanvasGroup(bonusCanvas.GetComponent<CanvasGroup>());
+
+        var equipement = (await Requests.GETEquipements())[0];
+
+        var text = bonusCanvas.transform.Find("Background/ResultText").GetComponent<TextMeshProUGUI>();
+        text.text = "Vous avez gagné:\n" + equipement.name;
+
+        var newEquipement = new NewEquipementModel(equipement.id.ToString());
+
+        await Requests.POSTInventoryEquipement(PlayerProfile.id, newEquipement);
+
+    }
+
+
     public void HealParty()
     {
         photonView.RPC("HealAll", RpcTarget.All);
@@ -130,6 +156,7 @@ public class DungeonManager : MonoBehaviourPunCallbacks
     [PunRPC]
     void HealAll()
     {
+        this.currentFloor++;
         foreach (DungeonCharacterInfo character in characters)
         {
             if (character.currentHP > 0)
@@ -138,9 +165,37 @@ public class DungeonManager : MonoBehaviourPunCallbacks
                 Debug.Log("newHP: " + newHP);
                 character.currentHP = newHP < character.maxHP ? newHP : character.maxHP;
                 Debug.Log(character.name + ": " + character.currentHP);
+                DungeonMap.ActiveCanvasGroup(GameObject.Find("HealPopUp").GetComponent<CanvasGroup>());
             }
         }
     }
+
+    public void HideHealMessage()
+    {
+        if (PhotonNetwork.IsMasterClient)
+        {
+            photonView.RPC("HideHealCanvas", RpcTarget.All);
+        }
+    }
+    [PunRPC]
+    public void HideHealCanvas()
+    {
+        DungeonMap.DisableCanvasGroup(GameObject.Find("HealPopUp").GetComponent<CanvasGroup>());
+    }
+
+    public void HideBonusMessage()
+    {
+        if (PhotonNetwork.IsMasterClient)
+        {
+            photonView.RPC("HideBonusCanvas", RpcTarget.All);
+        }
+    }
+    [PunRPC]
+    public void HideBonusCanvas()
+    {
+        DungeonMap.DisableCanvasGroup(GameObject.Find("BonusPopUp").GetComponent<CanvasGroup>());
+    }
+
     public void AddPacours(int toIndex)
     {
         if (PhotonNetwork.IsMasterClient)
@@ -174,5 +229,22 @@ public class DungeonManager : MonoBehaviourPunCallbacks
     public void LeaveRoom()
     {
         PhotonNetwork.LeaveRoom();
+    }
+
+    public void LeaveDungeon()
+    {
+        if (PhotonNetwork.IsMasterClient)
+        {
+            photonView.RPC("Leave", RpcTarget.All);
+        }
+        else
+            Leave();
+    }
+    [PunRPC]
+    public void Leave()
+    {
+        LeaveRoom();
+        SceneManager.LoadScene("MapScene");
+        Destroy(gameObject);
     }
 }
