@@ -42,7 +42,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 
     string gameVersion = "1";
 
-    public static  LobbyManager instance;
+    public static LobbyManager instance;
     public void Awake()
     {
         if (!instance)
@@ -121,7 +121,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         //todo change room name
         PhotonNetwork.CreateRoom(PhotonNetwork.NickName, roomOptions, TypedLobby.Default);
     }
-     
+
     public void Displaylobby()
     {
         lobbyList.alpha = 0;
@@ -144,7 +144,10 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         if (!PhotonNetwork.JoinRoom(roomName))
             Debug.Log("Launcher: ConnectToRoom() failed");
         else
+        {
             Debug.Log("Launcher: ConnectToRoom() worked");
+            startButton.interactable = false;
+        }
     }
     /// <summary>
     /// Start the connection process.
@@ -172,7 +175,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     public override void OnCreatedRoom()
     {
         Debug.Log("room created");
-        
+
         base.OnCreatedRoom();
     }
     public void Connect(RoomInfo roomInfo)
@@ -214,11 +217,11 @@ public class LobbyManager : MonoBehaviourPunCallbacks
             playersList.Add(newPlayerText);
         }
     }
-        // not seen if you're the player connecting
-       /*layerDisplay newPlayerText = Instantiate(playerDisplayPrefab, prefabPos);
-        newPlayerText.SetPlayerInfo(player);
-        playersList.Add(newPlayerText);/*
-    }*/
+    // not seen if you're the player connecting
+    /*layerDisplay newPlayerText = Instantiate(playerDisplayPrefab, prefabPos);
+     newPlayerText.SetPlayerInfo(player);
+     playersList.Add(newPlayerText);/*
+ }*/
     public override void OnPlayerLeftRoom(Player player)
     {
         Debug.LogFormat("OnPlayerLeftRoom() {0}", player.NickName); // seen when other disconnects
@@ -253,12 +256,13 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         roomDisplayListing.Clear();
         playersList.ForEach(roomDisplay => roomDisplay.gameObject.Destroy());
         playersList.Clear();
+        startButton.interactable = true;
     }
     #region Private Methods
 
     #endregion
     #region Public Methods
-       
+
     public override void OnRoomListUpdate(List<RoomInfo> roomList)
     {
         Debug.Log("OnRoomListUpdate");
@@ -306,7 +310,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         Debug.Log("Now this client is in a room.");
         GetPlayerList();
     }
-    
+
     #endregion
 }
 
