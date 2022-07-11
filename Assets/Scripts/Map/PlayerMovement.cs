@@ -34,7 +34,6 @@ public class PlayerMovement : MonoBehaviour
 
 	[SerializeField]
 	private CanvasGroup dungeonDescription;
-
 	/// <summary>
 	/// Use a mock <see cref="T:Mapbox.Unity.Location.TransformLocationProvider"/>,
 	/// rather than a <see cref="T:Mapbox.Unity.Location.EditorLocationProvider"/>. 
@@ -46,17 +45,22 @@ public class PlayerMovement : MonoBehaviour
 
 	private bool[] touchDidMove = new bool[10];
 
-    private void Awake()
-    {
-		Character = Instantiate(meshes[(int)PlayerProfile.character.heroClass], transform);
-		animator = Character.GetComponentInChildren<Animator>();
-    }
-
     /// <summary>
     /// The location provider.
     /// This is public so you change which concrete <see cref="T:Mapbox.Unity.Location.ILocationProvider"/> to use at runtime.
     /// </summary>
     ILocationProvider _locationProvider;
+
+	private bool isUIActive = false;
+
+	private Vector2 CharacterScreenPosition;
+
+	private void Awake()
+    {
+		Character = Instantiate(meshes[(int)PlayerProfile.character.heroClass], transform);
+		animator = Character.GetComponentInChildren<Animator>();
+    }
+
 	public ILocationProvider LocationProvider
 	{
 		private get
@@ -87,6 +91,7 @@ public class PlayerMovement : MonoBehaviour
 	{
 		LocationProvider.OnLocationUpdated += LocationProvider_OnLocationUpdated;
 		_map.OnInitialized += () => _isInitialized = true;
+		CharacterScreenPosition = Camera.main.WorldToScreenPoint(Character.transform.position);
 	}
 
 	void OnDestroy()
@@ -117,9 +122,10 @@ public class PlayerMovement : MonoBehaviour
 		transform.localPosition = Vector3.Lerp(transform.localPosition, _targetPosition, Time.deltaTime * _positionFollowFactor);
 		float speed = Vector3.Distance(transform.localPosition, oldPosition) / (Time.deltaTime * 7f);
 
+
         animator.SetFloat("Speed", speed, 0.5f, Time.deltaTime);
 
-        if (dungeonDescription.alpha == 0)
+		if (!isUIActive)
 		{
 			foreach (var touch in Input.touches)
 			{
@@ -130,7 +136,14 @@ public class PlayerMovement : MonoBehaviour
 				else if (touch.phase == TouchPhase.Moved)
 				{
 					touchDidMove[touch.fingerId] = true;
-					CameraPivot.transform.Rotate(0, 0.05f * touch.deltaPosition.x, 0);
+					float coef = Mathf.Lerp(0.2f, 0.01f, Vector2.Distance(CharacterScreenPosition, touch.position) / 1500f);
+					// C is the center, L the last point, N the new point
+					Vector2 CL = (touch.position - touch.deltaPosition) - CharacterScreenPosition;
+					// dir is the vector orthogonal to CL
+					Vector2 dir = new Vector2(-CL.y, CL.x).normalized;
+					Vector2 LN = touch.deltaPosition;
+					float w = Vector2.Dot(dir, LN);
+					CameraPivot.transform.Rotate(0, coef * w, 0);
 				}
 				else if (touch.phase == TouchPhase.Ended && !touchDidMove[touch.fingerId])
 				{
@@ -141,6 +154,7 @@ public class PlayerMovement : MonoBehaviour
 						DungeonPortal portal = hit.transform.gameObject.GetComponent<DungeonPortal>();
 						if (portal != null)
 						{
+							isUIActive = true;
 							portal.ShowInfo();
 						}
 					}
@@ -148,4 +162,9 @@ public class PlayerMovement : MonoBehaviour
 			}
 		}
 	}
+
+	public void SetUIState(bool state)
+    {
+		isUIActive = state;
+    }
 }
