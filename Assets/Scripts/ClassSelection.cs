@@ -1,6 +1,7 @@
 using RunPG.Multi;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -8,10 +9,10 @@ using UnityEngine.UI;
 public class ClassSelection : MonoBehaviour
 {
     [SerializeField]
-    private Sprite[] sprites;
+    private HeroClass[] classId;
 
     [SerializeField]
-    private HeroClass[] classId;
+    private TextMeshProUGUI className;
 
     [SerializeField]
     private Image classImage;
@@ -26,15 +27,17 @@ public class ClassSelection : MonoBehaviour
 
     public void Left()
     {
-        index = modIndex(index - 1, sprites.Length);
-        classImage.sprite = sprites[index];
+        index = modIndex(index - 1, classId.Length);
+        classImage.sprite = classId[index].GetSprite();
+        className.text = classId[index].GetName();
 
     }
 
     public void Right()
     {
-        index = (index + 1) % sprites.Length;
-        classImage.sprite = sprites[index];
+        index = (index + 1) % classId.Length;
+        classImage.sprite = classId[index].GetSprite();
+        className.text = classId[index].GetName();
     }
 
     public async void Choose()
