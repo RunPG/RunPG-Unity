@@ -170,8 +170,7 @@ public class FlexibleGridLayout : LayoutGroup
             {
                 var itemButton = target.GetComponent<Button>();
                 itemButton.onClick.AddListener(delegate {
-                    DungeonManager.instance.path.Add(toIndex);
-                    DungeonManager.instance.map[path.Count - 1][toIndex].onClickAction();
+                    DungeonManager.instance.AddPacours(toIndex);
                 });
             }
             return fromIndex == path[currentLine] && !defeat ? 2 : 1;

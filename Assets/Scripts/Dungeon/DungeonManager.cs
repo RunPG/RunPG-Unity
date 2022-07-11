@@ -1,9 +1,13 @@
+using Photon.Pun;
+using RunPG.Multi;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class DungeonManager : MonoBehaviour
+public class DungeonManager : MonoBehaviourPunCallbacks
 {
     public class DungeonCharacterInfo
     {
@@ -39,7 +43,7 @@ public class DungeonManager : MonoBehaviour
 
     public static DungeonManager instance;
 
-    public DungeonCharacterInfo[] characters { get; private set; }
+    public List<DungeonCharacterInfo> characters { get; private set; }
     public DungeonMonsterInfo[] enemies { get; private set; }
 
     public int currentFloor = 0;
@@ -47,7 +51,7 @@ public class DungeonManager : MonoBehaviour
     public int maxFloor;
 
     public List<int> path = new List<int>();
-
+    private int seed = -1;
     public List<List<Room>> map;
 
     private void Awake()
@@ -56,14 +60,27 @@ public class DungeonManager : MonoBehaviour
         {
             instance = this;
             DontDestroyOnLoad(this);
-            characters = new DungeonCharacterInfo[2];
-            characters[0] = new DungeonCharacterInfo("yott", "Paladin", new string[4] { "Entaille", "Entaille", "Provocation", "Provocation" }, 120);
-            characters[1] = new DungeonCharacterInfo("Firewop1", "Sorcier", new string[4] { "Boule de feu", "Boule de feu", "Embrasement", "Embrasement" }, 100);
+            var phtnView = gameObject.AddComponent<PhotonView>();
+            phtnView.ViewID = 1;
+
+            characters = new List<DungeonCharacterInfo>();
+
+            Dictionary<string, string> dic = new Dictionary<string, string>();
+            dic.Add("username", PlayerProfile.pseudo);
+            var classe = "Sorcier";
+            if (PlayerProfile.character != null)
+            {
+                classe = PlayerProfile.character.heroClass.GetName();
+            }
+            dic.Add("classe", classe);
+
+            photonView.RPC("AddCharacter", RpcTarget.All, dic);
             path.Add(0);
-            int seed = System.Environment.TickCount;
-            map = DungeonMap.GenerateMap(seed);
-            Debug.Log(seed);
-            maxFloor = map.Count - 1;
+            object objectSeed = System.Environment.TickCount;
+            if (PhotonNetwork.IsMasterClient)
+            {
+                photonView.RPC("SetSeed", RpcTarget.All, objectSeed);
+            }
         }
         else if (instance != this)
         {
@@ -71,15 +88,75 @@ public class DungeonManager : MonoBehaviour
             return;
         }
     }
-
+    private void Update()
+    {
+        //check if RPC was sent
+        if (seed != -1 && map == null)
+        {
+            map = DungeonMap.GenerateMap(seed);
+            Debug.Log("map generated");
+            maxFloor = map.Count - 1;
+        }
+    }
+    [PunRPC]
+    void SetSeed(object objectSeed)
+    {
+        seed = (int) objectSeed;
+    }
+    [PunRPC]
+    void SetPath(object path)
+    {
+        this.path = ((int[])path).ToList();
+        DungeonMap.RefreshMap();
+    }
+    [PunRPC]
+    void AddCharacter(object obj)
+    {
+        Dictionary<string, string> dic = (Dictionary<string, string>)obj;
+        if (dic["classe"] == "Paladin")
+            characters.Add(new DungeonCharacterInfo(dic["username"], "Paladin", new string[4] { "Entaille", "Entaille", "Provocation", "Provocation" }, 120));
+        else
+            characters.Add(new DungeonCharacterInfo(dic["username"], "Sorcier", new string[4] { "Boule de feu", "Boule de feu", "Embrasement", "Embrasement" }, 100));
+    }
     public void StartBattle(DungeonMonsterInfo[] monsters)
     {
         enemies = monsters;
         SceneManager.LoadScene("UI");
     }
 
+
+    public void GiveParty()
+    {
+        photonView.RPC("GiveAll", RpcTarget.All);
+    }
+    [PunRPC]
+    async void GiveAll()
+    {
+        this.currentFloor++;
+        
+        var bonusCanvas = GameObject.Find("BonusPopUp");
+        DungeonMap.ActiveCanvasGroup(bonusCanvas.GetComponent<CanvasGroup>());
+
+        var equipement = (await Requests.GETEquipements())[0];
+
+        var text = bonusCanvas.transform.Find("Background/ResultText").GetComponent<TextMeshProUGUI>();
+        text.text = "Vous avez gagné:\n" + equipement.name;
+
+        var newEquipement = new NewEquipementModel(equipement.id.ToString());
+
+        await Requests.POSTInventoryEquipement(PlayerProfile.id, newEquipement);
+
+    }
+
+
     public void HealParty()
     {
+        photonView.RPC("HealAll", RpcTarget.All);
+    }
+    [PunRPC]
+    void HealAll()
+    {
+        this.currentFloor++;
         foreach (DungeonCharacterInfo character in characters)
         {
             if (character.currentHP > 0)
@@ -88,10 +165,46 @@ public class DungeonManager : MonoBehaviour
                 Debug.Log("newHP: " + newHP);
                 character.currentHP = newHP < character.maxHP ? newHP : character.maxHP;
                 Debug.Log(character.name + ": " + character.currentHP);
+                DungeonMap.ActiveCanvasGroup(GameObject.Find("HealPopUp").GetComponent<CanvasGroup>());
             }
         }
     }
 
+    public void HideHealMessage()
+    {
+        if (PhotonNetwork.IsMasterClient)
+        {
+            photonView.RPC("HideHealCanvas", RpcTarget.All);
+        }
+    }
+    [PunRPC]
+    public void HideHealCanvas()
+    {
+        DungeonMap.DisableCanvasGroup(GameObject.Find("HealPopUp").GetComponent<CanvasGroup>());
+    }
+
+    public void HideBonusMessage()
+    {
+        if (PhotonNetwork.IsMasterClient)
+        {
+            photonView.RPC("HideBonusCanvas", RpcTarget.All);
+        }
+    }
+    [PunRPC]
+    public void HideBonusCanvas()
+    {
+        DungeonMap.DisableCanvasGroup(GameObject.Find("BonusPopUp").GetComponent<CanvasGroup>());
+    }
+
+    public void AddPacours(int toIndex)
+    {
+        if (PhotonNetwork.IsMasterClient)
+        {
+            path.Add(toIndex);
+            photonView.RPC("SetPath", RpcTarget.All, path.ToArray());
+            map[path.Count - 1][toIndex].onClickAction();
+        }
+    }
     public DungeonMonsterInfo[] generateFightEnemies(int difficulty)
     {
         DungeonManager.DungeonMonsterInfo[] roomEnemies = new DungeonManager.DungeonMonsterInfo[difficulty];
@@ -113,5 +226,25 @@ public class DungeonManager : MonoBehaviour
     {
         enemies = monsters;
     }
+    public void LeaveRoom()
+    {
+        PhotonNetwork.LeaveRoom();
+    }
 
+    public void LeaveDungeon()
+    {
+        if (PhotonNetwork.IsMasterClient)
+        {
+            photonView.RPC("Leave", RpcTarget.All);
+        }
+        else
+            Leave();
+    }
+    [PunRPC]
+    public void Leave()
+    {
+        LeaveRoom();
+        SceneManager.LoadScene("MapScene");
+        Destroy(gameObject);
+    }
 }

@@ -68,7 +68,6 @@ public class HealRoom : Room
     public override void onClickAction()
     {
         DungeonManager.instance.HealParty();
-        DungeonManager.instance.currentFloor += 1;
         DungeonMap.RefreshMap();
     }
 
@@ -82,8 +81,7 @@ public class BonusRoom : Room
 {
     public override void onClickAction()
     {
-        DungeonManager.instance.HealParty();
-        DungeonManager.instance.currentFloor += 1;
+        DungeonManager.instance.GiveParty();
         DungeonMap.RefreshMap();
     }
 

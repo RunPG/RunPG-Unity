@@ -1,3 +1,4 @@
+using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -5,42 +6,74 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class DungeonMap : MonoBehaviour
+public class DungeonMap : MonoBehaviourPun
 { 
     public static FlexibleGridLayout flexibleGrid;
     [SerializeField]
     private Canvas LeavePopup;
 
-    private void Start()
+    [SerializeField]
+    private CanvasGroup MapCanvasGroup;
+    [SerializeField]
+    private CanvasGroup ResultCanvasGroup;
+    [SerializeField]
+    private TextMeshProUGUI ResultText;
+    [SerializeField]
+    private GameObject LeaveButton;
+    [SerializeField]
+    private GameObject StatusButton;
+
+
+    private bool mapLoaded = false;
+
+    private void Update()
     {
-        flexibleGrid = GameObject.Find("Map/Scroll View/FlexibleGrid").GetComponent<FlexibleGridLayout>();
-
-        bool alive = false;
-        bool? victory = null;
-
-        if (DungeonManager.instance.currentFloor == 0)
-            StartCoroutine(flexibleGrid.AutoScroll(2f, false));
-
-        foreach (var character in DungeonManager.instance.characters)
+        if (DungeonManager.instance.map != null && !mapLoaded)
         {
-            if (character.currentHP > 0)
-                alive = true;
+            mapLoaded = true;
+            flexibleGrid = GameObject.Find("Map/Scroll View/FlexibleGrid").GetComponent<FlexibleGridLayout>();
+
+
+            bool alive = false;
+            bool? victory = null;
+
+            if (DungeonManager.instance.currentFloor == 0)
+                StartCoroutine(flexibleGrid.AutoScroll(2f, false));
+
+            foreach (var character in DungeonManager.instance.characters)
+            {
+                if (character.currentHP > 0)
+                    alive = true;
+            }
+            if (!alive)
+            {
+                //flexibleGrid.createDefeatText();
+                DisableCanvasGroup(MapCanvasGroup, false);
+                LeaveButton.SetActive(false);
+                StatusButton.SetActive(false);
+                ResultText.text = "D?faite";
+                ResultText.color = Color.yellow;
+                ActiveCanvasGroup(ResultCanvasGroup);
+                
+                StartCoroutine(flexibleGrid.AutoScroll(2f));
+                victory = false;
+            }
+            else if (DungeonManager.instance.currentFloor == DungeonManager.instance.maxFloor)
+            {
+                //flexibleGrid.createVictoryText();
+                DisableCanvasGroup(MapCanvasGroup, false);
+                LeaveButton.SetActive(false);
+                StatusButton.SetActive(false);
+                ResultText.text = "Victoire";
+                ResultText.color = Color.yellow;
+                ActiveCanvasGroup(ResultCanvasGroup);
+                
+                StartCoroutine(flexibleGrid.AutoScroll(2f));
+                victory = true;
+            }
+            flexibleGrid.displayMap(victory);
         }
-        if (!alive)
-        {
-            flexibleGrid.createDefeatText();
-            StartCoroutine(flexibleGrid.AutoScroll(2f));
-            victory = false;
-        }
-        else if (DungeonManager.instance.currentFloor == DungeonManager.instance.maxFloor)
-        {
-            flexibleGrid.createVictoryText();
-            StartCoroutine(flexibleGrid.AutoScroll(2f));
-            victory = true;
-        }
-        flexibleGrid.displayMap(victory);
     }
-
     public static List<List<Room>> GenerateMap(int seed)
     {
         Random.InitState(seed);
@@ -94,8 +127,7 @@ public class DungeonMap : MonoBehaviour
 
     public void Leave()
     {
-        Destroy(DungeonManager.instance);
-        SceneManager.LoadScene("MapScene");
+        DungeonManager.instance.LeaveDungeon();
     }
 
     public static void RefreshMap()
@@ -107,4 +139,27 @@ public class DungeonMap : MonoBehaviour
         flexibleGrid.displayMap(null);
     }
 
+    public static void DisableCanvasGroup(CanvasGroup canvasGroup, bool alpha = true)
+    {
+        canvasGroup.alpha = alpha ? 0 : 1;
+        canvasGroup.blocksRaycasts = false;
+        canvasGroup.interactable = false;
+    }
+
+    public static void ActiveCanvasGroup(CanvasGroup canvasGroup)
+    {
+        canvasGroup.alpha = 1;
+        canvasGroup.blocksRaycasts = true;
+        canvasGroup.interactable = true;
+    }
+
+    public static void HideHeal()
+    {
+        DungeonManager.instance.HideHealMessage();
+    }
+
+    public static void HideBonus()
+    {
+        DungeonManager.instance.HideBonusMessage();
+    }
 }

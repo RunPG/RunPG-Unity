@@ -1,4 +1,7 @@
+using RunPG.Multi;
+using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -99,9 +102,13 @@ public class InventoryScript : MonoBehaviour
     private GameObject selectedFilterBackground;
     private List<List<Item>> items;
 
+    private EquipementModel[] equipements;
+
+    private CharacterModel character;
+
 
     // Start is called before the first frame update
-    void Start()
+    async void Start()
     {
         selectedFilterBackground = weaponBackground;
         items = new List<List<Item>>();
@@ -109,18 +116,47 @@ public class InventoryScript : MonoBehaviour
         for (int i = 0; i < 7; i++)
             items.Add(new List<Item>());
 
-        items[0].Add(new Item { equiped = true, level = 15, name = "Epée", rarity = RarityType.Legendary, sprite = Resources.Load<Sprite>("Inventory/sword") });
-        items[2].Add(new Item { equiped = true, level = 13, name = "Chest", rarity = RarityType.Legendary, sprite = Resources.Load<Sprite>("Inventory/sword") });
-        items[2].Add(new Item { equiped = false, level = 15, name = "Chest", rarity = RarityType.Epic, sprite = Resources.Load<Sprite>("Inventory/sword") });
-        items[2].Add(new Item { equiped = false, level = 15, name = "Chest", rarity = RarityType.Common, sprite = Resources.Load<Sprite>("Inventory/sword") });
-        items[2].Add(new Item { equiped = false, level = 15, name = "Chest", rarity = RarityType.Legendary, sprite = Resources.Load<Sprite>("Inventory/sword") });
-        items[2].Add(new Item { equiped = false, level = 11, name = "Chest", rarity = RarityType.Legendary, sprite = Resources.Load<Sprite>("Inventory/sword") });
-        items[2].Add(new Item { equiped = false, level = 15, name = "Chest", rarity = RarityType.Legendary, sprite = Resources.Load<Sprite>("Inventory/sword") });
-        items[2].Add(new Item { equiped = false, level = 12, name = "Chest", rarity = RarityType.Legendary, sprite = Resources.Load<Sprite>("Inventory/sword") });
-        items[2].Add(new Item { equiped = false, level = 17, name = "Chest", rarity = RarityType.Legendary, sprite = Resources.Load<Sprite>("Inventory/sword") });
-        items[2].Add(new Item { equiped = false, level = 15, name = "Chest", rarity = RarityType.Legendary, sprite = Resources.Load<Sprite>("Inventory/sword") });
-        items[2].Add(new Item { equiped = false, level = 9, name = "Chest", rarity = RarityType.Legendary, sprite = Resources.Load<Sprite>("Inventory/sword") });
+        if (PlayerProfile.id != -1)
+        {
+            InventoryModel[] inventory = await Requests.GETUserInventory(PlayerProfile.id);
+            character = await Requests.GETUserCharacter(PlayerProfile.id);
+            PlayerProfile.character = character;
+
+            foreach (InventoryModel inventoryItem in inventory)
+            {
+                if (inventoryItem.equipementId != null)
+                {
+                    var equipement = await Requests.GETEquipementById(inventoryItem.equipementId ?? 1);
+                    AddEquipement(equipement);
+                }
+                else if (inventoryItem.itemId != null)
+                {
+                    //TODO
+                }
+            }
+
+            AddEquipement(await Requests.GETEquipementById(character.weaponId), true);
+            AddEquipement(await Requests.GETEquipementById(character.helmetId), true);
+            AddEquipement(await Requests.GETEquipementById(character.chestplateId), true);
+            AddEquipement(await Requests.GETEquipementById(character.glovesId), true);
+            AddEquipement(await Requests.GETEquipementById(character.leggingsId), true);
+
+            SetUsername(PlayerProfile.pseudo);
+            SetLevelClasse(15, character.heroClass);
+            SetVitality(10);
+            SetForce(20);
+            SetDefense(5);
+            SetResistance(7);
+            SetPuissance(15);
+            SetAgilite(30);
+            SetPrecision(2);
+            SetImage(character.heroClass);
+
+            SetXp(400, 960);
+        }
+
         LoadSortedInventory(0);
+        
 
         weaponButton.onClick.AddListener(delegate {
             SelectFilter(weaponBackground);
@@ -156,18 +192,6 @@ public class InventoryScript : MonoBehaviour
             SelectFilter(ressourcesBackground);
             LoadSortedInventory(6);
         });
-
-        SetUsername("ZenSheep");
-        SetLevelClasse(5, "Paladin");
-        SetVitality(10);
-        SetForce(20);
-        SetDefense(5);
-        SetResistance(7);
-        SetPuissance(15);
-        SetAgilite(30);
-        SetPrecision(2);
-
-        SetXp(400, 960);
     }
 
     void LoadInventory(int filterIndex)
@@ -194,7 +218,7 @@ public class InventoryScript : MonoBehaviour
 
             var rarity = newItem.Find("Rarity").GetComponent<TextMeshProUGUI>();
             rarity.text = item.rarity.ToString();
-            rarity.color = getRarityColor(item.rarity);
+            rarity.color = item.rarity.GetColor();
 
             if (!item.equiped)
             {
@@ -253,9 +277,9 @@ public class InventoryScript : MonoBehaviour
         usernameTextMesh.text = username;
     }
 
-    void SetLevelClasse(int level, string classe)
-    {
-        levelClasseTextMesh.text = string.Format("Lv.{0} - {1}", level, classe);
+    void SetLevelClasse(int level, HeroClass classe)
+    {        
+        levelClasseTextMesh.text = string.Format("Lv.{0} - {1}", level, classe.GetName());
     }
 
     void SetXp(int currentXP, int maxXP)
@@ -298,13 +322,34 @@ public class InventoryScript : MonoBehaviour
     {
         agiliteTextMesh.text = agilite.ToString();
     }
+
+    void SetImage(HeroClass classe)
+    {
+        classeImage.sprite = classe.GetSprite();
+    }
+
+    void AddEquipement(EquipementModel equipement, bool equiped =false)
+    {
+        var equipementBase = equipement.equipementBase;
+        var equipementType = equipementBase.equipementType;
+        var rarity = equipementBase.rarity;
+        Item newItem = new()
+        {
+            equiped = equiped,
+            level = equipement.statistics.level,
+            name = equipement.equipementBase.name,
+            rarity = rarity,
+            sprite = equipementType.GetSprite()
+        };
+        items[equipementType.GetIndex()].Add(newItem);
+    }
 }
 
 public struct Item
 {
     public string name { get; set; }
     public Sprite sprite { get; set; }
-    public RarityType rarity { get; set; }
+    public Rarity rarity { get; set; }
     public int level { get; set; }
     public bool equiped { get; set; }
 }

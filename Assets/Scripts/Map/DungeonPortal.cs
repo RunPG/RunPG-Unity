@@ -12,6 +12,7 @@ public class DungeonPortal : MonoBehaviour
     private Material originMaterial;
 
     private long id = -1;
+    //[SerializeField] CanvasScaler lobbylist;
 
     private void Start()
     {
@@ -35,12 +36,12 @@ public class DungeonPortal : MonoBehaviour
         //mesh.GetComponent<MeshRenderer>().material = material;
     }
 
-    public bool EnterDungeon()
+    public bool FindDungeonLobbies()
     {
         GameObject player = GameObject.Find("LocationBasedGame/Character");
         if (Vector3.Distance(player.transform.position, transform.position) < 50)
         {
-            SceneManager.LoadScene("DungeonScene");
+            LobbyManager.instance.FindDungeonLobbies();
             return true;
         }
         else

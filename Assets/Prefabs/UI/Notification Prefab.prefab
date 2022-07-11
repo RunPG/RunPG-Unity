@@ -29,6 +29,7 @@ RectTransform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 9192699594497759927}
   m_RootOrder: 1
@@ -149,6 +150,7 @@ RectTransform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 9192699594497759927}
   m_RootOrder: 2
@@ -251,9 +253,8 @@ GameObject:
   - component: {fileID: 9192699594497759927}
   - component: {fileID: 7936691595198884606}
   - component: {fileID: 8133580124685294478}
-  - component: {fileID: 2524249625063002753}
   m_Layer: 5
-  m_Name: FriendRequest Prefab
+  m_Name: Notification Prefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -269,6 +270,7 @@ RectTransform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5389112240620178683}
   - {fileID: 2390644677641797461}
@@ -319,21 +321,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &2524249625063002753
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7107120284308957206}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d6e4f4ffaa15e4241bc585730fd56f41, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  acceptButton: {fileID: 6612871524608015355}
-  refuseButton: {fileID: 2531046780341608556}
-  friend_id: 0
 --- !u!1 &7795826136689880691
 GameObject:
   m_ObjectHideFlags: 0
@@ -362,6 +349,7 @@ RectTransform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 9192699594497759927}
   m_RootOrder: 0

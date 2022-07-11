@@ -3,6 +3,7 @@ using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class MenuManager : MonoBehaviourPunCallbacks
@@ -18,7 +19,7 @@ public class MenuManager : MonoBehaviourPunCallbacks
     [SerializeField]
     private Button guildButton;
     [SerializeField]
-    private Button lobbyButton;
+    private Button dungeonButton;
     [SerializeField]
     private GameObject menuPanel;
     [SerializeField]
@@ -29,57 +30,54 @@ public class MenuManager : MonoBehaviourPunCallbacks
     private GameObject CharacterPanel;
     [SerializeField]
     private GameObject FriendListPanel;
-
+    [SerializeField]
+    private GameObject DungeonPanel;
+    [SerializeField]
+    private GameObject LobbyInvitationPanel;
+    [SerializeField]
+    private Button LobbyInvitationButton;
     // Start is called before the first frame update
     void Start()
     {
-        mainButton.onClick.AddListener(delegate {
-        menuPanel.SetActive(true);
-        mainPanel.SetActive(false);
+        mainButton.onClick.AddListener(delegate
+        {
+            menuPanel.SetActive(true);
+            mainPanel.SetActive(false);
         });
-        CancelButton.onClick.AddListener(delegate {
-            menuPanel.SetActive(false);
+        CancelButton.onClick.AddListener(delegate
+        {
+            menuPanel.SetActive(true);
             GuildPanel.SetActive(false);
             CharacterPanel.SetActive(false);
             FriendListPanel.SetActive(false);
-            mainPanel.SetActive(true);
+            DungeonPanel.SetActive(false);
+            LobbyInvitationPanel.SetActive(false);
         });
-        guildButton.onClick.AddListener(delegate {
+        guildButton.onClick.AddListener(delegate
+        {
             menuPanel.SetActive(false);
             GuildPanel.SetActive(true);
         });
-        CharacterButton.onClick.AddListener(delegate {
+        CharacterButton.onClick.AddListener(delegate
+        {
             menuPanel.SetActive(false);
             CharacterPanel.SetActive(true);
         });
-        FriendListButton.onClick.AddListener(delegate {
+        FriendListButton.onClick.AddListener(delegate
+        {
             menuPanel.SetActive(false);
             FriendListPanel.SetActive(true);
         });
-        lobbyButton.onClick.AddListener(JoinLobby);
-    }
-    void JoinLobby()
-    {
-       
-        RoomOptions roomOptions = new RoomOptions();
-        roomOptions.IsVisible = true;
-        roomOptions.IsVisible = true;
-        roomOptions.MaxPlayers = 4;
-        // null means we dont want a special room name
-        PhotonNetwork.CreateRoom(null, roomOptions, TypedLobby.Default);
-    }
-    public override void OnJoinedRoom()
-    {
-        Debug.Log("PUN Basics Tutorial/Launcher: OnJoinedRoom() called by PUN. Now this client is in a room.");
-        // #Critical: We only load if we are the first player, else we rely on `PhotonNetwork.AutomaticallySyncScene` to sync our instance scene.
-        if (PhotonNetwork.CurrentRoom.PlayerCount == 1)
+        dungeonButton.onClick.AddListener((delegate
         {
-            Debug.Log("We load the Lobby");
+            SceneManager.LoadScene("LobbyBis");
+        }));
+        LobbyInvitationButton.onClick.AddListener((delegate
+        {
+            menuPanel.SetActive(false);
+            LobbyInvitationPanel.SetActive(true);
+        }));
 
-
-            // #Critical
-            // Load the lobby.
-            PhotonNetwork.LoadLevel("Lobby");
-        }
     }
+    
 }

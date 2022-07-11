@@ -25,12 +25,15 @@ public class PlayerMovement : MonoBehaviour
 	[SerializeField]
 	private GameObject CameraPivot;
 
-	[SerializeField]
 	private GameObject Character;
 
-	[SerializeField]
 	private Animator animator;
 
+	[SerializeField]
+	private GameObject[] meshes;
+
+	[SerializeField]
+	private CanvasGroup dungeonDescription;
 	/// <summary>
 	/// Use a mock <see cref="T:Mapbox.Unity.Location.TransformLocationProvider"/>,
 	/// rather than a <see cref="T:Mapbox.Unity.Location.EditorLocationProvider"/>. 
@@ -42,15 +45,22 @@ public class PlayerMovement : MonoBehaviour
 
 	private bool[] touchDidMove = new bool[10];
 
+    /// <summary>
+    /// The location provider.
+    /// This is public so you change which concrete <see cref="T:Mapbox.Unity.Location.ILocationProvider"/> to use at runtime.
+    /// </summary>
+    ILocationProvider _locationProvider;
+
 	private bool isUIActive = false;
 
 	private Vector2 CharacterScreenPosition;
 
-	/// <summary>
-	/// The location provider.
-	/// This is public so you change which concrete <see cref="T:Mapbox.Unity.Location.ILocationProvider"/> to use at runtime.
-	/// </summary>
-	ILocationProvider _locationProvider;
+	private void Awake()
+    {
+		Character = Instantiate(meshes[(int)PlayerProfile.character.heroClass], transform);
+		animator = Character.GetComponentInChildren<Animator>();
+    }
+
 	public ILocationProvider LocationProvider
 	{
 		private get
@@ -108,9 +118,13 @@ public class PlayerMovement : MonoBehaviour
 		{
 			Character.transform.rotation = Quaternion.Lerp(Character.transform.rotation, Quaternion.LookRotation(direction, transform.up), Time.deltaTime * _rotationFollowFactor);
 		}
+		Vector3 oldPosition = transform.localPosition;
 		transform.localPosition = Vector3.Lerp(transform.localPosition, _targetPosition, Time.deltaTime * _positionFollowFactor);
+		float speed = Vector3.Distance(transform.localPosition, oldPosition) / (Time.deltaTime * 7f);
 
-		animator.SetFloat("Speed", Vector2.Distance(transform.position, _targetPosition) / 200f);
+
+        animator.SetFloat("Speed", speed, 0.5f, Time.deltaTime);
+
 		if (!isUIActive)
 		{
 			foreach (var touch in Input.touches)

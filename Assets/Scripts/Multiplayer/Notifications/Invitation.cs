@@ -5,19 +5,18 @@ using UnityEngine.UI;
 
 namespace RunPG.Multi
 {
-    public abstract class NotificationDisplay : MonoBehaviour
+    public abstract class Invitation: MonoBehaviour
     {
-        [SerializeField]
-        private Button acceptButton;
-        [SerializeField]
-        private Button refuseButton;
+        public Button acceptButton;
+        public Button refuseButton;
 
-        public ChatManager chatManager;
+        public NotificationManager notificationManager;
         public int sender_id;
-
         // Start is called before the first frame update
         private void Start()
         {
+            acceptButton = transform.Find("Accept Button").GetComponent<Button>();
+            refuseButton = transform.Find("Refuse Button").GetComponent<Button>();
             acceptButton.onClick.AddListener(OnClickAccept);
             refuseButton.onClick.AddListener(OnClickRefuse);
         }
