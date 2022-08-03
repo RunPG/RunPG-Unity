@@ -217,7 +217,7 @@ public class InventoryScript : MonoBehaviour
             newItem.Find("Level").GetComponent<TextMeshProUGUI>().text = string.Format("Lv. {0}", item.level);
 
             var rarity = newItem.Find("Rarity").GetComponent<TextMeshProUGUI>();
-            rarity.text = item.rarity.ToString();
+            rarity.text = item.rarity.GetName();
             rarity.color = item.rarity.GetColor();
 
             if (!item.equiped)

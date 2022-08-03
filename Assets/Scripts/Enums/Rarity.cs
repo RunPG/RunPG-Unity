@@ -30,4 +30,17 @@ static class RarityMethods
             _ => new Color(0, 0, 0)
         };
     }
+
+    public static string GetName(this Rarity rarity)
+    {
+        return rarity switch
+        {
+            Rarity.COMMON => "Commun",
+            Rarity.RARE => "Rare",
+            Rarity.EPIC => "Epic",
+            Rarity.LEGENDARY => "Légendaire",
+            Rarity.RELIC => "Relique",
+            _ => ""
+        };
+    }
 }
