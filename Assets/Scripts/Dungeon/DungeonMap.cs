@@ -81,34 +81,31 @@ public class DungeonMap : MonoBehaviourPun
         int dungeonSize = Random.Range(4, 5);
         List<List<Room>> map = new List<List<Room>>(dungeonSize);
         map.Add(new List<Room>() { new StartRoom() });
-        //for (int i = 1; i < dungeonSize; i++)
-        //{
-        //    int rowSize = Random.Range(1, 4);
-        //    List<Room> row = new List<Room>(rowSize);
-        //    for (int j = 0; j < rowSize; j++)
-        //    {
-        //        var r = Random.Range(0, 10);
-        //        switch (r)
-        //        {
-        //            case < 2:
-        //                row.Add(new HealRoom());
-        //                break;
+        for (int i = 1; i < dungeonSize; i++)
+        {
+            int rowSize = Random.Range(1, 4);
+            List<Room> row = new List<Room>(rowSize);
+            for (int j = 0; j < rowSize; j++)
+            {
+                var r = Random.Range(0, 10);
+                switch (r)
+                {
+                    case < 2:
+                        row.Add(new HealRoom());
+                        break;
 
-        //            case < 3:
-        //                row.Add(new BonusRoom());
-        //                break;
+                    case < 3:
+                        row.Add(new BonusRoom());
+                        break;
 
-        //            default:
-        //                FightRoom room = new FightRoom(DungeonManager.instance.generateFightEnemies(i));
-        //                row.Add(room);
-        //                break;
-        //        }
-        //    }
-        //    map.Add(row);
-        //}
-        map.Add(new List<Room>() { new FightRoom(DungeonManager.instance.generateFightEnemies(1)), new BonusRoom() });
-        map.Add(new List<Room>() { new FightRoom(DungeonManager.instance.generateFightEnemies(2)), new FightRoom(DungeonManager.instance.generateFightEnemies(2)), new FightRoom(DungeonManager.instance.generateFightEnemies(2)) });
-        map.Add(new List<Room>() { new HealRoom(), new BonusRoom() });
+                    default:
+                        FightRoom room = new FightRoom(DungeonManager.instance.generateFightEnemies(i));
+                        row.Add(room);
+                        break;
+                }
+            }
+            map.Add(row);
+        }
         map.Add(new List<Room>() { new BossRoom(DungeonManager.instance.generateBossEnemies()) });
         return map;
     }
