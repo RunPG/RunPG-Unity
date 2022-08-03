@@ -13,7 +13,7 @@ namespace RunPG.Multi
 {
     public static class Requests
     {
-        static readonly string rootUrl = "http://178.62.237.73/";
+        static readonly string rootUrl = "https://runpg.fooks.fr/";
         public static async Task<UserModel> GETUserByName(string username)
         {
             if (username.Length != 0)
