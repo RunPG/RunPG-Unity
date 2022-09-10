@@ -22,16 +22,28 @@ public class ConnectionManager : MonoBehaviour
 
     public void Start()
     {
+        var config = new PlayGamesClientConfiguration.Builder()
+        .RequestIdToken()
+        .AddOauthScope("https://www.googleapis.com/auth/fitness.activity.read")
+        .RequestServerAuthCode(false)
+        .Build();
+
+        PlayGamesPlatform.InitializeInstance(config);
+        PlayGamesPlatform.DebugLogEnabled = true;
         PlayGamesPlatform.Activate();
-        PlayGamesPlatform.Instance.Authenticate(ProcessAuthenticationAsync);
+
+        Social.localUser.Authenticate(OnGooglePlayGamesLogin);
     }
 
-    internal async void ProcessAuthenticationAsync(SignInStatus status)
+    internal async void OnGooglePlayGamesLogin(bool success)
     {
-        if (status == SignInStatus.Success)
+        if (success)
         {
-            Social.ReportProgress(GPGSIds.achievement_bienvenue__kheg, 100.0f, null);
+            Debug.Log("Login with Google done. IdToken: " + ((PlayGamesLocalUser)Social.localUser).GetIdToken());
+            Debug.Log("Server Auth Code ==> " + PlayGamesPlatform.Instance.GetServerAuthCode());
 
+            Social.ReportProgress(GPGSIds.achievement_bienvenue__kheg, 100.0f, null);
+            
             PlayerProfile.pseudo = Social.localUser.userName;
             PlayerProfile.guid = Social.localUser.id;
 
@@ -59,6 +71,7 @@ public class ConnectionManager : MonoBehaviour
         }
         else
         {
+            Debug.Log("Unsuccessful login");
             if (Application.isEditor)
             {
                 PlayerProfile.pseudo = "UnityEditor";
@@ -81,6 +94,62 @@ public class ConnectionManager : MonoBehaviour
             }
         }
     }
+
+    //internal async void ProcessAuthenticationAsync(SignInStatus status)
+    //{
+    //    if (status == SignInStatus.Success)
+    //    {
+    //        Social.ReportProgress(GPGSIds.achievement_bienvenue__kheg, 100.0f, null);
+
+    //        PlayerProfile.pseudo = Social.localUser.userName;
+    //        PlayerProfile.guid = Social.localUser.id;
+
+    //        if (!Permission.HasUserAuthorizedPermission(Permission.FineLocation))
+    //        {
+    //            var callback = new PermissionCallbacks();
+    //            callback.PermissionDenied += PermissionDenied;
+    //            callback.PermissionGranted += PermissionGranted;
+    //            Permission.RequestUserPermission(Permission.FineLocation, callback);
+    //        }
+    //        else
+    //        {
+    //            var user = await Requests.GETUserByName(PlayerProfile.pseudo);
+    //            if (user != null)
+    //            {
+    //                PlayerProfile.id = user.id;
+    //                PlayerProfile.character = await Requests.GETUserCharacter(PlayerProfile.id);
+    //                SceneManager.LoadScene("MapScene");
+    //            }
+    //            else
+    //            {
+    //                signupButton.SetActive(true);
+    //            }
+    //        }
+    //    }
+    //    else
+    //    {
+    //        if (Application.isEditor)
+    //        {
+    //            PlayerProfile.pseudo = "UnityEditor";
+    //            PlayerProfile.guid = "UnityEditor";
+    //            var user = await Requests.GETUserByName("UnityEditor");
+    //            if (user != null)
+    //            {
+    //                PlayerProfile.id = user.id;
+    //                PlayerProfile.character = await Requests.GETUserCharacter(PlayerProfile.id);
+    //                SceneManager.LoadScene("MapScene");
+    //            }
+    //            else
+    //            {
+    //                signupButton.SetActive(true);
+    //            }
+    //        }
+    //        else
+    //        {
+    //            Debug.LogError("Can't connect to Google Play Games");
+    //        }
+    //    }
+    //}
 
     public void SignUp()
     {
