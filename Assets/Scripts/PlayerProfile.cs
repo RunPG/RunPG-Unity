@@ -5,8 +5,10 @@ using UnityEngine;
 
 public static class PlayerProfile
 {
+    public static string email = null;
     public static string pseudo = null;
     public static string guid = null;
     public static int id;
+    public static string serverAuthCode = null;
     public static CharacterModel character;
 }
