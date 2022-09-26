@@ -76,11 +76,12 @@ public class ConnectionManager : MonoBehaviour
             Debug.Log("Unsuccessful login");
             if (Application.isEditor)
             {
-                PlayerProfile.pseudo = "UnityEditor";
-                PlayerProfile.guid = "UnityEditor";
-                PlayerProfile.email = "unityeditor@exemple.com";
-                
-                var user = await Requests.GETUserByName("UnityEditor");
+                PlayerProfile.pseudo = "editor";
+                PlayerProfile.guid = "editor";
+                PlayerProfile.email = "editor@exemple.com";
+                PlayerProfile.serverAuthCode = "unity-editor";
+
+                var user = await Requests.GETUserByName("editor");
                 if (user != null)
                 {
                     PlayerProfile.id = user.id;
