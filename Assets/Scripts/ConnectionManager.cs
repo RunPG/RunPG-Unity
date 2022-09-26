@@ -25,6 +25,7 @@ public class ConnectionManager : MonoBehaviour
         var config = new PlayGamesClientConfiguration.Builder()
         .RequestIdToken()
         .AddOauthScope("https://www.googleapis.com/auth/fitness.activity.read")
+        .RequestEmail()
         .RequestServerAuthCode(false)
         .Build();
 
@@ -40,12 +41,13 @@ public class ConnectionManager : MonoBehaviour
         if (success)
         {
             Debug.Log("Login with Google done. IdToken: " + ((PlayGamesLocalUser)Social.localUser).GetIdToken());
-            Debug.Log("Server Auth Code ==> " + PlayGamesPlatform.Instance.GetServerAuthCode());
 
             Social.ReportProgress(GPGSIds.achievement_bienvenue__kheg, 100.0f, null);
-            
+
             PlayerProfile.pseudo = Social.localUser.userName;
             PlayerProfile.guid = Social.localUser.id;
+            PlayerProfile.serverAuthCode = PlayGamesPlatform.Instance.GetServerAuthCode();
+            PlayerProfile.email = ((PlayGamesLocalUser)Social.localUser).Email;
 
             if (!Permission.HasUserAuthorizedPermission(Permission.FineLocation))
             {
@@ -74,9 +76,12 @@ public class ConnectionManager : MonoBehaviour
             Debug.Log("Unsuccessful login");
             if (Application.isEditor)
             {
-                PlayerProfile.pseudo = "UnityEditor";
-                PlayerProfile.guid = "UnityEditor";
-                var user = await Requests.GETUserByName("UnityEditor");
+                PlayerProfile.pseudo = "editor";
+                PlayerProfile.guid = "editor";
+                PlayerProfile.email = "editor@exemple.com";
+                PlayerProfile.serverAuthCode = "unity-editor";
+
+                var user = await Requests.GETUserByName("editor");
                 if (user != null)
                 {
                     PlayerProfile.id = user.id;

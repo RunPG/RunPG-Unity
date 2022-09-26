@@ -109,7 +109,7 @@ namespace RunPG.Multi
 
         public static async Task<InventoryModel[]> GETUserInventory(int user_id)
         {
-            var url = rootUrl + "inventory/user/" + user_id;
+            var url = rootUrl + "user/" + user_id + "/inventory";
             using (UnityWebRequest request = UnityWebRequest.Get(url))
             {
                 request.SendWebRequest();
