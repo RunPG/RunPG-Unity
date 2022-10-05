@@ -163,7 +163,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         {
             PhotonNetwork.NickName = PlayerProfile.pseudo;
             Hashtable hash = new Hashtable();
-            hash.Add("heroClass", PlayerProfile.character.heroClass);
+            hash.Add("heroClass", PlayerProfile.characterInfo.heroClass);
             PhotonNetwork.LocalPlayer.SetCustomProperties(hash);
         }
         else

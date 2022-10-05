@@ -25,8 +25,10 @@ public class TeamStatus : MonoBehaviour
         {
             var newStatus = Instantiate(statusPrefab, layout).transform;
             newStatus.Find("Username").GetComponent<TextMeshProUGUI>().text = character.name;
-            newStatus.Find("XpBar").GetComponent<Slider>().value = character.currentHP * 100 / character.maxHP;
-            newStatus.Find("Xp").GetComponent<TextMeshProUGUI>().text = string.Format("{0} / {1} hp", character.currentHP, character.maxHP);
+            newStatus.Find("HpBar").GetComponent<Slider>().value = character.ratioHP;
+            int maxHP = character.stats.GetMaxHp(character.level);
+            int currentHP = Mathf.RoundToInt(character.ratioHP * maxHP);
+            newStatus.Find("Hp").GetComponent<TextMeshProUGUI>().text = string.Format("{0} / {1} hp", currentHP, maxHP);
             newStatus.Find("Image").GetComponent<Image>().sprite = Resources.Load<Sprite>(string.Format("Classe/{0}", character.classType));
         }
     }

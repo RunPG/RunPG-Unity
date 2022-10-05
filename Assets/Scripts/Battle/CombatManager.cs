@@ -293,11 +293,11 @@ public class CombatManager : MonoBehaviourPun
             Character c = characters.Find(c => c.characterName == character.name);
             if (c != null)
             {
-                character.currentHP = c.currentHealth;
+                character.ratioHP = ((float) c.currentHealth) / c.maxHealth;
             }
             else
             {
-                character.currentHP = 0;
+                character.ratioHP = 0f;
             }
         }
 
@@ -431,8 +431,9 @@ public class CombatManager : MonoBehaviourPun
 
     private void InitPlayer(int index)
     {
-        if (dungeonManager.characters[index].currentHP <= 0)
+        if (dungeonManager.characters[index].ratioHP <= 0)
             return;
+
         GameObject character;
         switch (dungeonManager.characters[index].classType)
         {
@@ -448,7 +449,7 @@ public class CombatManager : MonoBehaviourPun
 
         PlayerCharacter playerCharacter = character.GetComponent<PlayerCharacter>();
 
-        playerCharacter.Init(dungeonManager.characters[index].name, dungeonManager.characters[index].skillNames, dungeonManager.characters[index].maxHP, dungeonManager.characters[index].currentHP);
+        playerCharacter.Init(dungeonManager.characters[index].name, dungeonManager.characters[index].level, dungeonManager.characters[index].skillNames, dungeonManager.characters[index].stats, dungeonManager.characters[index].ratioHP);
 
         playerCharacter.tag = "Team1";
 

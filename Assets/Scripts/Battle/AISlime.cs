@@ -13,4 +13,14 @@ public class AISlime : AICharacter
 
         CombatManager.Instance.AddAction(bond);
     }
+
+    protected override void InitStat(int level)
+    {
+        stats.power = 5;
+        stats.precision = 5;
+        stats.vitality = 10 + level * 3;
+        stats.strength = 5 + level * 3;
+        stats.defense = 10 + level * 3;
+        stats.resistance = 10 + level * 3;
+    }
 }

@@ -109,7 +109,7 @@ namespace RunPG.Multi
 
         public static async Task<InventoryModel[]> GETUserInventory(int user_id)
         {
-            var url = rootUrl + "inventory/user/" + user_id;
+            var url = rootUrl + "user/" + user_id + "/inventory";
             using (UnityWebRequest request = UnityWebRequest.Get(url))
             {
                 request.SendWebRequest();
@@ -130,7 +130,7 @@ namespace RunPG.Multi
             return null;
         }
 
-        public static async Task<EquipementBaseModel[]> GETEquipements()
+        public static async Task<EquipmentBaseModel[]> GETEquipements()
         {
             var url = rootUrl + "equipementBase";
             using (UnityWebRequest request = UnityWebRequest.Get(url))
@@ -146,14 +146,14 @@ namespace RunPG.Multi
                 }
                 else
                 {
-                    var equipements = JsonConvert.DeserializeObject<EquipementBaseModel[]>(request.downloadHandler.text);
+                    var equipements = JsonConvert.DeserializeObject<EquipmentBaseModel[]>(request.downloadHandler.text);
                     return equipements;
                 }
             }
             return null;
         }
 
-        public static async Task<EquipementModel> GETEquipementById(int equipement_id)
+        public static async Task<EquipmentModel> GETEquipementById(int equipement_id)
         {
             var url = rootUrl + "equipement/" + equipement_id;
             using (UnityWebRequest request = UnityWebRequest.Get(url))
@@ -169,14 +169,14 @@ namespace RunPG.Multi
                 }
                 else
                 {
-                    var equipement = JsonConvert.DeserializeObject<EquipementModel>(request.downloadHandler.text);
+                    var equipement = JsonConvert.DeserializeObject<EquipmentModel>(request.downloadHandler.text);
                     return equipement;
                 }
             }
             return null;
         }
 
-        public static async Task<CharacterModel> GETUserCharacter(int user_id)
+        public static async Task<UserCharacterModel> GETUserCharacter(int user_id)
         {
             var url = rootUrl + "user/" + user_id + "/character";
             using (UnityWebRequest request = UnityWebRequest.Get(url))
@@ -192,7 +192,7 @@ namespace RunPG.Multi
                 }
                 else
                 {
-                    var character = JsonConvert.DeserializeObject<CharacterModel>(request.downloadHandler.text);
+                    var character = JsonConvert.DeserializeObject<UserCharacterModel>(request.downloadHandler.text);
                     return character;
                 }
             }

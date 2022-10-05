@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace RunPG.Multi
 {
-    public class EquipementBaseModel
+    public class EquipmentBaseModel
     {
         
         public int id;
@@ -15,9 +15,9 @@ namespace RunPG.Multi
         public string description;
         public Rarity rarity;
         public string heroClass;
-        public EquipementType equipementType;
+        public EquipmentType equipementType; // TODO rename
 
-        public EquipementBaseModel(int id, string name, string description, Rarity rarity, string heroClass, EquipementType equipementType)
+        public EquipmentBaseModel(int id, string name, string description, Rarity rarity, string heroClass, EquipmentType equipementType)
         {
             this.id = id;
             this.name = name;

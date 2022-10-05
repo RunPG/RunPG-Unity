@@ -222,7 +222,7 @@ GameObject:
   - component: {fileID: 5077085146618264411}
   - component: {fileID: 5077085146618264410}
   m_Layer: 0
-  m_Name: XpBar
+  m_Name: '|HpBar'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -465,7 +465,7 @@ GameObject:
   - component: {fileID: 5077085147672991104}
   - component: {fileID: 5077085147672991105}
   m_Layer: 5
-  m_Name: Xp
+  m_Name: Hp
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

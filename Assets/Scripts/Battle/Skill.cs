@@ -32,7 +32,21 @@ public class Entaille : Skill
     private IEnumerator DoAction()
     {
         yield return new WaitForSeconds(0.4f);
-        target.TakeDamage(25);
+
+        target.TakeDamage(GetDamage());
+    }
+
+    private int GetDamage()
+    {
+        float attackMultiplier = (float)caster.stats.strength / target.stats.defense;
+        float critMultiplier = 1f;
+
+        if (caster.stats.RollCrit())
+        {
+            critMultiplier = caster.stats.GetCritMultiplier();
+        }
+
+        return Mathf.RoundToInt((30 + 10 * caster.level) * attackMultiplier * critMultiplier);
     }
 }
 
@@ -55,8 +69,21 @@ public class Provocation : Skill
     private IEnumerator DoAction()
     {
         yield return new WaitForSeconds(0.8f);
-        CombatManager.Instance.AddStatus(new TauntStatus(caster), target);
-        target.TakeDamage(20);
+
+        target.TakeDamage(GetDamage());
+    }
+
+    private int GetDamage()
+    {
+        float attackMultiplier = (float)caster.stats.strength / target.stats.defense;
+        float critMultiplier = 1f;
+
+        if (caster.stats.RollCrit())
+        {
+            critMultiplier = caster.stats.GetCritMultiplier();
+        }
+
+        return Mathf.RoundToInt((10 + 5 * caster.level) * attackMultiplier * critMultiplier);
     }
 }
 
@@ -94,9 +121,22 @@ public class BouleDeFeu : Skill
             yield return null;
         }
 
-        target.TakeDamage(25);
+        target.TakeDamage(GetDamage());
         CombatManager.Instance.AddStatus(new BurnStatus(), target);
         GameObject.Destroy(fireball);
+    }
+
+    private int GetDamage()
+    {
+        float attackMultiplier = (float)caster.stats.power / target.stats.resistance;
+        float critMultiplier = 1f;
+
+        if (caster.stats.RollCrit())
+        {
+            critMultiplier = caster.stats.GetCritMultiplier();
+        }
+
+        return Mathf.RoundToInt((25 + 10 * caster.level) * attackMultiplier * critMultiplier);
     }
 }
 
@@ -134,5 +174,19 @@ public class Embrasement : Skill
         CombatManager.Instance.AddStatus(new BurnStatus(), target);
         yield return new WaitForSeconds(1f);
         GameObject.Destroy(ignite);
+    }
+
+    private int GetDamage()
+    {
+        float attackMultiplier = (float)caster.stats.strength / target.stats.defense;
+        float critMultiplier = 1f;
+        float burnMultiplier = target.IsAffectedByStatus("Brulure") ? 1.5f : 1f;
+
+        if (caster.stats.RollCrit())
+        {
+            critMultiplier = caster.stats.GetCritMultiplier();
+        }
+
+        return Mathf.RoundToInt((20 + 8 * caster.level) * attackMultiplier * critMultiplier * burnMultiplier);
     }
 }

@@ -60,7 +60,7 @@ public class ConnectionManager : MonoBehaviour
                 if (user != null)
                 {
                     PlayerProfile.id = user.id;
-                    PlayerProfile.character = await Requests.GETUserCharacter(PlayerProfile.id);
+                    PlayerProfile.characterInfo = await CharacterInfo.Load(PlayerProfile.id);
                     SceneManager.LoadScene("MapScene");
                 }
                 else
@@ -80,7 +80,7 @@ public class ConnectionManager : MonoBehaviour
                 if (user != null)
                 {
                     PlayerProfile.id = user.id;
-                    PlayerProfile.character = await Requests.GETUserCharacter(PlayerProfile.id);
+                    PlayerProfile.characterInfo = await CharacterInfo.Load(PlayerProfile.id);
                     SceneManager.LoadScene("MapScene");
                 }
                 else
@@ -173,7 +173,7 @@ public class ConnectionManager : MonoBehaviour
         if (user != null)
         {
             PlayerProfile.id = user.id;
-            PlayerProfile.character = await Requests.GETUserCharacter(PlayerProfile.id);
+            PlayerProfile.characterInfo = await CharacterInfo.Load(PlayerProfile.id);
             SceneManager.LoadScene("MapScene");
         }
         else
