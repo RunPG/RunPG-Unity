@@ -3220,7 +3220,7 @@ CanvasGroup:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 299272955}
   m_Enabled: 1
-  m_Alpha: 1
+  m_Alpha: 0
   m_Interactable: 0
   m_BlocksRaycasts: 0
   m_IgnoreParentGroups: 0
@@ -3728,7 +3728,7 @@ CanvasGroup:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 318763122}
   m_Enabled: 1
-  m_Alpha: 0
+  m_Alpha: 1
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
@@ -8300,7 +8300,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &953794118
 RectTransform:
   m_ObjectHideFlags: 0
@@ -12139,6 +12139,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   popUp: {fileID: 1413331741}
+  profile: {fileID: 0}
   vitalityPlusButton: {fileID: 351897532}
   strengthPlusButton: {fileID: 91819609}
   defensePlusButton: {fileID: 1976466985}
@@ -15703,7 +15704,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.1925068}
   m_AnchorMax: {x: 0.5, y: 0.33}
   m_AnchoredPosition: {x: -0.00000071525574, y: 0}
-  m_SizeDelta: {x: 755.1, y: -0.00000333786}
+  m_SizeDelta: {x: 823.15, y: -0.00000333786}
   m_Pivot: {x: 0.50000006, y: 0.9999994}
 --- !u!114 &1812794978
 MonoBehaviour:
