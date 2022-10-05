@@ -8,7 +8,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using static Rarity;
 
-public class ProfileScript : MonoBehaviour
+public class CharacterProfileScript : MonoBehaviour
 {
     [Header("Header Informations")]
     [SerializeField]
@@ -206,26 +206,42 @@ public class ProfileScript : MonoBehaviour
             if (!IsEquiped(equipment))
             {
                 var itemIndexCopy = equipmentIndex;
-                newItem.Find("Button").GetComponent<Button>().onClick.AddListener(delegate {
+                newItem.Find("Button").GetComponent<Button>().onClick.AddListener(async delegate {
+                    PlayerEquipmentModel playerEquipment = new PlayerEquipmentModel(PlayerProfile.characterInfo.helmet.id, PlayerProfile.characterInfo.chestplate.id,
+                        PlayerProfile.characterInfo.gloves.id, PlayerProfile.characterInfo.leggings.id, PlayerProfile.characterInfo.weapon.id);
                     switch (equipment.type)
                     {
                         case EquipmentType.WEAPON:
+                            playerEquipment.weaponId = equipment.id;
+                            if (!await Requests.POSTPlayerEquipment(PlayerProfile.id, playerEquipment))
+                                return;
                             PlayerProfile.characterInfo.weapon = equipment;
                             break;
                         case EquipmentType.HELMET:
+                            playerEquipment.helmetId = equipment.id;
+                            if (!await Requests.POSTPlayerEquipment(PlayerProfile.id, playerEquipment))
+                                return;
                             PlayerProfile.characterInfo.helmet = equipment;
                             break;
                         case EquipmentType.CHESTPLATE:
+                            playerEquipment.chestplateId = equipment.id;
+                            if (!await Requests.POSTPlayerEquipment(PlayerProfile.id, playerEquipment))
+                                return;
                             PlayerProfile.characterInfo.chestplate = equipment;
                             break;
                         case EquipmentType.GLOVES:
+                            playerEquipment.glovesId = equipment.id;
+                            if (!await Requests.POSTPlayerEquipment(PlayerProfile.id, playerEquipment))
+                                return;
                             PlayerProfile.characterInfo.gloves = equipment;
                             break;
                         case EquipmentType.LEGGINGS:
+                            playerEquipment.leggingsId = equipment.id;
+                            if (!await Requests.POSTPlayerEquipment(PlayerProfile.id, playerEquipment))
+                                return;
                             PlayerProfile.characterInfo.leggings = equipment;
                             break;
                     }
-                    // TODO: Update backend data
                     RefreshStat();
                     LoadInventory(filterIndex);
                 });

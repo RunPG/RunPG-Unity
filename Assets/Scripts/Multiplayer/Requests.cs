@@ -277,6 +277,47 @@ namespace RunPG.Multi
             return true;
         }
 
+        public static async Task<bool> POSTPlayerEquipment(int user_id, PlayerEquipmentModel equipments)
+        {
+            var url = rootUrl + "user/" + user_id + "/equiped";
+            var content = JsonConvert.SerializeObject(equipments);
+
+            using UnityWebRequest request = UnityWebRequest.Post(url, "POST");
+            request.SetRequestHeader("Content-Type", "application/json");
+            request.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(content));
+            request.SendWebRequest();
+            while (!request.isDone)
+            {
+                await Task.Yield();
+            }
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogError(string.Format("Error in request:{0}\nError Message: {1}", url, request.error));
+                return false;
+            }
+            return true;
+        }
+
+        public static async Task<bool> POSTLevelUp(int user_id, StatisticsModel statistics)
+        {
+            var url = rootUrl + "user/" + user_id + "/levelup";
+            var content = JsonConvert.SerializeObject(statistics);
+
+            using UnityWebRequest request = UnityWebRequest.Post(url, "POST");
+            request.SetRequestHeader("Content-Type", "application/json");
+            request.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(content));
+            request.SendWebRequest();
+            while (!request.isDone)
+            {
+                await Task.Yield();
+            }
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogError(string.Format("Error in request:{0}\nError Message: {1}", url, request.error));
+                return false;
+            }
+            return true;
+        }
 
         public static IEnumerator DELETENotification(int userId, int friend_id, NotificationType type)
         {

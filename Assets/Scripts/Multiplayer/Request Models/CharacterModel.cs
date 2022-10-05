@@ -38,6 +38,6 @@ namespace RunPG.Multi
             this.glovesId = glovesId;
             this.weaponId = weaponId;
             this.heroClass = heroClass;
+        }
     }
-}
 }

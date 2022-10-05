@@ -1,5 +1,7 @@
+using RunPG.Multi;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,7 +12,7 @@ public class LevelUpManager : MonoBehaviour
     [SerializeField]
     private CanvasGroup popUp;
     [SerializeField]
-    private ProfileScript profile;
+    private CharacterProfileScript profile;
 
     [Space(20)]
     [Header("Plus Buttons")]
@@ -97,18 +99,31 @@ public class LevelUpManager : MonoBehaviour
         ShowPopUp(true);
     }
 
-    public void CompleteLevelUp()
+    public async Task CompleteLevelUpAsync()
     {
-        PlayerProfile.characterInfo.level += numberLevelUp;
+        int newLevel = PlayerProfile.characterInfo.level + numberLevelUp;
+        int newVitality = PlayerProfile.characterInfo.vitality + vitalityIncrement;
+        int newStrength = PlayerProfile.characterInfo.strength + strengthIncrement;
+        int newDefense = PlayerProfile.characterInfo.defense + defenseIncrement;
+        int newPower = PlayerProfile.characterInfo.power + powerIncrement;
+        int newResistance = PlayerProfile.characterInfo.resistance + resistanceIncrement;
+        int newPrecision = PlayerProfile.characterInfo.precision + precisionIncrement;
+
+        StatisticsModel statistics = new StatisticsModel(PlayerProfile.characterInfo.statisticsId, newLevel, newVitality, newStrength, newDefense, newPower, newResistance, newPrecision);
+        if (!await Requests.POSTLevelUp(PlayerProfile.id, statistics))
+            return;
+
+        PlayerProfile.characterInfo.level = newLevel;
         PlayerProfile.characterInfo.experience = futureXp;
-        PlayerProfile.characterInfo.vitality += vitalityIncrement;
-        PlayerProfile.characterInfo.strength += strengthIncrement;
-        PlayerProfile.characterInfo.defense += defenseIncrement;
-        PlayerProfile.characterInfo.power += powerIncrement;
-        PlayerProfile.characterInfo.resistance += resistanceIncrement;
-        PlayerProfile.characterInfo.precision += precisionIncrement;
+        PlayerProfile.characterInfo.vitality = newVitality;
+        PlayerProfile.characterInfo.strength = newStrength;
+        PlayerProfile.characterInfo.defense = newDefense;
+        PlayerProfile.characterInfo.power = newPower;
+        PlayerProfile.characterInfo.resistance = newResistance;
+        PlayerProfile.characterInfo.precision = newPrecision;
         profile.RefreshStat();
         profile.RefreshXp();
+        
         ShowPopUp(false);
     }
 

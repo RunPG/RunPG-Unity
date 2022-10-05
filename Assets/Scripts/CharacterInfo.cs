@@ -47,6 +47,7 @@ public class CharacterInfo
     public HeroClass heroClass;
     public int level;
     public int experience;
+    public int statisticsId;
     public int vitality;
     public int strength;
     public int defense;
@@ -107,6 +108,7 @@ public class CharacterInfo
         characterInfo.heroClass = userCharacterModel.character.heroClass;
         characterInfo.level = userCharacterModel.statistics.level;
         characterInfo.experience = userCharacterModel.character.experience;
+        characterInfo.statisticsId = userCharacterModel.statistics.id;
         characterInfo.vitality = userCharacterModel.statistics.vitality;
         characterInfo.strength = userCharacterModel.statistics.strength;
         characterInfo.defense = userCharacterModel.statistics.defense;
