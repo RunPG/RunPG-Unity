@@ -31,14 +31,14 @@ public class DungeonManager : MonoBehaviourPunCallbacks
 
     public class DungeonMonsterInfo
     {
-        public DungeonMonsterInfo(string name, int maxHP)
+        public DungeonMonsterInfo(string name, int level)
         {
             this.name = name;
-            this.maxHP = maxHP;
+            this.level = level;
         }
 
         public string name { get; private set; }
-        public int maxHP { get; private set; }
+        public int level { get; private set; }
         // level and stats when it will be needed
     }
 
@@ -54,6 +54,7 @@ public class DungeonManager : MonoBehaviourPunCallbacks
     public List<int> path = new List<int>();
     private int seed = -1;
     public List<List<Room>> map;
+    public int dungeonLevel;
 
     private void Awake()
     {
@@ -115,6 +116,8 @@ public class DungeonManager : MonoBehaviourPunCallbacks
         //check if RPC was sent
         if (seed != -1 && map == null)
         {
+            dungeonLevel = characters.Max(character => character.level);
+            Debug.Log("Dungeon level: " + dungeonLevel);
             map = DungeonMap.GenerateMap(seed);
             Debug.Log("map generated");
             maxFloor = map.Count - 1;
@@ -232,7 +235,7 @@ public class DungeonManager : MonoBehaviourPunCallbacks
         DungeonManager.DungeonMonsterInfo[] roomEnemies = new DungeonManager.DungeonMonsterInfo[difficulty];
         for (int k = 0; k < difficulty; k++)
         {
-            roomEnemies[k] = new DungeonManager.DungeonMonsterInfo("Slime", 50);
+            roomEnemies[k] = new DungeonManager.DungeonMonsterInfo("Slime", dungeonLevel);
         }
         return roomEnemies;
     }
@@ -240,7 +243,7 @@ public class DungeonManager : MonoBehaviourPunCallbacks
     public DungeonMonsterInfo[] generateBossEnemies()
     {
         DungeonManager.DungeonMonsterInfo[] bossEnemies = new DungeonManager.DungeonMonsterInfo[1];
-        bossEnemies[0] = new DungeonManager.DungeonMonsterInfo("King Slime", 200);
+        bossEnemies[0] = new DungeonManager.DungeonMonsterInfo("King Slime", dungeonLevel * 2);
         return bossEnemies;
     }
 

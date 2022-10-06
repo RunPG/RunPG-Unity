@@ -464,7 +464,7 @@ public class CombatManager : MonoBehaviourPun
             monster.Add("name", dungeonManager.enemies[index].name);
             monster.Add("index", index.ToString());
             monster.Add("length", dungeonManager.enemies.Length.ToString());
-            monster.Add("maxHp", dungeonManager.enemies[index].maxHP.ToString());
+            monster.Add("level", dungeonManager.enemies[index].level.ToString());
             photonView.RPC("AddMonster", RpcTarget.All, monster);
         }
     }
@@ -476,7 +476,7 @@ public class CombatManager : MonoBehaviourPun
         var name = dic["name"];
         var index = int.Parse(dic["index"]);
         var length = int.Parse(dic["length"]);
-        var maxHp = int.Parse(dic["maxHp"]);
+        var level = int.Parse(dic["level"]);
 
         GameObject monster = name switch
         {
@@ -486,7 +486,7 @@ public class CombatManager : MonoBehaviourPun
         };
 
         AICharacter AICharacter = monster.GetComponent<AICharacter>();
-        AICharacter.Init(name, maxHp);
+        AICharacter.Init(name, level);
 
         AICharacter.tag = "Team2";
 
