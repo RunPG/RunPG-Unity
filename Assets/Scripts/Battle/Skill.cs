@@ -13,6 +13,20 @@ public abstract class Skill : CombatAction
     }
 }
 
+public class Attendre : Skill 
+{
+    public override string name => "Attendre";
+
+    public override PossibleTarget possibleTarget => PossibleTarget.Self;
+
+    public override int speed => 0;
+
+    public override float duration => 0.5f;
+
+    public override int cooldown => 0;
+
+    public override void PlayAction() { }
+}
 
 public class Entaille : Skill
 {

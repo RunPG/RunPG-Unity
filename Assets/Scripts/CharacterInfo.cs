@@ -54,6 +54,10 @@ public class CharacterInfo
     public int power;
     public int resistance;
     public int precision;
+    public string spell1;
+    public string spell2;
+    public string spell3;
+    public string spell4;
     public Equipment weapon;
     public Equipment helmet;
     public Equipment chestplate;

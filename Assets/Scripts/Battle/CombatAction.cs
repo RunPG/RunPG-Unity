@@ -23,19 +23,6 @@ public abstract class CombatAction
     public abstract void PlayAction();
 }
 
-public class Attendre : CombatAction
-{
-    public override string name => "Attendre";
-
-    public override PossibleTarget possibleTarget => PossibleTarget.Self;
-
-    public override int speed => 0;
-
-    public override float duration => 0.5f;
-
-    public override void PlayAction() {}
-}
-
 public class Bond : CombatAction
 {
     public override string name => "Bond";

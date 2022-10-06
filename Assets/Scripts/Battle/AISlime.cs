@@ -16,11 +16,6 @@ public class AISlime : AICharacter
 
     protected override void InitStat(int level)
     {
-        stats.power = 5;
-        stats.precision = 5;
-        stats.vitality = 10 + level * 3;
-        stats.strength = 5 + level * 3;
-        stats.defense = 10 + level * 3;
-        stats.resistance = 10 + level * 3;
+        stats = new Statistics(5, 5, 10 + level * 3, 5 + level * 3, 10 + level * 3, 10 + level * 3);
     }
 }
