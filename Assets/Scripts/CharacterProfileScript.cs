@@ -299,7 +299,7 @@ public class CharacterProfileScript : MonoBehaviour
             EquipmentType.HELMET => PlayerProfile.characterInfo.helmet != null &&  equipment.id == PlayerProfile.characterInfo.helmet.id,
             EquipmentType.CHESTPLATE => PlayerProfile.characterInfo.chestplate != null && equipment.id == PlayerProfile.characterInfo.chestplate.id,
             EquipmentType.GLOVES => PlayerProfile.characterInfo.gloves != null && equipment.id == PlayerProfile.characterInfo.gloves.id,
-            EquipmentType.LEGGINGS => PlayerProfile.characterInfo.leggings != null && equipment.id == PlayerProfile.characterInfo.gloves.id,
+            EquipmentType.LEGGINGS => PlayerProfile.characterInfo.leggings != null && equipment.id == PlayerProfile.characterInfo.leggings.id,
             _ => false
         };
     }
