@@ -295,11 +295,11 @@ public class CharacterProfileScript : MonoBehaviour
     {
         return equipment.type switch
         {
-            EquipmentType.WEAPON => PlayerProfile.characterInfo.weapon == null || equipment.id == PlayerProfile.characterInfo.weapon.id,
-            EquipmentType.HELMET => PlayerProfile.characterInfo.helmet == null ||  equipment.id == PlayerProfile.characterInfo.helmet.id,
-            EquipmentType.CHESTPLATE => PlayerProfile.characterInfo.chestplate == null || equipment.id == PlayerProfile.characterInfo.chestplate.id,
-            EquipmentType.GLOVES => PlayerProfile.characterInfo.gloves == null || equipment.id == PlayerProfile.characterInfo.gloves.id,
-            EquipmentType.LEGGINGS => PlayerProfile.characterInfo.leggings == null || equipment.id == PlayerProfile.characterInfo.gloves.id,
+            EquipmentType.WEAPON => PlayerProfile.characterInfo.weapon != null && equipment.id == PlayerProfile.characterInfo.weapon.id,
+            EquipmentType.HELMET => PlayerProfile.characterInfo.helmet != null &&  equipment.id == PlayerProfile.characterInfo.helmet.id,
+            EquipmentType.CHESTPLATE => PlayerProfile.characterInfo.chestplate != null && equipment.id == PlayerProfile.characterInfo.chestplate.id,
+            EquipmentType.GLOVES => PlayerProfile.characterInfo.gloves != null && equipment.id == PlayerProfile.characterInfo.gloves.id,
+            EquipmentType.LEGGINGS => PlayerProfile.characterInfo.leggings != null && equipment.id == PlayerProfile.characterInfo.gloves.id,
             _ => false
         };
     }
