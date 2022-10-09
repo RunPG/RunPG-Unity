@@ -170,9 +170,9 @@ public class DungeonManager : MonoBehaviourPunCallbacks
         var text = bonusCanvas.transform.Find("Background/ResultText").GetComponent<TextMeshProUGUI>();
         text.text = "Vous avez gagné:\n" + equipement.name;
 
-        var newEquipement = new NewEquipementModel(equipement.id.ToString());
+        var newEquipment = new NewEquipementModel(equipement.id.ToString(), new StatisticsModel(-1, 1, 1, 1, 1, 1, 1, 1));
 
-        await Requests.POSTInventoryEquipement(PlayerProfile.id, newEquipement);
+        await Requests.POSTInventoryEquipement(PlayerProfile.id, newEquipment);
 
     }
 
