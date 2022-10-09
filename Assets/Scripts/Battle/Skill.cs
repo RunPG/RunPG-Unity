@@ -185,7 +185,7 @@ public class Embrasement : Skill
 
     private int GetDamage()
     {
-        float attackMultiplier = (float)caster.stats.strength / target.stats.defense;
+        float attackMultiplier = (float)caster.stats.power / target.stats.resistance;
         float critMultiplier = 1f;
         float burnMultiplier = target.IsAffectedByStatus("Brulure") ? 1.5f : 1f;
 
@@ -194,6 +194,6 @@ public class Embrasement : Skill
             critMultiplier = caster.stats.GetCritMultiplier();
         }
 
-        return Mathf.RoundToInt((30 + 10 * caster.level) * attackMultiplier * critMultiplier * burnMultiplier);
+        return Mathf.RoundToInt((20 + 10 * caster.level) * attackMultiplier * critMultiplier * burnMultiplier);
     }
 }
