@@ -11,33 +11,34 @@ public class DungeonManager : MonoBehaviourPunCallbacks
 {
     public class DungeonCharacterInfo
     {
-        public DungeonCharacterInfo(string name, string classType, string[] skillNames, int maxHP)
+        public DungeonCharacterInfo(string name, int level, string classType, string[] skillNames, Statistics stats)
         {
             this.name = name;
+            this.level = level;
             this.classType = classType;
             this.skillNames = skillNames;
-            this.maxHP = maxHP;
-            this.currentHP = maxHP;
+            this.ratioHP = 1f;
+            this.stats = stats;
         }
 
         public string name { get; private set; }
+        public int level { get; private set; }
         public string classType { get; private set; }
         public string[] skillNames { get; private set; }
-        public int maxHP { get; private set; }
-        public int currentHP { get; set; }
-        // level, stats and equipement when it'll be needed
+        public float ratioHP;
+        public Statistics stats { get; private set; }
     }
 
     public class DungeonMonsterInfo
     {
-        public DungeonMonsterInfo(string name, int maxHP)
+        public DungeonMonsterInfo(string name, int level)
         {
             this.name = name;
-            this.maxHP = maxHP;
+            this.level = level;
         }
 
         public string name { get; private set; }
-        public int maxHP { get; private set; }
+        public int level { get; private set; }
         // level and stats when it will be needed
     }
 
@@ -53,6 +54,7 @@ public class DungeonManager : MonoBehaviourPunCallbacks
     public List<int> path = new List<int>();
     private int seed = -1;
     public List<List<Room>> map;
+    public int dungeonLevel;
 
     private void Awake()
     {
@@ -67,12 +69,33 @@ public class DungeonManager : MonoBehaviourPunCallbacks
 
             Dictionary<string, string> dic = new Dictionary<string, string>();
             dic.Add("username", PlayerProfile.pseudo);
-            var classe = "Sorcier";
-            if (PlayerProfile.character != null)
+            string heroClass = "Sorcier";
+            int level = 1;
+            int vitality = 1;
+            int strength = 1;
+            int defense = 1;
+            int power = 1;
+            int resistance = 1;
+            int precision = 1;
+            if (PlayerProfile.characterInfo != null)
             {
-                classe = PlayerProfile.character.heroClass.GetName();
+                heroClass = PlayerProfile.characterInfo.heroClass.GetName();
+                level = PlayerProfile.characterInfo.level;
+                vitality = PlayerProfile.characterInfo.vitality;
+                strength = PlayerProfile.characterInfo.strength;
+                defense = PlayerProfile.characterInfo.defense;
+                power = PlayerProfile.characterInfo.power;
+                resistance = PlayerProfile.characterInfo.resistance;
+                precision = PlayerProfile.characterInfo.precision;
             }
-            dic.Add("classe", classe);
+            dic.Add("heroClass", heroClass);
+            dic.Add("level", level.ToString());
+            dic.Add("vitality", vitality.ToString());
+            dic.Add("strength", strength.ToString());
+            dic.Add("defense", defense.ToString());
+            dic.Add("power", power.ToString());
+            dic.Add("resistance", resistance.ToString());
+            dic.Add("precision", precision.ToString());
 
             photonView.RPC("AddCharacter", RpcTarget.All, dic);
             path.Add(0);
@@ -93,6 +116,8 @@ public class DungeonManager : MonoBehaviourPunCallbacks
         //check if RPC was sent
         if (seed != -1 && map == null)
         {
+            dungeonLevel = characters.Max(character => character.level);
+            Debug.Log("Dungeon level: " + dungeonLevel);
             map = DungeonMap.GenerateMap(seed);
             Debug.Log("map generated");
             maxFloor = map.Count - 1;
@@ -113,10 +138,13 @@ public class DungeonManager : MonoBehaviourPunCallbacks
     void AddCharacter(object obj)
     {
         Dictionary<string, string> dic = (Dictionary<string, string>)obj;
-        if (dic["classe"] == "Paladin")
-            characters.Add(new DungeonCharacterInfo(dic["username"], "Paladin", new string[4] { "Entaille", "Entaille", "Provocation", "Provocation" }, 120));
+
+        if (dic["heroClass"] == "Paladin")
+            characters.Add(new DungeonCharacterInfo(dic["username"], int.Parse(dic["level"]) , "Paladin", new string[4] { "Entaille", "Provocation", "Attendre", "Attendre" },
+                new Statistics(int.Parse(dic["vitality"]), int.Parse(dic["strength"]), int.Parse(dic["defense"]), int.Parse(dic["power"]), int.Parse(dic["resistance"]), int.Parse(dic["precision"]))));
         else
-            characters.Add(new DungeonCharacterInfo(dic["username"], "Sorcier", new string[4] { "Boule de feu", "Boule de feu", "Embrasement", "Embrasement" }, 100));
+            characters.Add(new DungeonCharacterInfo(dic["username"], int.Parse(dic["level"]), "Sorcier", new string[4] { "Boule de feu", "Embrasement", "Attendre", "Attendre" },
+                new Statistics(int.Parse(dic["vitality"]), int.Parse(dic["strength"]), int.Parse(dic["defense"]), int.Parse(dic["power"]), int.Parse(dic["resistance"]), int.Parse(dic["precision"]))));
     }
     public void StartBattle(DungeonMonsterInfo[] monsters)
     {
@@ -142,9 +170,9 @@ public class DungeonManager : MonoBehaviourPunCallbacks
         var text = bonusCanvas.transform.Find("Background/ResultText").GetComponent<TextMeshProUGUI>();
         text.text = "Vous avez gagné:\n" + equipement.name;
 
-        var newEquipement = new NewEquipementModel(equipement.id.ToString());
+        var newEquipment = new NewEquipementModel(equipement.id.ToString(), new StatisticsModel(-1, 1, 1, 1, 1, 1, 1, 1));
 
-        await Requests.POSTInventoryEquipement(PlayerProfile.id, newEquipement);
+        await Requests.POSTInventoryEquipement(PlayerProfile.id, newEquipment);
 
     }
 
@@ -159,15 +187,12 @@ public class DungeonManager : MonoBehaviourPunCallbacks
         this.currentFloor++;
         foreach (DungeonCharacterInfo character in characters)
         {
-            if (character.currentHP > 0)
+            if (character.ratioHP > 0)
             {
-                int newHP = character.currentHP + (int)(0.25f * character.maxHP);
-                Debug.Log("newHP: " + newHP);
-                character.currentHP = newHP < character.maxHP ? newHP : character.maxHP;
-                Debug.Log(character.name + ": " + character.currentHP);
-                DungeonMap.ActiveCanvasGroup(GameObject.Find("HealPopUp").GetComponent<CanvasGroup>());
+                character.ratioHP = Mathf.Min(1f, character.ratioHP + 0.25f);
             }
         }
+        DungeonMap.ActiveCanvasGroup(GameObject.Find("HealPopUp").GetComponent<CanvasGroup>());
     }
 
     public void HideHealMessage()
@@ -210,7 +235,7 @@ public class DungeonManager : MonoBehaviourPunCallbacks
         DungeonManager.DungeonMonsterInfo[] roomEnemies = new DungeonManager.DungeonMonsterInfo[difficulty];
         for (int k = 0; k < difficulty; k++)
         {
-            roomEnemies[k] = new DungeonManager.DungeonMonsterInfo("Slime", 50);
+            roomEnemies[k] = new DungeonManager.DungeonMonsterInfo("Slime", dungeonLevel);
         }
         return roomEnemies;
     }
@@ -218,7 +243,7 @@ public class DungeonManager : MonoBehaviourPunCallbacks
     public DungeonMonsterInfo[] generateBossEnemies()
     {
         DungeonManager.DungeonMonsterInfo[] bossEnemies = new DungeonManager.DungeonMonsterInfo[1];
-        bossEnemies[0] = new DungeonManager.DungeonMonsterInfo("King Slime", 200);
+        bossEnemies[0] = new DungeonManager.DungeonMonsterInfo("King Slime", dungeonLevel * 2);
         return bossEnemies;
     }
 

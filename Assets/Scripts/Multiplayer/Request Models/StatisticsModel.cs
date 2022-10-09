@@ -11,27 +11,23 @@ namespace RunPG.Multi
         public int id;
         public int level;
         public int vitality;
-        public int endurance;
         public int strength;
         public int defense;
         public int power;
         public int resistance;
         public int precision;
-        public int agility;
 
 
-        public StatisticsModel(int id, int level, int vitality, int endurance, int strength, int defense, int power, int resistance, int precision, int agility)
+        public StatisticsModel(int id, int level, int vitality, int strength, int defense, int power, int resistance, int precision)
         {
             this.id = id;
             this.level = level;
             this.vitality = vitality;
-            this.endurance = endurance;
             this.strength = strength;
             this.defense = defense;
             this.power = power;
             this.resistance = resistance;
             this.precision = precision;
-            this.agility = agility;
         }
     }
 }

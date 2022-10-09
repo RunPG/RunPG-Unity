@@ -62,7 +62,7 @@ public class ConnectionManager : MonoBehaviour
                 if (user != null)
                 {
                     PlayerProfile.id = user.id;
-                    PlayerProfile.character = await Requests.GETUserCharacter(PlayerProfile.id);
+                    PlayerProfile.characterInfo = await CharacterInfo.Load(PlayerProfile.id);
                     SceneManager.LoadScene("MapScene");
                 }
                 else
@@ -76,16 +76,16 @@ public class ConnectionManager : MonoBehaviour
             Debug.Log("Unsuccessful login");
             if (Application.isEditor)
             {
-                PlayerProfile.pseudo = "editor";
-                PlayerProfile.guid = "editor";
+                PlayerProfile.pseudo = "Editor";
+                PlayerProfile.guid = "unity";
                 PlayerProfile.email = "editor@exemple.com";
                 PlayerProfile.serverAuthCode = "unity-editor";
 
-                var user = await Requests.GETUserByName("editor");
+                var user = await Requests.GETUserByName(PlayerProfile.pseudo);
                 if (user != null)
                 {
                     PlayerProfile.id = user.id;
-                    PlayerProfile.character = await Requests.GETUserCharacter(PlayerProfile.id);
+                    PlayerProfile.characterInfo = await CharacterInfo.Load(PlayerProfile.id);
                     SceneManager.LoadScene("MapScene");
                 }
                 else
@@ -178,7 +178,7 @@ public class ConnectionManager : MonoBehaviour
         if (user != null)
         {
             PlayerProfile.id = user.id;
-            PlayerProfile.character = await Requests.GETUserCharacter(PlayerProfile.id);
+            PlayerProfile.characterInfo = await CharacterInfo.Load(PlayerProfile.id);
             SceneManager.LoadScene("MapScene");
         }
         else

@@ -4,11 +4,15 @@ using UnityEngine;
 
 public abstract class AICharacter : Character
 {
-    public void Init(string name, int maxHP)
+    public void Init(string name, int level)
     {
         characterName = name;
-        maxHealth = maxHP;
-        currentHealth = maxHP;
+        this.level = level;
+        InitStat(level);
+        maxHealth = this.stats.GetMaxHp(this.level);
+        currentHealth = maxHealth;
         healthBar.SetMaxHealth(maxHealth);
     }
+
+    protected abstract void InitStat(int level);
 }

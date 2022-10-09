@@ -13,4 +13,9 @@ public class AISlime : AICharacter
 
         CombatManager.Instance.AddAction(bond);
     }
+
+    protected override void InitStat(int level)
+    {
+        stats = new Statistics(5, 5, 10 + level * 3, 5 + level * 3, 10 + level * 3, 10 + level * 3);
+    }
 }

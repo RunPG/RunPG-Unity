@@ -57,7 +57,7 @@ public class PlayerMovement : MonoBehaviour
 
 	private void Awake()
     {
-		Character = Instantiate(meshes[(int)PlayerProfile.character.heroClass], transform);
+		Character = Instantiate(meshes[(int)PlayerProfile.characterInfo.heroClass], transform);
 		animator = Character.GetComponentInChildren<Animator>();
     }
 

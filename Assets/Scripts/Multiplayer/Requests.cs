@@ -130,7 +130,7 @@ namespace RunPG.Multi
             return null;
         }
 
-        public static async Task<EquipementBaseModel[]> GETEquipements()
+        public static async Task<EquipmentBaseModel[]> GETEquipements()
         {
             var url = rootUrl + "equipementBase";
             using (UnityWebRequest request = UnityWebRequest.Get(url))
@@ -146,14 +146,14 @@ namespace RunPG.Multi
                 }
                 else
                 {
-                    var equipements = JsonConvert.DeserializeObject<EquipementBaseModel[]>(request.downloadHandler.text);
+                    var equipements = JsonConvert.DeserializeObject<EquipmentBaseModel[]>(request.downloadHandler.text);
                     return equipements;
                 }
             }
             return null;
         }
 
-        public static async Task<EquipementModel> GETEquipementById(int equipement_id)
+        public static async Task<EquipmentModel> GETEquipementById(int equipement_id)
         {
             var url = rootUrl + "equipement/" + equipement_id;
             using (UnityWebRequest request = UnityWebRequest.Get(url))
@@ -169,14 +169,14 @@ namespace RunPG.Multi
                 }
                 else
                 {
-                    var equipement = JsonConvert.DeserializeObject<EquipementModel>(request.downloadHandler.text);
+                    var equipement = JsonConvert.DeserializeObject<EquipmentModel>(request.downloadHandler.text);
                     return equipement;
                 }
             }
             return null;
         }
 
-        public static async Task<CharacterModel> GETUserCharacter(int user_id)
+        public static async Task<UserCharacterModel> GETUserCharacter(int user_id)
         {
             var url = rootUrl + "user/" + user_id + "/character";
             using (UnityWebRequest request = UnityWebRequest.Get(url))
@@ -192,7 +192,7 @@ namespace RunPG.Multi
                 }
                 else
                 {
-                    var character = JsonConvert.DeserializeObject<CharacterModel>(request.downloadHandler.text);
+                    var character = JsonConvert.DeserializeObject<UserCharacterModel>(request.downloadHandler.text);
                     return character;
                 }
             }
@@ -256,10 +256,10 @@ namespace RunPG.Multi
             }
         }
 
-        public static async Task<bool> POSTInventoryEquipement(int user_id, NewEquipementModel newUser)
+        public static async Task<bool> POSTInventoryEquipement(int user_id, NewEquipementModel newEquipment)
         {
             var url = rootUrl + "user/" + user_id + "/inventory/equipement";
-            var content = JsonConvert.SerializeObject(newUser);
+            var content = JsonConvert.SerializeObject(newEquipment);
 
             using UnityWebRequest request = UnityWebRequest.Post(url, "POST");
             request.SetRequestHeader("Content-Type", "application/json");
@@ -277,6 +277,47 @@ namespace RunPG.Multi
             return true;
         }
 
+        public static async Task<bool> POSTPlayerEquipment(int user_id, PlayerEquipmentModel equipments)
+        {
+            var url = rootUrl + "user/" + user_id + "/equiped";
+            var content = JsonConvert.SerializeObject(equipments);
+
+            using UnityWebRequest request = UnityWebRequest.Post(url, "POST");
+            request.SetRequestHeader("Content-Type", "application/json");
+            request.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(content));
+            request.SendWebRequest();
+            while (!request.isDone)
+            {
+                await Task.Yield();
+            }
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogError(string.Format("Error in request:{0}\nError Message: {1}", url, request.error));
+                return false;
+            }
+            return true;
+        }
+
+        public static async Task<bool> POSTLevelUp(int user_id, StatisticsModel statistics)
+        {
+            var url = rootUrl + "user/" + user_id + "/levelup";
+            var content = JsonConvert.SerializeObject(statistics);
+
+            using UnityWebRequest request = UnityWebRequest.Post(url, "POST");
+            request.SetRequestHeader("Content-Type", "application/json");
+            request.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(content));
+            request.SendWebRequest();
+            while (!request.isDone)
+            {
+                await Task.Yield();
+            }
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogError(string.Format("Error in request:{0}\nError Message: {1}", url, request.error));
+                return false;
+            }
+            return true;
+        }
 
         public static IEnumerator DELETENotification(int userId, int friend_id, NotificationType type)
         {

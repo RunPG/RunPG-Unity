@@ -7,10 +7,12 @@ namespace RunPG.Multi
     public class NewEquipementModel
     {
         public string equipementBaseId;
+        public StatisticsModel statistics;
 
-        public NewEquipementModel(string equipementBaseId)
+        public NewEquipementModel(string equipementBaseId, StatisticsModel statistics)
         {
             this.equipementBaseId = equipementBaseId;
+            this.statistics = statistics;
         }
     }
 }

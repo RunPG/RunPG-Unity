@@ -10,5 +10,5 @@ public static class PlayerProfile
     public static string guid = null;
     public static int id;
     public static string serverAuthCode = null;
-    public static CharacterModel character;
+    public static CharacterInfo characterInfo;
 }

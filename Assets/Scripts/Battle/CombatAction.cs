@@ -23,19 +23,6 @@ public abstract class CombatAction
     public abstract void PlayAction();
 }
 
-public class Attendre : CombatAction
-{
-    public override string name => "Attendre";
-
-    public override PossibleTarget possibleTarget => PossibleTarget.Self;
-
-    public override int speed => 0;
-
-    public override float duration => 0.5f;
-
-    public override void PlayAction() {}
-}
-
 public class Bond : CombatAction
 {
     public override string name => "Bond";
@@ -52,6 +39,19 @@ public class Bond : CombatAction
     private IEnumerator DoAction()
     {
         yield return new WaitForSeconds(0.9f);
-        target.TakeDamage(10);
+        target.TakeDamage(GetDamage());
+    }
+
+    private int GetDamage()
+    {
+        float attackMultiplier = (float)caster.stats.strength / target.stats.defense;
+        float critMultiplier = 1f;
+
+        if (caster.stats.RollCrit())
+        {
+            critMultiplier = caster.stats.GetCritMultiplier();
+        }
+
+        return Mathf.RoundToInt((10 + 4 * caster.level) * attackMultiplier * critMultiplier);
     }
 }

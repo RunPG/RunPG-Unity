@@ -42,7 +42,7 @@ public class DungeonMap : MonoBehaviourPun
 
             foreach (var character in DungeonManager.instance.characters)
             {
-                if (character.currentHP > 0)
+                if (character.ratioHP > 0f)
                     alive = true;
             }
             if (!alive)

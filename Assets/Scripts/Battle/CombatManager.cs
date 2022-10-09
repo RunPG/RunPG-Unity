@@ -293,11 +293,11 @@ public class CombatManager : MonoBehaviourPun
             Character c = characters.Find(c => c.characterName == character.name);
             if (c != null)
             {
-                character.currentHP = c.currentHealth;
+                character.ratioHP = ((float) c.currentHealth) / c.maxHealth;
             }
             else
             {
-                character.currentHP = 0;
+                character.ratioHP = 0f;
             }
         }
 
@@ -431,8 +431,9 @@ public class CombatManager : MonoBehaviourPun
 
     private void InitPlayer(int index)
     {
-        if (dungeonManager.characters[index].currentHP <= 0)
+        if (dungeonManager.characters[index].ratioHP <= 0)
             return;
+
         GameObject character;
         switch (dungeonManager.characters[index].classType)
         {
@@ -448,7 +449,7 @@ public class CombatManager : MonoBehaviourPun
 
         PlayerCharacter playerCharacter = character.GetComponent<PlayerCharacter>();
 
-        playerCharacter.Init(dungeonManager.characters[index].name, dungeonManager.characters[index].skillNames, dungeonManager.characters[index].maxHP, dungeonManager.characters[index].currentHP);
+        playerCharacter.Init(dungeonManager.characters[index].name, dungeonManager.characters[index].level, dungeonManager.characters[index].skillNames, dungeonManager.characters[index].stats, dungeonManager.characters[index].ratioHP);
 
         playerCharacter.tag = "Team1";
 
@@ -463,7 +464,7 @@ public class CombatManager : MonoBehaviourPun
             monster.Add("name", dungeonManager.enemies[index].name);
             monster.Add("index", index.ToString());
             monster.Add("length", dungeonManager.enemies.Length.ToString());
-            monster.Add("maxHp", dungeonManager.enemies[index].maxHP.ToString());
+            monster.Add("level", dungeonManager.enemies[index].level.ToString());
             photonView.RPC("AddMonster", RpcTarget.All, monster);
         }
     }
@@ -475,7 +476,7 @@ public class CombatManager : MonoBehaviourPun
         var name = dic["name"];
         var index = int.Parse(dic["index"]);
         var length = int.Parse(dic["length"]);
-        var maxHp = int.Parse(dic["maxHp"]);
+        var level = int.Parse(dic["level"]);
 
         GameObject monster = name switch
         {
@@ -485,7 +486,7 @@ public class CombatManager : MonoBehaviourPun
         };
 
         AICharacter AICharacter = monster.GetComponent<AICharacter>();
-        AICharacter.Init(name, maxHp);
+        AICharacter.Init(name, level);
 
         AICharacter.tag = "Team2";
 
