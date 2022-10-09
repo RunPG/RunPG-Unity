@@ -11,5 +11,11 @@ namespace RunPG.Multi
     {
         public int userId; 
         public int friendId;
+
+        public FriendModel(int userId, int friendId)
+        {
+            this.userId = userId;
+            this.friendId = friendId;
+        }
     }
 }

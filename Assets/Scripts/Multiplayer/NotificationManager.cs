@@ -74,8 +74,7 @@ namespace RunPG.Multi
             UserModel friend = await Requests.GETUserByName(friendUsername);
             if (friend != null)
             {
-                var coroutine = Requests.POSTSendNotification(GlobalVariables.userId, friend.id, NotificationType.FRIENDLIST);
-                StartCoroutine(coroutine);
+                var coroutine = await Requests.POSTSendNotification(GlobalVariables.userId, friend.id, NotificationType.FRIENDLIST);
                 Debug.Log("Starting POSTREGISTER" + GlobalVariables.userId);
             }
             else

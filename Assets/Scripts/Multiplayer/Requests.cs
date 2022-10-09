@@ -107,6 +107,30 @@ namespace RunPG.Multi
             return null;
         }
 
+        public static async Task<NotificationModel> GETNotificationsByTypeBySender(int receiver_id, NotificationType type, int sender_id)
+        {
+            string url = rootUrl + "user/" + receiver_id + "/notification/" + type + "/" + sender_id;
+            using (UnityWebRequest request = UnityWebRequest.Get(url))
+            {
+
+                request.SendWebRequest();
+                while (!request.isDone)
+                {
+                    await Task.Yield();
+                }
+                if (request.result != UnityWebRequest.Result.Success)
+                {
+                    Debug.LogError(string.Format("Error in request:{0}\nError Message: {1}\nError 404 can be normal (not an error)", url, request.error));
+                }
+                else
+                {
+                    var notifications = JsonConvert.DeserializeObject<NotificationModel>(request.downloadHandler.text);
+                    return notifications;
+                }
+            }
+            return null;
+        }
+
         public static async Task<InventoryModel[]> GETUserInventory(int user_id)
         {
             var url = rootUrl + "user/" + user_id + "/inventory";
@@ -199,6 +223,29 @@ namespace RunPG.Multi
             return null;
         }
 
+        public static async Task<FriendModel> GETUserFriend(int user_id, int friend_id)
+        {
+            var url = rootUrl + "user/" + user_id + "/friend/" + friend_id;
+            using (UnityWebRequest request = UnityWebRequest.Get(url))
+            {
+                request.SendWebRequest();
+                while (!request.isDone)
+                {
+                    await Task.Yield();
+                }
+                if (request.result != UnityWebRequest.Result.Success)
+                {
+                    Debug.LogError(string.Format("Error in request:{0}\nError Message: {1}\nError 404 can be normal (not an error)", url, request.error));
+                }
+                else
+                {
+                    var friendModel = JsonConvert.DeserializeObject<FriendModel>(request.downloadHandler.text);
+                    return friendModel;
+                }
+            }
+            return null;
+        }
+
         public static async Task<bool> POSTNewUser(NewUserModel newUser)
         {
             var url = rootUrl + "user";
@@ -222,38 +269,40 @@ namespace RunPG.Multi
             }
         }
 
-        public static IEnumerator POSTAddFriend(int userId, int friend_id)
+        public static async Task<bool> POSTAddFriend(int userId, int friend_id)
         {
-            // var str = "http://178.62.237.73/user/" + PhotonNetwork.NickName + "/friend/7";
-            var str = rootUrl + "user/" + userId + "/friend/" + friend_id;
-            Debug.Log(str);
-            using (UnityWebRequest request = UnityWebRequest.Post(str, "POST"))
+            var url = rootUrl + "user/" + userId + "/friend/" + friend_id;
+            
+            using UnityWebRequest request = UnityWebRequest.Post(url, "POST");
+            request.SendWebRequest();
+            while (!request.isDone)
             {
-                yield return request.SendWebRequest();
-
-                if (request.result != UnityWebRequest.Result.Success)
-                {
-                    Debug.Log(request.error);
-                    // _errorMessage.SetActive(true);
-                    // _errorMessage.GetComponent<Text>().text = "User already exist!";
-                }
+                await Task.Yield();
             }
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogError(string.Format("Error in request:{0}\nError Message: {1}", url, request.error));
+                return false;
+            }
+            return true;
         }
-        public static IEnumerator POSTSendNotification(int senderId, int receiver_id, NotificationType type)
+        
+        public static async Task<bool> POSTSendNotification(int senderId, int receiver_id, NotificationType type)
         {
-            var str = rootUrl + "user/" + receiver_id + "/notification/" + type + "/" + senderId;
-            Debug.Log(str);
-            using (UnityWebRequest request = UnityWebRequest.Post(str, "POST"))
+            var url = rootUrl + "user/" + receiver_id + "/notification/" + type + "/" + senderId;
+            
+            using UnityWebRequest request = UnityWebRequest.Post(url, "POST");
+            request.SendWebRequest();
+            while (!request.isDone)
             {
-                yield return request.SendWebRequest();
-
-                if (request.result != UnityWebRequest.Result.Success)
-                {
-                    Debug.Log(request.error);
-                    // _errorMessage.SetActive(true);
-                    // _errorMessage.GetComponent<Text>().text = "User already exist!";
-                }
+                await Task.Yield();
             }
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogError(string.Format("Error in request:{0}\nError Message: {1}", url, request.error));
+                return false;
+            }
+            return true;
         }
 
         public static async Task<bool> POSTInventoryEquipement(int user_id, NewEquipementModel newEquipment)
@@ -319,19 +368,23 @@ namespace RunPG.Multi
             return true;
         }
 
-        public static IEnumerator DELETENotification(int userId, int friend_id, NotificationType type)
+        public static async Task<bool> DELETENotification(int userId, int friend_id, NotificationType type)
         {
-            var str = rootUrl + "user/" + userId + "/notification/" + type + '/'+ friend_id;
-            Debug.Log(str);
-            using (UnityWebRequest request = UnityWebRequest.Delete(str))
+            var url = rootUrl + "user/" + userId + "/notification/" + type + '/'+ friend_id;
+            
+            using UnityWebRequest request = UnityWebRequest.Delete(url);
+            request.SendWebRequest();
+            while (!request.isDone)
             {
-                yield return request.SendWebRequest();
-
-                if (request.result != UnityWebRequest.Result.Success)
-                {
-                    Debug.Log(request.error);
-                }
+                await Task.Yield();
             }
+
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogError(string.Format("Error in request:{0}\nError Message: {1}", url, request.error));
+                return false;
+            }
+            return true;
         }
     }
 }
