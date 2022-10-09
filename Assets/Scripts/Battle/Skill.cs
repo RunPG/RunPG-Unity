@@ -194,6 +194,6 @@ public class Embrasement : Skill
             critMultiplier = caster.stats.GetCritMultiplier();
         }
 
-        return Mathf.RoundToInt((20 + 8 * caster.level) * attackMultiplier * critMultiplier * burnMultiplier);
+        return Mathf.RoundToInt((30 + 10 * caster.level) * attackMultiplier * critMultiplier * burnMultiplier);
     }
 }
