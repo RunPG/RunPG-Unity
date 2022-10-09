@@ -73,6 +73,7 @@ public class PlayerCharacter : Character
 
         characterName = name;
         healthBarInstance.transform.Find("Name").GetComponent<TextMeshProUGUI>().text = name;
+        healthBarInstance.transform.Find("Level").GetComponent<TextMeshProUGUI>().text = "Lvl. " + level;
 
         skills[0] = (Skill)CombatManager.Instance.GetCombatAction(skillNames[0]);
         skills[1] = (Skill)CombatManager.Instance.GetCombatAction(skillNames[1]);
