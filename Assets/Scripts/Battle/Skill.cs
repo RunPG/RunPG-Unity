@@ -177,14 +177,7 @@ public class Embrasement : Skill
         yield return new WaitForSeconds(0.65f);
         Vector3 pos = target.transform.Find("Ground").transform.position;
         GameObject ignite = GameObject.Instantiate<GameObject>(igniteRessource, pos, Quaternion.identity);
-        if (target.IsAffectedByStatus("Brulure"))
-        {
-            target.TakeDamage(40);
-        }
-        else
-        {
-            target.TakeDamage(20);
-        }
+        target.TakeDamage(GetDamage());
         CombatManager.Instance.AddStatus(new BurnStatus(), target);
         yield return new WaitForSeconds(1f);
         GameObject.Destroy(ignite);
