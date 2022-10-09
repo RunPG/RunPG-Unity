@@ -206,7 +206,9 @@ public class CharacterProfileScript : MonoBehaviour
             if (!IsEquiped(equipment))
             {
                 var itemIndexCopy = equipmentIndex;
-                newItem.Find("Button").GetComponent<Button>().onClick.AddListener(async delegate {
+                Button button = newItem.Find("Button").GetComponent<Button>();
+                button.onClick.RemoveAllListeners();
+                button.onClick.AddListener(async delegate {
                     PlayerEquipmentModel playerEquipment = new PlayerEquipmentModel(PlayerProfile.characterInfo.helmet.id, PlayerProfile.characterInfo.chestplate.id,
                         PlayerProfile.characterInfo.gloves.id, PlayerProfile.characterInfo.leggings.id, PlayerProfile.characterInfo.weapon.id);
                     switch (equipment.type)

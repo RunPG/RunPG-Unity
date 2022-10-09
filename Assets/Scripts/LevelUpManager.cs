@@ -87,6 +87,12 @@ public class LevelUpManager : MonoBehaviour
 
     public void OpenLevelUp()
     {
+        vitalityIncrement = 0;
+        strengthIncrement = 0;
+        defenseIncrement = 0;
+        powerIncrement = 0;
+        resistanceIncrement = 0;
+        precisionIncrement = 0;
         CalculateLevelUp();
         RefreshButtons();
         UpdatePointsText();
@@ -99,7 +105,7 @@ public class LevelUpManager : MonoBehaviour
         ShowPopUp(true);
     }
 
-    public async Task CompleteLevelUpAsync()
+    public async void CompleteLevelUp()
     {
         int newLevel = PlayerProfile.characterInfo.level + numberLevelUp;
         int newVitality = PlayerProfile.characterInfo.vitality + vitalityIncrement;
@@ -239,21 +245,21 @@ public class LevelUpManager : MonoBehaviour
     private void RefreshButtons()
     {
         bool state = (numberLevelUp * 4) - (vitalityIncrement + strengthIncrement + defenseIncrement + powerIncrement + resistanceIncrement + precisionIncrement) > 0;
-        vitalityPlusButton.enabled = state;
-        strengthPlusButton.enabled = state;
-        defensePlusButton.enabled = state;
-        powerPlusButton.enabled = state;
-        resistancePlusButton.enabled = state;
-        precisionPlusButton.enabled = state;
+        vitalityPlusButton.interactable = state;
+        strengthPlusButton.interactable = state;
+        defensePlusButton.interactable = state;
+        powerPlusButton.interactable = state;
+        resistancePlusButton.interactable = state;
+        precisionPlusButton.interactable = state;
 
-        vitalityMinusButton.enabled = vitalityIncrement > 0;
-        strengthMinusButton.enabled = strengthIncrement > 0;
-        defenseMinusButton.enabled = defenseIncrement > 0;
-        powerMinusButton.enabled = powerIncrement > 0;
-        resistanceMinusButton.enabled = resistanceIncrement > 0;
-        precisionMinusButton.enabled = precisionIncrement > 0;
+        vitalityMinusButton.interactable = vitalityIncrement > 0;
+        strengthMinusButton.interactable = strengthIncrement > 0;
+        defenseMinusButton.interactable = defenseIncrement > 0;
+        powerMinusButton.interactable = powerIncrement > 0;
+        resistanceMinusButton.interactable = resistanceIncrement > 0;
+        precisionMinusButton.interactable = precisionIncrement > 0;
 
-        completeButton.enabled = !state;
+        completeButton.interactable = !state;
     }
 
     private void UpdatePointsText()

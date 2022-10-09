@@ -11868,7 +11868,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   popUp: {fileID: 1413331741}
-  profile: {fileID: 0}
+  profile: {fileID: 299272963}
   vitalityPlusButton: {fileID: 351897532}
   strengthPlusButton: {fileID: 91819609}
   defensePlusButton: {fileID: 1976466985}
