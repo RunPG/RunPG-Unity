@@ -21,7 +21,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 
     [SerializeField] private CanvasGroup lobbyList;
     [SerializeField] private CanvasGroup lobby;
-    [SerializeField] private CanvasGroup DungeonDescription;
+    [SerializeField] private CanvasGroup portalDescription;
     [SerializeField] private CanvasGroup InventoryCanvas;
     [SerializeField] private CanvasGroup canvas;
 
@@ -31,6 +31,10 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     private Transform playerPrefabPos;
     [SerializeField]
     private PlayerDisplay playerDisplayPrefab;
+
+    [SerializeField]
+    private PlayerMovement playerMovement;
+
     private List<PlayerDisplay> playersList = new List<PlayerDisplay>();
     private List<RoomDisplay> roomDisplayListing = new List<RoomDisplay>();
     /// <summary>
@@ -64,12 +68,13 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         lobby.alpha = 0;
         lobby.interactable = false;
         lobby.blocksRaycasts = false;
-        DungeonDescription.alpha = 0;
-        DungeonDescription.interactable = false;
-        DungeonDescription.blocksRaycasts = false;
+        portalDescription.alpha = 0;
+        portalDescription.interactable = false;
+        portalDescription.blocksRaycasts = false;
         canvas.alpha = 0;
         canvas.interactable = false;
         canvas.blocksRaycasts = false;
+        playerMovement.SetUIState(true);
     }
 
     public void Start()
@@ -94,13 +99,11 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         lobbyList.interactable = false;
         lobbyList.blocksRaycasts = false;
 
-        DungeonDescription.alpha = 1;
-        DungeonDescription.interactable = true;
-        DungeonDescription.blocksRaycasts = true;
-
         canvas.alpha = 1;
         canvas.interactable = true;
         canvas.blocksRaycasts = true;
+
+        playerMovement.SetUIState(false);
     }
     /*
     [PunRPC]

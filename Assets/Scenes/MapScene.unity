@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028352, g: 0.22571376, b: 0.3069224, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1700,13 +1700,14 @@ MonoBehaviour:
   startButton: {fileID: 2021801419}
   lobbyList: {fileID: 26413379}
   lobby: {fileID: 357829250}
-  DungeonDescription: {fileID: 356504483}
+  portalDescription: {fileID: 356504483}
   InventoryCanvas: {fileID: 299272957}
   canvas: {fileID: 1049330826}
   lobbyPrefabPos: {fileID: 69135554}
   playerPrefabPos: {fileID: 120975138}
   playerDisplayPrefab: {fileID: 4524501509815181583, guid: 783b6690f5fcdc44abba235d6e99ae30,
     type: 3}
+  playerMovement: {fileID: 757680894}
 --- !u!4 &184373589
 Transform:
   m_ObjectHideFlags: 0
@@ -3070,7 +3071,7 @@ GameObject:
   - component: {fileID: 356504483}
   - component: {fileID: 356504482}
   m_Layer: 5
-  m_Name: DungeonDescription
+  m_Name: PortalDescription
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3170,9 +3171,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 35e493406d959f143b658b2f60cebe52, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  descriptionCanvas: {fileID: 356504483}
   distanceWarning: {fileID: 786150601}
-  dungeon: {fileID: 0}
+  title: {fileID: 1133367923}
 --- !u!225 &356504483
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -13773,11 +13773,8 @@ MonoBehaviour:
         - airport_label
         - barrier_line
         - building
-        - contour
         - country_label
-        - hillshade
         - housenum_label
-        - landcover
         - landuse
         - landuse_overlay
         - marine_label
@@ -13789,7 +13786,6 @@ MonoBehaviour:
         - road
         - road_label
         - state_label
-        - traffic
         - water
         - water_label
         - waterway
@@ -13881,7 +13877,7 @@ MonoBehaviour:
         _maskValue: 0
         selectedTypes: 
         spawnPrefabOptions:
-          prefab: {fileID: 7904719197150478613, guid: bb70599d0c538d7429cc645ec4ac09df,
+          prefab: {fileID: 7125049973745293952, guid: a47189c2d672a06458204bee9b9e79dc,
             type: 3}
           scaleDownWithWorld: 0
         findByType: 0
