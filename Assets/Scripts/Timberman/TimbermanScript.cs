@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -185,7 +186,8 @@ public class TimbermanScript : MonoBehaviour
         while (elapsedTime < 30f)
         {
             elapsedTime += Time.deltaTime;
-            timer.text = "0:" + (Mathf.RoundToInt(30f - elapsedTime)).ToString();
+            TimeSpan remainingTime = new TimeSpan(0, 0, Mathf.RoundToInt(30f - elapsedTime));
+            timer.text = remainingTime.ToString(@"m\:ss");
             yield return null;
         }
         End();
