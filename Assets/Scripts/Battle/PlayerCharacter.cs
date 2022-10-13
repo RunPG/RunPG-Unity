@@ -67,20 +67,25 @@ public class PlayerCharacter : Character
         buttonObjectBack = ObjectCanvas.transform.Find("Background/Button Back").GetComponent<Button>();
     }
 
-    public void Init(string name, string[] skillNames, int maxHP, int currentHP)
+    public void Init(string name, int level, string[] skillNames, Statistics stats, float percentHP)
     {
+        this.level = level;
+
         characterName = name;
         healthBarInstance.transform.Find("Name").GetComponent<TextMeshProUGUI>().text = name;
+        healthBarInstance.transform.Find("Level").GetComponent<TextMeshProUGUI>().text = "Lvl. " + level;
 
         skills[0] = (Skill)CombatManager.Instance.GetCombatAction(skillNames[0]);
         skills[1] = (Skill)CombatManager.Instance.GetCombatAction(skillNames[1]);
         skills[2] = (Skill)CombatManager.Instance.GetCombatAction(skillNames[2]);
         skills[3] = (Skill)CombatManager.Instance.GetCombatAction(skillNames[3]);
 
-        maxHealth = maxHP;
-        currentHealth = currentHP;
-        healthBar.SetMaxHealth(maxHP);
-        healthBar.SetHealth(currentHP);
+        this.stats = stats;
+
+        maxHealth = this.stats.GetMaxHp(this.level);
+        currentHealth = Mathf.RoundToInt(percentHP * maxHealth);
+        healthBar.SetMaxHealth(maxHealth);
+        healthBar.SetHealth(currentHealth);
     }
 
     private void Update()

@@ -9,8 +9,9 @@ using UnityEngine.UI;
 
 public abstract class Character : MonoBehaviour
 {
-    [SerializeField]
-    protected int maxHealth = 100;
+    public int level { get; protected set; }
+
+    public int maxHealth { get; protected set; }
     public int currentHealth { get; protected set; }
 
     public string characterName { get; set; }
@@ -25,6 +26,8 @@ public abstract class Character : MonoBehaviour
     protected Dictionary<string, int> inventory = new Dictionary<string, int>();
 
     protected List<Status> statusList = new List<Status>();
+
+    public Statistics stats { get; protected set; }
 
     [SerializeField]
     protected Animator animator;

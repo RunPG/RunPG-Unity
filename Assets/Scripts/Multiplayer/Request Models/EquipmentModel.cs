@@ -6,16 +6,16 @@ using System.Threading.Tasks;
 
 namespace RunPG.Multi
 {
-    public class EquipementModel
+    public class EquipmentModel
     {
         public int id;
-        public EquipementBaseModel equipementBase;
+        public EquipmentBaseModel equipementBase; // TODO rename
         public StatisticsModel statistics;
 
-        public EquipementModel(int id, EquipementBaseModel equipementBase, StatisticsModel statistics)
+        public EquipmentModel(int id, EquipmentBaseModel equipmentBase, StatisticsModel statistics)
         {
             this.id = id;
-            this.equipementBase = equipementBase;
+            this.equipementBase = equipmentBase;
             this.statistics = statistics;
         }
     }

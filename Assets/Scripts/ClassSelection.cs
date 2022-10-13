@@ -42,12 +42,12 @@ public class ClassSelection : MonoBehaviour
 
     public async void Choose()
     {
-        NewUserModel newUser = new NewUserModel(PlayerProfile.pseudo, PlayerProfile.guid, classId[index].ToString());
+        NewUserModel newUser = new NewUserModel(PlayerProfile.pseudo, PlayerProfile.guid, PlayerProfile.email, PlayerProfile.serverAuthCode, classId[index].ToString());
         if (await Requests.POSTNewUser(newUser))
         {
             UserModel user = await Requests.GETUserByName(PlayerProfile.pseudo);
             PlayerProfile.id = user.id;
-            PlayerProfile.character = await Requests.GETUserCharacter(PlayerProfile.id);
+            PlayerProfile.characterInfo = await CharacterInfo.Load(PlayerProfile.id);
             SceneManager.LoadScene("MapScene");
         }
         else

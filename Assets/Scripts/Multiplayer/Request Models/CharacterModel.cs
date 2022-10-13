@@ -7,44 +7,6 @@ using UnityEngine;
 
 namespace RunPG.Multi
 {
-    public enum HeroClass
-    {
-        MAGE,
-        BERSERKER,
-        PRIEST,
-        ROGUE,
-        PALADIN
-    }
-    
-    static class HeroClassMethods
-    {
-        public static string GetName(this HeroClass heroClass)
-        {
-            return heroClass switch
-            {
-                HeroClass.MAGE => "Sorcier",
-                HeroClass.BERSERKER => "Berserk",
-                HeroClass.PRIEST => "Prètre",
-                HeroClass.ROGUE => "Assassin",
-                HeroClass.PALADIN => "Paladin",
-                _ => "",
-            };
-        }
-
-        public static Sprite GetSprite(this HeroClass heroclass)
-        {
-            return heroclass switch
-            {
-                HeroClass.MAGE => Resources.Load<Sprite>("Classe/Sorcier"),
-                HeroClass.BERSERKER => Resources.Load<Sprite>("Classe/Berserk"),
-                HeroClass.PRIEST => Resources.Load<Sprite>("Classe/Pretre"),
-                HeroClass.ROGUE => Resources.Load<Sprite>("Classe/Assassin"),
-                HeroClass.PALADIN => Resources.Load<Sprite>("Classe/Paladin"),
-                _ => null,
-            };
-        }
-    }
-
     public class CharacterModel
     {
         public int id;
@@ -76,6 +38,6 @@ namespace RunPG.Multi
             this.glovesId = glovesId;
             this.weaponId = weaponId;
             this.heroClass = heroClass;
+        }
     }
-}
 }
