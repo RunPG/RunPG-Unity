@@ -3,14 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Friend
+public class UserInfos
 {
     public int id;
     public string name;
     public HeroClass heroClass;
     public int level;
 
-    public Friend(UserModel userModel, UserCharacterModel characterModel)
+    public UserInfos(UserModel userModel, UserCharacterModel characterModel)
     {
         id = userModel.id;
         name = userModel.name;

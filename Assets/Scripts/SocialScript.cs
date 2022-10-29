@@ -25,11 +25,11 @@ public class SocialScript : MonoBehaviour
     private GameObject textInputObject;
 
     
-    public List<Friend> friends;
-    private List<Friend> filteredFriends;
+    public List<UserInfos> friends;
+    private List<UserInfos> filteredFriends;
 
-    public List<Friend> friendRequests;
-    private List<Friend> filteredFriendRequests;
+    public List<UserInfos> friendRequests;
+    private List<UserInfos> filteredFriendRequests;
 
     private Order order;
     private bool ascendant;
@@ -60,27 +60,27 @@ public class SocialScript : MonoBehaviour
 
     async Task LoadFriendRequests()
     {
-        friendRequests = new List<Friend>();
+        friendRequests = new List<UserInfos>();
         
         NotificationModel[] notificationModels = await Requests.GETNotificationsByType(PlayerProfile.id, NotificationType.FRIENDLIST);
         foreach (var notification in notificationModels)
         {
             UserModel userModel = await Requests.GETUserById(notification.senderId);
             UserCharacterModel characterModel = await Requests.GETUserCharacter(notification.senderId);
-            friendRequests.Add(new Friend(userModel, characterModel));
+            friendRequests.Add(new UserInfos(userModel, characterModel));
         }
     }
 
     async Task LoadFriends()
     {
-        friends = new List<Friend>();
+        friends = new List<UserInfos>();
         
         FriendlistModel friendListModel = await Requests.GETAllFriends(PlayerProfile.id);
         foreach (var friendModel in friendListModel.friends)
         {
             UserModel userModel = await Requests.GETUserById(friendModel.friendId);
             UserCharacterModel characterModel = await Requests.GETUserCharacter(friendModel.friendId);
-            friends.Add(new Friend(userModel, characterModel));
+            friends.Add(new UserInfos(userModel, characterModel));
         }
     }
 
@@ -132,7 +132,7 @@ public class SocialScript : MonoBehaviour
         }
     }
 
-    async void AcceptFriendRequest(Friend friend)
+    async void AcceptFriendRequest(UserInfos friend)
     {
         await Requests.DELETENotification(PlayerProfile.id, friend.id, NotificationType.FRIENDLIST);
         await Requests.POSTAddFriend(PlayerProfile.id, friend.id);
@@ -142,7 +142,7 @@ public class SocialScript : MonoBehaviour
         ReloadFriendList();
     }
 
-    async void DeclineFriendRequest(Friend friend)
+    async void DeclineFriendRequest(UserInfos friend)
     {
         await Requests.DELETENotification(PlayerProfile.id, friend.id, NotificationType.FRIENDLIST);
         friendRequests.Remove(friend);
