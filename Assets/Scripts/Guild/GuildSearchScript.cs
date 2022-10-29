@@ -34,7 +34,7 @@ public class GuildSearchScript : MonoBehaviour
     private List<GuildModel> guildInvitations;
     private List<GuildModel> filteredGuildInvitations;
 
-    async void Start()
+    void Start()
     {
         var textInput = textInputObject.GetComponent<TMP_InputField>();
         textInput.onValueChanged.AddListener(delegate

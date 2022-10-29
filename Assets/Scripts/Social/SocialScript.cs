@@ -23,8 +23,12 @@ public class SocialScript : MonoBehaviour
     private GameObject dropdownObject;
     [SerializeField]
     private GameObject textInputObject;
+    [SerializeField]
+    private GameObject friendChatCanvas;
 
-    
+    private FriendChatScript friendChatScript;
+
+
     public List<UserInfos> friends;
     private List<UserInfos> filteredFriends;
 
@@ -39,6 +43,8 @@ public class SocialScript : MonoBehaviour
     // Start is called before the first frame update
     async void Start()
     {
+        friendChatScript = friendChatCanvas.GetComponent<FriendChatScript>();
+
         var dropdown = dropdownObject.GetComponent<TMP_Dropdown>();
         dropdown.onValueChanged.AddListener(delegate
         {
@@ -111,6 +117,19 @@ public class SocialScript : MonoBehaviour
             friendObject.Find("Class").GetComponent<Image>().sprite = friend.heroClass.GetSprite();
             friendObject.Find("Name").GetComponent<TextMeshProUGUI>().text = friend.name;
             friendObject.Find("Level").GetComponent<TextMeshProUGUI>().text = string.Format("Lv. {0}", friend.level);
+            friendObject.Find("Message").GetComponent<Button>().onClick.AddListener(() =>
+            {
+                friendChatScript.Connect(friend);
+                var friendChatGroup = friendChatCanvas.GetComponent<CanvasGroup>();
+                friendChatGroup.alpha = 1;
+                friendChatGroup.blocksRaycasts = true;
+                friendChatGroup.interactable = true;
+
+                var socialGroup = GetComponent<CanvasGroup>();
+                socialGroup.alpha = 0;
+                socialGroup.blocksRaycasts = false;
+                socialGroup.interactable = false;
+            });
             //TODO Messages
         }
     }
