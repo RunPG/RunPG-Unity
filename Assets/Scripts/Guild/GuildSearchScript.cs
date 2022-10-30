@@ -25,6 +25,11 @@ public class GuildSearchScript : MonoBehaviour
     private GameObject invitationTextObject;
     [SerializeField]
     private GameObject guildPageCanvas;
+    [SerializeField]
+    private GameObject notificationManagerCanvas;
+
+    private NotificationManagerScript notificationManagerScript;
+
 
     private string filter;
     
@@ -36,6 +41,8 @@ public class GuildSearchScript : MonoBehaviour
 
     void Start()
     {
+        notificationManagerScript = notificationManagerCanvas.GetComponent<NotificationManagerScript>();
+
         var textInput = textInputObject.GetComponent<TMP_InputField>();
         textInput.onValueChanged.AddListener(delegate
         {
@@ -131,6 +138,7 @@ public class GuildSearchScript : MonoBehaviour
         await Requests.POSTJoinGuild(PlayerProfile.id, guild.id);
         PlayerProfile.guildId = guild.id;
 
+        await notificationManagerScript.UpdateNotifications();
 
         var guildScript = guildPageCanvas.GetComponent<GuildScript>();
         await guildScript.Load();
@@ -150,6 +158,10 @@ public class GuildSearchScript : MonoBehaviour
     {
         var guildOwner = guild.members.Find(user => user.isOwner);
         await Requests.DELETENotification(PlayerProfile.id, guildOwner.id, NotificationType.GUILD);
+        if (guildInvitations.Count == 0)
+        {
+            await notificationManagerScript.UpdateNotifications();
+        }
         guildInvitations.Remove(guild);
         ReloadGuildList();
     }

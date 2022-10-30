@@ -25,9 +25,12 @@ public class SocialScript : MonoBehaviour
     private GameObject textInputObject;
     [SerializeField]
     private GameObject friendChatCanvas;
+    [SerializeField]
+    private GameObject notificationManagerCanvas;
 
     private FriendChatScript friendChatScript;
 
+    private NotificationManagerScript notificationManagerScript;
 
     public List<UserInfos> friends;
     private List<UserInfos> filteredFriends;
@@ -44,6 +47,7 @@ public class SocialScript : MonoBehaviour
     async void Start()
     {
         friendChatScript = friendChatCanvas.GetComponent<FriendChatScript>();
+        notificationManagerScript = notificationManagerCanvas.GetComponent<NotificationManagerScript>();
 
         var dropdown = dropdownObject.GetComponent<TMP_Dropdown>();
         dropdown.onValueChanged.AddListener(delegate
@@ -60,8 +64,6 @@ public class SocialScript : MonoBehaviour
 
         order = Order.NAME;
         ascendant = true;
-
-        await Load();
     }
 
     async Task LoadFriendRequests()
@@ -117,8 +119,20 @@ public class SocialScript : MonoBehaviour
             friendObject.Find("Class").GetComponent<Image>().sprite = friend.heroClass.GetSprite();
             friendObject.Find("Name").GetComponent<TextMeshProUGUI>().text = friend.name;
             friendObject.Find("Level").GetComponent<TextMeshProUGUI>().text = string.Format("Lv. {0}", friend.level);
-            friendObject.Find("Message").GetComponent<Button>().onClick.AddListener(() =>
+            
+            var messageTransform = friendObject.Find("Message");
+            var notificationObject = messageTransform.Find("Notification").gameObject;
+
+            if (notificationManagerScript.friendMessagesSenders.Contains(friend.name))
             {
+                notificationObject.SetActive(true);
+            }
+
+            messageTransform.GetComponent<Button>().onClick.AddListener(() =>
+            {
+                notificationObject.SetActive(false);
+                notificationManagerScript.friendMessagesSenders.Remove(friend.name);
+
                 friendChatScript.Connect(friend);
                 var friendChatGroup = friendChatCanvas.GetComponent<CanvasGroup>();
                 friendChatGroup.alpha = 1;
@@ -157,6 +171,10 @@ public class SocialScript : MonoBehaviour
         await Requests.POSTAddFriend(PlayerProfile.id, friend.id);
         await Requests.POSTAddFriend(friend.id, PlayerProfile.id);
         friendRequests.Remove(friend);
+        if (friendRequests.Count == 0)
+        {
+            await notificationManagerScript.UpdateNotifications();
+        }
         friends.Add(friend);
         ReloadFriendList();
     }
@@ -165,6 +183,10 @@ public class SocialScript : MonoBehaviour
     {
         await Requests.DELETENotification(PlayerProfile.id, friend.id, NotificationType.FRIENDLIST);
         friendRequests.Remove(friend);
+        if (friendRequests.Count == 0)
+        {
+            await notificationManagerScript.UpdateNotifications();
+        }
         ReloadFriendList();
     }
 

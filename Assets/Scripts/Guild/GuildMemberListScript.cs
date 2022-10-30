@@ -24,8 +24,11 @@ public class GuildMemberListScript : MonoBehaviour
     private GameObject membersTextObject;
     [SerializeField]
     private GameObject textInputObject;
+    [SerializeField]
+    private GameObject notificationManagerCanvas;
 
     private GuildScript guildScript;
+    private NotificationManagerScript notificationManagerScript;
     private string filter;
 
     private List<GuildMemberModel> requestUsers;
@@ -36,6 +39,7 @@ public class GuildMemberListScript : MonoBehaviour
     void Start()
     {
         guildScript = GuildCanvas.GetComponent<GuildScript>();
+        notificationManagerScript = notificationManagerCanvas.GetComponent<NotificationManagerScript>();
 
         var textInput = textInputObject.GetComponent<TMP_InputField>();
         textInput.onValueChanged.AddListener(delegate
@@ -115,6 +119,10 @@ public class GuildMemberListScript : MonoBehaviour
         await Requests.POSTJoinGuild(member.id, guildScript.guild.id);
         guildScript.guild.members.Add(member);
         requestUsers.Remove(member);
+        if (requestUsers.Count == 0)
+        {
+            await notificationManagerScript.UpdateNotifications();
+        }
         ReloadUsersList();
     }
 
@@ -122,6 +130,10 @@ public class GuildMemberListScript : MonoBehaviour
     {
         await Requests.DELETENotification(PlayerProfile.id, member.id, NotificationType.GUILD);
         requestUsers.Remove(member);
+        if (requestUsers.Count == 0)
+        {
+            await notificationManagerScript.UpdateNotifications();
+        }
         ReloadUsersList();
     }
 

@@ -24,12 +24,19 @@ namespace RunPG.Multi
         private GameObject guildPageCanvas;
         [SerializeField]
         private GameObject friendChatCanvas;
+        [SerializeField]
+        private GameObject notificationManagerCanvas;
 
         private string guildChannelName;
         private ChatClient _chatClient;
         
         private GuildScript guildScript;
+        private CanvasGroup guildGroup;
+        
         private FriendChatScript friendChatScript;
+        private CanvasGroup friendChatGroup;
+
+        private NotificationManagerScript notificationManagerScript;
 
         private void Awake()
         {
@@ -44,7 +51,13 @@ namespace RunPG.Multi
         private void Start()
         {
             guildScript = guildPageCanvas.GetComponent<GuildScript>();
+            guildGroup = guildPageCanvas.GetComponent<CanvasGroup>();
+            
             friendChatScript = friendChatCanvas.GetComponent<FriendChatScript>();
+            friendChatGroup = friendChatCanvas.GetComponent<CanvasGroup>();
+
+            notificationManagerScript = notificationManagerCanvas.GetComponent<NotificationManagerScript>();
+            
             guildChannelName = $"Guild_{PlayerProfile.guildId}";
         }
         
@@ -90,7 +103,14 @@ namespace RunPG.Multi
             {
                 string[] message = (string[])messages[i];
                 if (message != null)
+                {
+                    if (guildGroup.alpha == 0)
+                    {
+                        notificationManagerScript.guildMessagesNotification = true;
+                        notificationManagerScript.UpdateNotificationObjects();
+                    }
                     guildScript.DisplayMessage(message[0], message[1]);
+                }
             }
             // All public messages are automatically cached in `Dictionary<string, ChatChannel> PublicChannels`.
             // So you don't have to keep track of them.
@@ -104,9 +124,14 @@ namespace RunPG.Multi
             var messageArray = (string[])message;
             var messageText = messageArray[0];
             var messageSender = messageArray[1];
-            if (friendChatScript.currentFriend != null && sender == friendChatScript.currentFriend.name)
+            if (friendChatGroup.alpha == 1 && friendChatScript.currentFriend != null && sender == friendChatScript.currentFriend.name)
             {
                 friendChatScript.AddMessage(messageText, messageSender);
+            }
+            else
+            {
+                notificationManagerScript.friendMessagesSenders.Add(sender);
+                notificationManagerScript.UpdateNotificationObjects();
             }
         }
 

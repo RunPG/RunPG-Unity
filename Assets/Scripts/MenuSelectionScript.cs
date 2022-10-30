@@ -8,17 +8,30 @@ using UnityEngine.UI;
 public class MenuSelectionScript : MonoBehaviour
 {
     [SerializeField]
+    private GameObject menuSelectionButton;
+    
+    [SerializeField]
     private GameObject guildSearchCanvas;
     [SerializeField]
     private GameObject guildPageCanvas;
     [SerializeField]
     private GameObject guildButton;
+
     [SerializeField]
-    private GameObject menuSelectionButton;
+    private GameObject socialCanvas;
+    [SerializeField]
+    private GameObject socialButton;
+
+
+
+    [SerializeField]
+    private GameObject notificationManagerCanvas;
 
     // Start is called before the first frame update
     void Start()
     {
+        var notificationManagerScript = notificationManagerCanvas.GetComponent<NotificationManagerScript>();
+
         menuSelectionButton.GetComponent<Button>().onClick.AddListener(async () =>
         {
             var user = await Requests.GETUserById(PlayerProfile.id);
@@ -50,7 +63,19 @@ public class MenuSelectionScript : MonoBehaviour
                 guildPageCanvasGroup.alpha = 1;
                 guildPageCanvasGroup.interactable = true;
                 guildPageCanvasGroup.blocksRaycasts = true;
+                notificationManagerScript.guildMessagesNotification = false;
+                notificationManagerScript.UpdateNotificationObjects();
             }
+        });
+
+        socialButton.GetComponent<Button>().onClick.AddListener(async () =>
+        {
+            var socialScript = socialCanvas.GetComponent<SocialScript>();
+            await socialScript.Load();
+            var socialCanvasGroup = socialCanvas.GetComponent<CanvasGroup>();
+            socialCanvasGroup.alpha = 1;
+            socialCanvasGroup.interactable = true;
+            socialCanvasGroup.blocksRaycasts = true;
         });
     }
 }
