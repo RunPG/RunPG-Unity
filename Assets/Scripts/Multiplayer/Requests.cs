@@ -132,7 +132,7 @@ namespace RunPG.Multi
 
         public static async Task<EquipmentBaseModel[]> GETEquipements()
         {
-            var url = rootUrl + "equipementBase";
+            var url = rootUrl + "equipmentBase";
             using (UnityWebRequest request = UnityWebRequest.Get(url))
             {
                 request.SendWebRequest();
@@ -153,9 +153,9 @@ namespace RunPG.Multi
             return null;
         }
 
-        public static async Task<EquipmentModel> GETEquipementById(int equipement_id)
+        public static async Task<EquipmentModel> GETEquipmentById(int equipment_id)
         {
-            var url = rootUrl + "equipement/" + equipement_id;
+            var url = rootUrl + "equipment/" + equipment_id;
             using (UnityWebRequest request = UnityWebRequest.Get(url))
             {
                 request.SendWebRequest();

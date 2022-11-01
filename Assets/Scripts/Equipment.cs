@@ -22,7 +22,7 @@ public class Equipment
     public Equipment(EquipmentModel model)
     {
         id = model.id;
-        type = model.equipementBase.equipementType;
+        type = model.equipementBase.equipmentType;
         name = model.equipementBase.name;
         rarity = model.equipementBase.rarity;
         heroClass = model.equipementBase.heroClass;
