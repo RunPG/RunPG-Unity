@@ -199,6 +199,28 @@ namespace RunPG.Multi
             return null;
         }
 
+        public static async Task<ActivityModel> GetActivityAvailability(int user_id, long activity_id)
+        {
+            var url = rootUrl + "user/" + user_id + "/activity/" + activity_id;
+            using UnityWebRequest request = UnityWebRequest.Get(url);
+
+            request.SendWebRequest();
+            while (!request.isDone)
+            {
+                await Task.Yield();
+            }
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogError(string.Format("Error in request:{0}\nError Message: {1}", url, request.error));
+            }
+            else
+            {
+                var activity = JsonConvert.DeserializeObject<ActivityModel>(request.downloadHandler.text);
+                return activity;
+            }
+            return null;
+        }
+
         public static async Task<bool> POSTNewUser(NewUserModel newUser)
         {
             var url = rootUrl + "user";
@@ -306,6 +328,23 @@ namespace RunPG.Multi
             using UnityWebRequest request = UnityWebRequest.Post(url, "POST");
             request.SetRequestHeader("Content-Type", "application/json");
             request.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(content));
+            request.SendWebRequest();
+            while (!request.isDone)
+            {
+                await Task.Yield();
+            }
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogError(string.Format("Error in request:{0}\nError Message: {1}", url, request.error));
+                return false;
+            }
+            return true;
+        }
+
+        public static async Task<bool> POSTActivity(int user_id, long activity_id)
+        {
+            var url = rootUrl + "user/" + user_id + "/activity/" + activity_id;
+            using UnityWebRequest request = UnityWebRequest.Post(url, "POST");
             request.SendWebRequest();
             while (!request.isDone)
             {

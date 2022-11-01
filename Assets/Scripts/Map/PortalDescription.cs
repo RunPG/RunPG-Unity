@@ -6,7 +6,7 @@ using UnityEngine;
 public class PortalDescription : MonoBehaviour
 {
     [SerializeField]
-    private TextMeshProUGUI distanceWarning;
+    private TextMeshProUGUI warning;
     [SerializeField]
     private TextMeshProUGUI title;
 
@@ -19,7 +19,7 @@ public class PortalDescription : MonoBehaviour
         canvasGroup.alpha = 0;
         canvasGroup.interactable = false;
         canvasGroup.blocksRaycasts = false;
-        distanceWarning.gameObject.SetActive(false);
+        warning.gameObject.SetActive(false);
     }
 
     public void Enter()
@@ -27,9 +27,15 @@ public class PortalDescription : MonoBehaviour
         if (!poi)
             return;
 
-        if (!poi.IsInRange())
+        if (!poi.IsPOIAvailable())
         {
-            distanceWarning.gameObject.SetActive(true);
+            warning.text = "Ce portail n'est pas disponible pour le moment";
+            warning.gameObject.SetActive(true);
+        }
+        else if (!poi.IsInRange())
+        {
+            warning.text = "Rapprochez-vous du portail pour pouvoir y accéder";
+            warning.gameObject.SetActive(true);
         }
         else
         {

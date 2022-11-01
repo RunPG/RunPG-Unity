@@ -10,4 +10,5 @@ public abstract class ActivityScript : MonoBehaviour
     public abstract void Enter();
     public abstract void ShowInfo();
     public abstract bool IsInRange();
+    public abstract void SetAvailable(bool state);
 }

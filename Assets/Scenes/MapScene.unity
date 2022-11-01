@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028352, g: 0.22571376, b: 0.3069224, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -3903,7 +3903,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 35e493406d959f143b658b2f60cebe52, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  distanceWarning: {fileID: 786150601}
+  warning: {fileID: 786150601}
   title: {fileID: 1133367923}
 --- !u!225 &356504483
 CanvasGroup:
@@ -6836,12 +6836,12 @@ GameObject:
   - component: {fileID: 786150602}
   - component: {fileID: 786150601}
   m_Layer: 5
-  m_Name: DistanceWarning
+  m_Name: Warning
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &786150601
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6871,8 +6871,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 460770
-  m_fontColor: {r: 0.8867924, g: 0.028444227, b: 0.028444227, a: 0}
+    rgba: 4278650850
+  m_fontColor: {r: 0.8867924, g: 0.028444227, b: 0.028444227, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:

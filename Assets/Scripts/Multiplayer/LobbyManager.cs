@@ -12,7 +12,6 @@ using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 public class LobbyManager : MonoBehaviourPunCallbacks
 {
-
     [SerializeField] RoomDisplay roomDisplayPrefab;
     [SerializeField] private Button createButton;
     [SerializeField] private Button leaveButtonRoom;
@@ -37,6 +36,8 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 
     private List<PlayerDisplay> playersList = new List<PlayerDisplay>();
     private List<RoomDisplay> roomDisplayListing = new List<RoomDisplay>();
+
+    private long poiId;
     /// <summary>
     /// Keep track of the current process. Since connection is asynchronous and is based on several callbacks from Photon,
     /// we need to keep track of this to properly adjust the behavior when we receive call back by Photon.
@@ -60,7 +61,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         // this makes sure we can use PhotonNetwork.LoadLevel() on the master client and all clients in the same room sync their level automatically
         PhotonNetwork.AutomaticallySyncScene = true;
     }
-    public void FindDungeonLobbies()
+    public void FindDungeonLobbies(long poiId)
     {
         lobbyList.alpha = 1;
         lobbyList.interactable = true;
@@ -75,6 +76,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         canvas.interactable = false;
         canvas.blocksRaycasts = false;
         playerMovement.SetUIState(true);
+        this.poiId = poiId;
     }
 
     public void Start()
@@ -89,10 +91,18 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         if (PhotonNetwork.IsMasterClient)
         {
             Debug.LogFormat("PhotonNetwork : Loading Dungeon");
+            photonView.RPC("UseActivity", RpcTarget.All);
             PhotonNetwork.AutomaticallySyncScene = true;
             PhotonNetwork.LoadLevel("DungeonScene");
         }
     }
+
+    [PunRPC]
+    async void UseActivity()
+    {
+        await Requests.POSTActivity(PlayerProfile.id, poiId);
+    }
+
     public void Close()
     {
         lobbyList.alpha = 0;

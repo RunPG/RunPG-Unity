@@ -14,7 +14,7 @@ public class TimbermanScript : MonoBehaviour
     [SerializeField]
     private GameObject tree;
     [SerializeField]
-    private GameObject character;
+    private CharacterScript character;
     [SerializeField]
     private GameObject gameInfo;
     [SerializeField]
@@ -52,11 +52,16 @@ public class TimbermanScript : MonoBehaviour
     private bool hasStarted = false;
     private bool hasEnded = false;
 
+    private float pos;
+    private float scale;
+
     // Start is called before the first frame update
     void Start()
     {
         resultButton.onClick.AddListener(() => SkipResults());
         InitLogs();
+        pos = character.transform.position.x;
+        scale = character.transform.localScale.x;
     }
 
     private void InitLogs()
@@ -101,8 +106,13 @@ public class TimbermanScript : MonoBehaviour
         if (hasEnded || !hasStarted)
             return;
 
-        character.transform.position = new Vector3(-1.5f, character.transform.position.y, character.transform.position.z);
+        if (!character.Cut())
+            return;
+
+        character.transform.position = new Vector3(pos, character.transform.position.y, character.transform.position.z);
+        character.transform.localScale = new Vector3(scale, character.transform.localScale.y, character.transform.localScale.z);
         RecycleLog();
+        UpdateLogsPos();
         if (logs[0].HasLeftBranch())
         {
             End();
@@ -124,7 +134,11 @@ public class TimbermanScript : MonoBehaviour
         if (hasEnded || !hasStarted)
             return;
 
-        character.transform.position = new Vector3(1.5f, character.transform.position.y, character.transform.position.z);
+        if (!character.Cut())
+            return;
+
+        character.transform.position = new Vector3(-pos, character.transform.position.y, character.transform.position.z);
+        character.transform.localScale = new Vector3(-scale, character.transform.localScale.y, character.transform.localScale.z);
         RecycleLog();
         UpdateLogsPos();
         if (logs[0].HasRightBranch())
@@ -245,7 +259,7 @@ public class TimbermanScript : MonoBehaviour
         while (elapsedTime < 0.5f)
         {
             elapsedTime += Time.deltaTime;
-            resultsScore.text = Mathf.RoundToInt(Mathf.Lerp(0, score, EasingFunc.EaseOutQuad(elapsedTime / 0.7f))).ToString();
+            resultsScore.text = Mathf.RoundToInt(Mathf.Lerp(0, score, EasingFunc.EaseOutQuad(elapsedTime / 0.5f))).ToString();
             yield return null;
         }
 
