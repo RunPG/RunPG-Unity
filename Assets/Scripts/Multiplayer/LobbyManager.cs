@@ -57,6 +57,8 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 
         isConnecting = PhotonNetwork.ConnectUsingSettings();
         PhotonNetwork.GameVersion = gameVersion;
+        var phtnView = gameObject.AddComponent<PhotonView>();
+        phtnView.ViewID = 2;
         // #Critical
         // this makes sure we can use PhotonNetwork.LoadLevel() on the master client and all clients in the same room sync their level automatically
         PhotonNetwork.AutomaticallySyncScene = true;
@@ -91,7 +93,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         if (PhotonNetwork.IsMasterClient)
         {
             Debug.LogFormat("PhotonNetwork : Loading Dungeon");
-            photonView.RPC("UseActivity", RpcTarget.All);
+            photonView.RPC("UseActivity", RpcTarget.All, null);
             PhotonNetwork.AutomaticallySyncScene = true;
             PhotonNetwork.LoadLevel("DungeonScene");
         }
@@ -315,7 +317,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         Debug.Log("Leave room");
         PhotonNetwork.LeaveRoom();
 
-        FindDungeonLobbies();
+        FindDungeonLobbies(poiId);
     }
     public override void OnJoinedRoom()
     {
