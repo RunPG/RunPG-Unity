@@ -1,7 +1,4 @@
-using Assets.Scripts.Multiplayer.Request_Models;
-using Mapbox.Unity.Utilities;
 using RunPG.Multi;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,22 +9,22 @@ using UnityEngine.UI;
 public class GuildSearchScript : MonoBehaviour
 {
     [SerializeField]
-    private GameObject guildLayout;
+    private Transform guildLayout;
     [SerializeField]
     private GameObject guildPrefab;
     [SerializeField]
     private GameObject guildInvitationPrefab;
     [SerializeField]
-    private GameObject textInputObject;
+    private TMP_InputField textInput;
     [SerializeField]
-    private GameObject guildsTextObject;
+    private GameObject guildsTextPrefab;
     [SerializeField]
-    private GameObject invitationTextObject;
+    private GameObject invitationTextPrefab;
     [SerializeField]
-    private GameObject guildPageCanvas;
+    private GuildScript guildScript;
     [SerializeField]
-    private GameObject notificationManagerCanvas;
-
+    private CanvasGroup guildCanvasGroup;
+    [SerializeField]
     private NotificationManagerScript notificationManagerScript;
 
 
@@ -41,9 +38,6 @@ public class GuildSearchScript : MonoBehaviour
 
     void Start()
     {
-        notificationManagerScript = notificationManagerCanvas.GetComponent<NotificationManagerScript>();
-
-        var textInput = textInputObject.GetComponent<TMP_InputField>();
         textInput.onValueChanged.AddListener(delegate
         {
             FilterList(textInput.text);
@@ -65,6 +59,8 @@ public class GuildSearchScript : MonoBehaviour
 
     async Task LoadInvitations()
     {
+        Debug.Log("LoadInvitations");
+
         guildInvitations = new List<GuildModel>();
         var notifications = await Requests.GETNotificationsByType(PlayerProfile.id, NotificationType.GUILD);
         foreach (var notification in notifications)
@@ -72,8 +68,12 @@ public class GuildSearchScript : MonoBehaviour
             var user = await Requests.GETUserById(notification.senderId);
             try
             {
-                var guild = await Requests.GETGuildById(user.guildId);
-                guildInvitations.Add(guild);
+                Debug.Log("Guild id: " + user.guildId);
+                if (user.guildId.HasValue)
+                {
+                    var guild = await Requests.GETGuildById(user.guildId.Value);
+                    guildInvitations.Add(guild);
+                }
             }
             catch
             {
@@ -84,7 +84,7 @@ public class GuildSearchScript : MonoBehaviour
 
     void ClearGuildList()
     {
-        foreach (Transform child in guildLayout.transform)
+        foreach (Transform child in guildLayout)
         {
             Destroy(child.gameObject);
         }
@@ -94,11 +94,11 @@ public class GuildSearchScript : MonoBehaviour
     {
         if (filteredGuilds.Count > 0)
         {
-            Instantiate(guildsTextObject, guildLayout.transform);
+            Instantiate(guildsTextPrefab, guildLayout);
         }
         foreach (var guild in filteredGuilds)
         {
-            var guildObject = Instantiate(guildPrefab, guildLayout.transform).transform;
+            var guildObject = Instantiate(guildPrefab, guildLayout).transform;
             guildObject.Find("Name").GetComponent<TextMeshProUGUI>().text = guild.name;
             guildObject.Find("Capacity").GetComponent<TextMeshProUGUI>().text = guild.members.Count + "/" + 50;
             guildObject.Find("Join").GetComponent<Button>().onClick.AddListener(() =>
@@ -113,11 +113,11 @@ public class GuildSearchScript : MonoBehaviour
     {
         if (filteredGuildInvitations.Count > 0)
         {
-            Instantiate(invitationTextObject, guildLayout.transform);
+            Instantiate(invitationTextPrefab, guildLayout);
         }
         foreach (var guild in filteredGuildInvitations)
         {
-            var guildObject = Instantiate(guildInvitationPrefab, guildLayout.transform).transform;
+            var guildObject = Instantiate(guildInvitationPrefab, guildLayout).transform;
             guildObject.Find("Name").GetComponent<TextMeshProUGUI>().text = guild.name;
             guildObject.Find("Capacity").GetComponent<TextMeshProUGUI>().text = guild.members.Count + "/" + 50;
             guildObject.Find("Accept").GetComponent<Button>().onClick.AddListener(() =>
@@ -140,7 +140,6 @@ public class GuildSearchScript : MonoBehaviour
 
         await notificationManagerScript.UpdateNotifications();
 
-        var guildScript = guildPageCanvas.GetComponent<GuildScript>();
         await guildScript.Load();
 
         var guildSearchCanvasGroup = GetComponent<CanvasGroup>();
@@ -148,7 +147,6 @@ public class GuildSearchScript : MonoBehaviour
         guildSearchCanvasGroup.interactable = false;
         guildSearchCanvasGroup.blocksRaycasts = false;
 
-        var guildCanvasGroup = guildScript.GetComponent<CanvasGroup>();
         guildCanvasGroup.alpha = 1;
         guildCanvasGroup.interactable = true;
         guildCanvasGroup.blocksRaycasts = true;

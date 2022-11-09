@@ -24,6 +24,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     [SerializeField] private CanvasGroup DungeonDescription;
     [SerializeField] private CanvasGroup InventoryCanvas;
     [SerializeField] private CanvasGroup canvas;
+    [SerializeField] private CanvasGroup lobbyPlayerList;
 
     [SerializeField]
     private Transform lobbyPrefabPos;
@@ -33,6 +34,17 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     private PlayerDisplay playerDisplayPrefab;
     private List<PlayerDisplay> playersList = new List<PlayerDisplay>();
     private List<RoomDisplay> roomDisplayListing = new List<RoomDisplay>();
+    private HashSet<string> roomNameList = new HashSet<string>();
+
+    [SerializeField]
+    private Button invitePlayerButton;
+
+    [SerializeField]
+    private LobbyPLayerListScript lobbyPlayerListScript;
+    [SerializeField]
+    private PlayerMovement playerMovement;
+
+
     /// <summary>
     /// Keep track of the current process. Since connection is asynchronous and is based on several callbacks from Photon,
     /// we need to keep track of this to properly adjust the behavior when we receive call back by Photon.
@@ -78,6 +90,15 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         closeButton.onClick.AddListener(Close);
         createButton.onClick.AddListener(CreateRoom);
         startButton.onClick.AddListener(LoadDungeon);
+        invitePlayerButton.onClick.AddListener(async () => 
+        {
+            await lobbyPlayerListScript.LoasList(PhotonNetwork.CurrentRoom.Name);
+            lobby.interactable = false;
+            lobby.blocksRaycasts = false;
+            lobbyPlayerList.alpha = 1;
+            lobbyPlayerList.interactable = true;
+            lobbyPlayerList.blocksRaycasts = true;
+        });
     }
     public void LoadDungeon()
     {
@@ -94,13 +115,10 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         lobbyList.interactable = false;
         lobbyList.blocksRaycasts = false;
 
-        DungeonDescription.alpha = 1;
-        DungeonDescription.interactable = true;
-        DungeonDescription.blocksRaycasts = true;
-
         canvas.alpha = 1;
         canvas.interactable = true;
         canvas.blocksRaycasts = true;
+        playerMovement.SetUIState(false);
     }
     /*
     [PunRPC]
@@ -137,17 +155,29 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         lobby.blocksRaycasts = true;
     }
 
-    public void ConnectToRoom(string roomName)
+    public bool ConnectToRoom(string roomName)
     {
         if (roomName == null)
+        {
             Debug.Log("Launcher: ConnectToRoom() roomName is null");
+            return false;
+        }
+        if (!roomNameList.Contains(roomName))
+        {
+            Debug.Log("Launcher: ConnectToRoom() room has been deleted");
+            return false;
+        }
         if (!PhotonNetwork.JoinRoom(roomName))
+        {
             Debug.Log("Launcher: ConnectToRoom() failed");
+            return false;
+        }
         else
         {
             Debug.Log("Launcher: ConnectToRoom() worked");
             startButton.interactable = false;
         }
+        return true;
     }
     /// <summary>
     /// Start the connection process.
@@ -272,6 +302,8 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         {
             if (room.RemovedFromList)
             {
+                roomNameList.Remove(room.Name);
+
                 int index = roomDisplayListing.FindIndex(x => x.roomInfo.Name == room.Name);
                 if (index != -1)
                 {
@@ -281,6 +313,8 @@ public class LobbyManager : MonoBehaviourPunCallbacks
             }
             else
             {
+                roomNameList.Add(room.Name);
+
                 if (!roomDisplayListing.Find(roomDisplay => roomDisplay.roomInfo.Name == room.Name))
                 {
                     RoomDisplay newRoomDisplay = Instantiate(roomDisplayPrefab, lobbyPrefabPos);

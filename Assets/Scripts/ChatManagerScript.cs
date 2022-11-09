@@ -1,20 +1,11 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using Photon.Chat;
 using ExitGames.Client.Photon;
-using UnityEngine.UI;
 using Photon.Pun;
-using System;
-using UnityEngine.Networking;
 using Photon.Realtime;
 using System.Linq;
-using System.Threading.Tasks;
-using Unity.Services.Authentication;
 
 namespace RunPG.Multi
 {
@@ -58,7 +49,8 @@ namespace RunPG.Multi
 
             notificationManagerScript = notificationManagerCanvas.GetComponent<NotificationManagerScript>();
             
-            guildChannelName = $"Guild_{PlayerProfile.guildId}";
+            if (PlayerProfile.guildId.HasValue)
+                guildChannelName = $"Guild_{PlayerProfile.guildId}";
         }
         
 
@@ -75,17 +67,21 @@ namespace RunPG.Multi
         public void OnConnected()
         {
             Debug.Log("ChatManager:OnConnected called");
-            if (PlayerProfile.guildId != null && PlayerProfile.guildId != 0)
+            if (PlayerProfile.guildId.HasValue)
             {
                 if (_chatClient.Subscribe(guildChannelName, messagesFromHistory: 50, creationOptions: new ChannelCreationOptions { MaxSubscribers = 50 }))
                 {
-                    _chatClient.PublicChannels[guildChannelName].Messages.ForEach(messageObject =>
+                    if (_chatClient.PublicChannels.ContainsKey(guildChannelName))
                     {
-                        var messageArray = (string[])messageObject;
-                        var sender = messageArray[1];
-                        var message = messageArray[1];
-                        guildScript.DisplayMessage(message, sender);
-                    });
+                        _chatClient.PublicChannels[guildChannelName].Messages.ForEach(messageObject =>
+                        {
+                            var messageArray = (string[])messageObject;
+                            var sender = messageArray[1];
+                            var message = messageArray[1];
+                            guildScript.DisplayMessage(message, sender);
+                        });
+                    }
+                    
                     Debug.Log($"Subscribed to {guildChannelName}");
                 }
             }
@@ -104,12 +100,16 @@ namespace RunPG.Multi
                 string[] message = (string[])messages[i];
                 if (message != null)
                 {
-                    if (guildGroup.alpha == 0)
+                    string sender = message[1];
+                    if (guildGroup.alpha == 0 && sender != PlayerProfile.pseudo)
                     {
                         notificationManagerScript.guildMessagesNotification = true;
                         notificationManagerScript.UpdateNotificationObjects();
                     }
-                    guildScript.DisplayMessage(message[0], message[1]);
+                    if (message.Length > 2)
+                        guildScript.DisplayLobbyInvitation(message[0], sender, message[2]);
+                    else
+                        guildScript.DisplayMessage(message[0], sender);
                 }
             }
             // All public messages are automatically cached in `Dictionary<string, ChatChannel> PublicChannels`.
@@ -121,17 +121,21 @@ namespace RunPG.Multi
         public void OnPrivateMessage(string sender, object message, string channelName)
         {
             Debug.Log($"OnPrivateMessage: {sender} sent {message} to {channelName}");
-            var messageArray = (string[])message;
-            var messageText = messageArray[0];
-            var messageSender = messageArray[1];
-            if (friendChatGroup.alpha == 1 && friendChatScript.currentFriend != null && sender == friendChatScript.currentFriend.name)
-            {
-                friendChatScript.AddMessage(messageText, messageSender);
-            }
-            else
+            var messageObject = (string[])message;
+            var messageText = messageObject[0];
+            var messageSender = messageObject[1];
+            if ((friendChatGroup.alpha == 0 || friendChatScript.currentFriend == null || sender != friendChatScript.currentFriend.name) && sender != PlayerProfile.pseudo)
             {
                 notificationManagerScript.friendMessagesSenders.Add(sender);
                 notificationManagerScript.UpdateNotificationObjects();
+            }
+            else if (messageObject.Length > 2)
+            {
+                friendChatScript.DisplayLobbyInvitation(messageText, messageSender, messageObject[2]);
+            }
+            else
+            {
+                friendChatScript.DisplayMessage(messageText, messageSender);
             }
         }
 
@@ -165,9 +169,21 @@ namespace RunPG.Multi
             _chatClient.PublishMessage(guildChannelName, message);
         }
 
+        public void SendGuildLobbyInvitation(string roomName)
+        {
+            string[] message = { "", PlayerProfile.pseudo, roomName };
+            _chatClient.PublishMessage(guildChannelName, message);
+        }
+
         public void SendPrivateMessage(string target, string messageText)
         {
             string[] message = { messageText, PlayerProfile.pseudo };
+            _chatClient.SendPrivateMessage(target, message);
+        }
+
+        public void SendFriendLobbyInvitation(string target, string roomName)
+        {
+            string[] message = { "", PlayerProfile.pseudo, roomName };
             _chatClient.SendPrivateMessage(target, message);
         }
 
@@ -179,8 +195,7 @@ namespace RunPG.Multi
             {
                 List<string[]> messages = privateChannel.Messages.Select(messageObject =>
                 {
-                    var messageArray = (string[])messageObject;
-                    return new string[] { messageArray[0], messageArray[1] };
+                    return (string[])messageObject;
                 }).ToList();
                 return messages;
             }

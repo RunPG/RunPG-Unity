@@ -13,12 +13,12 @@ namespace RunPG.Multi
         public string name;
         public string mail;
         public string refreshToken;
-        public int guildId;
-        public int characterId;
+        public int? guildId;
+        public int? characterId;
         public string lastCaloriesUpdate;
         public bool isGuildOwner;
 
-        public UserModel(int id, string uid, string name, string mail, string refreshToken, int guildId, int characterId, string lastCaloriesUpdate, bool isGuildOwner)
+        public UserModel(int id, string uid, string name, string mail, string refreshToken, int? guildId, int? characterId, string lastCaloriesUpdate, bool isGuildOwner)
         {
             this.id = id;
             this.uid = uid;

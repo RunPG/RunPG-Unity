@@ -11,14 +11,12 @@ public class AddFriendScript : MonoBehaviour
     [SerializeField]
     private GameObject friendObject;
     [SerializeField]
-    private GameObject textInputObject;
+    private TMP_InputField textInput;
     [SerializeField]
     private GameObject notFoundText;
     [SerializeField]
-    private GameObject loopObject;
+    private Button loopButton;
     [SerializeField]
-    private GameObject SocialCanvas;
-
     private SocialScript socialScript;
 
     private Transform friendTransform;
@@ -26,19 +24,16 @@ public class AddFriendScript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        var textInput = textInputObject.GetComponent<TMP_InputField>();
         textInput.onSubmit.AddListener(delegate
         {
             SearchUser(textInput.text);
         });
 
-        var loopButton = loopObject.GetComponent<Button>();
         loopButton.onClick.AddListener(delegate
         {
             SearchUser(textInput.text);
         });
 
-        socialScript = SocialCanvas.GetComponent<SocialScript>();
         friendTransform = friendObject.transform;
 
     }

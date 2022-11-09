@@ -1,6 +1,4 @@
 using RunPG.Multi;
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -8,7 +6,7 @@ using UnityEngine.UI;
 public class CreateGuildScript : MonoBehaviour
 {
     [SerializeField]
-    private GameObject textInputObject;
+    private TMP_InputField textInput;
     [SerializeField]
     private GameObject guildPageCanvas;
     [SerializeField]
@@ -21,7 +19,6 @@ public class CreateGuildScript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        var textInput = textInputObject.GetComponent<TMP_InputField>();
         textInput.onValueChanged.AddListener(delegate
         {
             guildName = textInput.text;

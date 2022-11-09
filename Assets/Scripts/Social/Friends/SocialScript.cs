@@ -1,5 +1,4 @@
 using RunPG.Multi;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -20,17 +19,16 @@ public class SocialScript : MonoBehaviour
     [SerializeField]
     private GameObject myFriendsText;
     [SerializeField]
-    private GameObject dropdownObject;
+    private TMP_Dropdown dropdown;
     [SerializeField]
-    private GameObject textInputObject;
+    private TMP_InputField textInput;
     [SerializeField]
-    private GameObject friendChatCanvas;
+    private CanvasGroup friendChatCanvasGroup;
     [SerializeField]
-    private GameObject notificationManagerCanvas;
-
     private FriendChatScript friendChatScript;
-
+    [SerializeField]
     private NotificationManagerScript notificationManagerScript;
+
 
     public List<UserInfos> friends;
     private List<UserInfos> filteredFriends;
@@ -44,18 +42,14 @@ public class SocialScript : MonoBehaviour
     private string filter;
 
     // Start is called before the first frame update
-    async void Start()
+    void Start()
     {
-        friendChatScript = friendChatCanvas.GetComponent<FriendChatScript>();
-        notificationManagerScript = notificationManagerCanvas.GetComponent<NotificationManagerScript>();
 
-        var dropdown = dropdownObject.GetComponent<TMP_Dropdown>();
         dropdown.onValueChanged.AddListener(delegate
         {
             ReOrderList(dropdown.value);
         });
 
-        var textInput = textInputObject.GetComponent<TMP_InputField>();
         textInput.onValueChanged.AddListener(delegate
         {
             FilterList(textInput.text);
@@ -134,10 +128,9 @@ public class SocialScript : MonoBehaviour
                 notificationManagerScript.friendMessagesSenders.Remove(friend.name);
 
                 friendChatScript.Connect(friend);
-                var friendChatGroup = friendChatCanvas.GetComponent<CanvasGroup>();
-                friendChatGroup.alpha = 1;
-                friendChatGroup.blocksRaycasts = true;
-                friendChatGroup.interactable = true;
+                friendChatCanvasGroup.alpha = 1;
+                friendChatCanvasGroup.blocksRaycasts = true;
+                friendChatCanvasGroup.interactable = true;
 
                 var socialGroup = GetComponent<CanvasGroup>();
                 socialGroup.alpha = 0;

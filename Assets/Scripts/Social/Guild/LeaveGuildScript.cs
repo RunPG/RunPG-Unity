@@ -1,6 +1,4 @@
 using RunPG.Multi;
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
@@ -8,12 +6,16 @@ using UnityEngine.UI;
 public class LeaveGuildScript : MonoBehaviour
 {
     [SerializeField]
-    private GameObject guildPageCanvas;
+    private GuildScript guildScript;
     [SerializeField]
-    private GameObject guildSearchCanvas;
+    private CanvasGroup guildCanvasGroup;
+    [SerializeField]
+    private GuildSearchScript guildSearchScript;
+    [SerializeField]
+    private CanvasGroup guildSearchCanvasGroup;
     [SerializeField]
     private GameObject yesButtonObject;
-    // Start is called before the first frame update
+
     void Start()
     {
         yesButtonObject.GetComponent<Button>().onClick.AddListener(LeaveGuild);
@@ -21,22 +23,19 @@ public class LeaveGuildScript : MonoBehaviour
 
     async void LeaveGuild()
     {
-        var guild = guildPageCanvas.GetComponent<GuildScript>().guild; 
+        var guild = guildScript.guild; 
         guild.members = guild.members.Where(user => user.id != PlayerProfile.id).ToList();
         await Requests.DELETELeaveGuild(PlayerProfile.id);
         PlayerProfile.guildId = 0;
         PlayerProfile.isGuildOwner = false;
 
-        var guildPageCanvasGroup = guildPageCanvas.GetComponent<CanvasGroup>();
-        guildPageCanvasGroup.alpha = 0;
-        guildPageCanvasGroup.interactable = false;
-        guildPageCanvasGroup.blocksRaycasts = false;
+        guildCanvasGroup.alpha = 0;
+        guildCanvasGroup.interactable = false;
+        guildCanvasGroup.blocksRaycasts = false;
 
-        await guildSearchCanvas.GetComponent<GuildSearchScript>().Load();
-        var guildSearchCanvasGroup = guildSearchCanvas.GetComponent<CanvasGroup>();
+        await guildSearchScript.Load();
         guildSearchCanvasGroup.alpha = 1;
         guildSearchCanvasGroup.interactable = true;
         guildSearchCanvasGroup.blocksRaycasts = true;
-        guildSearchCanvas.SetActive(true);
     }
 }

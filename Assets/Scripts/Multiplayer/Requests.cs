@@ -33,7 +33,7 @@ namespace RunPG.Multi
                 }
                 else
                 {
-                    var user = JsonUtility.FromJson<UserModel>(request.downloadHandler.text);
+                    var user = JsonConvert.DeserializeObject<UserModel>(request.downloadHandler.text);
                     return user;
                 }
             }
@@ -56,7 +56,7 @@ namespace RunPG.Multi
             }
             else
             {
-                var user = JsonUtility.FromJson<UserModel>(request.downloadHandler.text);
+                var user = JsonConvert.DeserializeObject<UserModel>(request.downloadHandler.text);
                 return user;
             }
         }

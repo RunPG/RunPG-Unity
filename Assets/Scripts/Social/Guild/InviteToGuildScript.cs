@@ -1,6 +1,4 @@
 using RunPG.Multi;
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -8,36 +6,32 @@ using UnityEngine.UI;
 public class InviteToGuildScript : MonoBehaviour
 {
     [SerializeField]
-    private GameObject textInputObject;
+    private TMP_InputField textInput;
     [SerializeField]
     private GameObject userObject;
     [SerializeField]
     private GameObject notFoundText;
     [SerializeField]
-    private GameObject loopObject;
+    private Button loopButton;
     [SerializeField]
-    private GameObject GuildCanvas;
-
     private GuildScript guildScript;
+
     private Transform userTransform;
 
 
     // Start is called before the first frame update
     void Start()
     {
-        var textInput = textInputObject.GetComponent<TMP_InputField>();
         textInput.onSubmit.AddListener(delegate
         {
             SearchUser(textInput.text);
         });
 
-        var loopButton = loopObject.GetComponent<Button>();
         loopButton.onClick.AddListener(delegate
         {
             SearchUser(textInput.text);
         });
 
-        guildScript = GuildCanvas.GetComponent<GuildScript>();
         userTransform = userObject.transform;
     }
 
