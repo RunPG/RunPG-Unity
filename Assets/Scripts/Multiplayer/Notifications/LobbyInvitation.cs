@@ -23,10 +23,10 @@ namespace RunPG.Multi
             acceptButton.onClick.AddListener(OnClickAccept);
             refuseButton.onClick.AddListener(OnClickRefuse);
         }
-        public override void OnClickAccept()
+        public override async void OnClickAccept()
         {
             Debug.Log("");
-            StartCoroutine(Requests.DELETENotification(GlobalVariables.userId, sender_id, NotificationType.LOBBY));
+            await Requests.DELETENotification(GlobalVariables.userId, sender_id, NotificationType.LOBBY);
             lobbyInvitationPanel.SetActive(false);
             DungeonPanel.SetActive(true);
             //TODO: find another room names
@@ -34,9 +34,9 @@ namespace RunPG.Multi
             Destroy(gameObject);
         }
 
-        public override void OnClickRefuse()
+        public override async void OnClickRefuse()
         {
-            StartCoroutine(Requests.DELETENotification(GlobalVariables.userId, sender_id, NotificationType.GUILD));
+            await Requests.DELETENotification(GlobalVariables.userId, sender_id, NotificationType.GUILD);
             Destroy(gameObject);
         }
     }

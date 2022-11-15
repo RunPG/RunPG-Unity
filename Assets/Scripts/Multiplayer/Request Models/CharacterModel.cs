@@ -12,10 +12,10 @@ namespace RunPG.Multi
         public int id;
         public int experience;
         public int statisticsId;
-        public int firstSpellId;
-        public int secondSpellId;
-        public int thirdSpellId;
-        public int fourthSpellId;
+        public int? firstSpellId;
+        public int? secondSpellId;
+        public int? thirdSpellId;
+        public int? fourthSpellId;
         public int helmetId;
         public int chestplateId;
         public int leggingsId;
@@ -23,7 +23,7 @@ namespace RunPG.Multi
         public int weaponId;
         public HeroClass heroClass;
 
-        public CharacterModel(int id, int experience, int statisticsId, int firstSpellId, int secondSpellId, int thirdSpellId, int fourthSpellId, int helmetId, int chestplateId, int leggingsId, int glovesId, int weaponId, HeroClass heroClass)
+        public CharacterModel(int id, int experience, int statisticsId, int? firstSpellId, int? secondSpellId, int? thirdSpellId, int? fourthSpellId, int helmetId, int chestplateId, int leggingsId, int glovesId, int weaponId, HeroClass heroClass)
         {
             this.id = id;
             this.experience = experience;

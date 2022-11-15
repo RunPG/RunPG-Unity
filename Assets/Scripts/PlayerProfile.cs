@@ -11,4 +11,6 @@ public static class PlayerProfile
     public static int id;
     public static string serverAuthCode = null;
     public static CharacterInfo characterInfo;
+    public static int? guildId;
+    public static bool isGuildOwner;
 }

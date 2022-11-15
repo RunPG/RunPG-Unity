@@ -19,9 +19,9 @@ namespace RunPG.Multi
         */
         }
 
-        public override void OnClickRefuse()
+        public override async void OnClickRefuse()
         {
-            StartCoroutine(Requests.DELETENotification(Int32.Parse(PhotonNetwork.NickName), sender_id, NotificationType.GUILD));
+            await Requests.DELETENotification(Int32.Parse(PhotonNetwork.NickName), sender_id, NotificationType.GUILD);
             Destroy(gameObject);
         }
     }

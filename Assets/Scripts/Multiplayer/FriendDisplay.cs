@@ -17,10 +17,10 @@ namespace RunPG.Multi
             lobbyInvitationButton.onClick.AddListener(OnClickSendLobbyInvitation);
         }
 
-        void OnClickSendLobbyInvitation()
+        async void OnClickSendLobbyInvitation()
         {
             Debug.Log("Sending lobby invitation friendID:" + _friendId + " userid:" + GlobalVariables.userId);  
-            StartCoroutine(Requests.POSTSendNotification(GlobalVariables.userId, _friendId, NotificationType.LOBBY));
+            await Requests.POSTSendNotification(GlobalVariables.userId, _friendId, NotificationType.LOBBY);
         }
     }
 }

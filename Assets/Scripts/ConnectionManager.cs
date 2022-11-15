@@ -63,6 +63,8 @@ public class ConnectionManager : MonoBehaviour
                 {
                     PlayerProfile.id = user.id;
                     PlayerProfile.characterInfo = await CharacterInfo.Load(PlayerProfile.id);
+                    PlayerProfile.guildId = user.guildId;
+                    PlayerProfile.isGuildOwner = user.isGuildOwner;
                     SceneManager.LoadScene("MapScene");
                 }
                 else
@@ -86,6 +88,8 @@ public class ConnectionManager : MonoBehaviour
                 {
                     PlayerProfile.id = user.id;
                     PlayerProfile.characterInfo = await CharacterInfo.Load(PlayerProfile.id);
+                    PlayerProfile.guildId = user.guildId;
+                    PlayerProfile.isGuildOwner = user.isGuildOwner;
                     SceneManager.LoadScene("MapScene");
                 }
                 else
@@ -179,6 +183,8 @@ public class ConnectionManager : MonoBehaviour
         {
             PlayerProfile.id = user.id;
             PlayerProfile.characterInfo = await CharacterInfo.Load(PlayerProfile.id);
+            PlayerProfile.guildId = user.guildId;
+            PlayerProfile.isGuildOwner = user.isGuildOwner;
             SceneManager.LoadScene("MapScene");
         }
         else

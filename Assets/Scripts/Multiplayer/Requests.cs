@@ -33,7 +33,7 @@ namespace RunPG.Multi
                 }
                 else
                 {
-                    var user = JsonUtility.FromJson<UserModel>(request.downloadHandler.text);
+                    var user = JsonConvert.DeserializeObject<UserModel>(request.downloadHandler.text);
                     return user;
                 }
             }
@@ -56,7 +56,7 @@ namespace RunPG.Multi
             }
             else
             {
-                var user = JsonUtility.FromJson<UserModel>(request.downloadHandler.text);
+                var user = JsonConvert.DeserializeObject<UserModel>(request.downloadHandler.text);
                 return user;
             }
         }
@@ -101,6 +101,30 @@ namespace RunPG.Multi
                 else
                 {
                     var notifications = JsonConvert.DeserializeObject<NotificationModel[]>(request.downloadHandler.text);
+                    return notifications;
+                }
+            }
+            return null;
+        }
+
+        public static async Task<NotificationModel> GETNotificationsByTypeBySender(int receiver_id, NotificationType type, int sender_id)
+        {
+            string url = rootUrl + "user/" + receiver_id + "/notification/" + type + "/" + sender_id;
+            using (UnityWebRequest request = UnityWebRequest.Get(url))
+            {
+
+                request.SendWebRequest();
+                while (!request.isDone)
+                {
+                    await Task.Yield();
+                }
+                if (request.result != UnityWebRequest.Result.Success)
+                {
+                    Debug.LogError(string.Format("Error in request:{0}\nError Message: {1}\nError 404 can be normal (not an error)", url, request.error));
+                }
+                else
+                {
+                    var notifications = JsonConvert.DeserializeObject<NotificationModel>(request.downloadHandler.text);
                     return notifications;
                 }
             }
@@ -199,6 +223,71 @@ namespace RunPG.Multi
             return null;
         }
 
+        public static async Task<FriendModel> GETUserFriend(int user_id, int friend_id)
+        {
+            var url = rootUrl + "user/" + user_id + "/friend/" + friend_id;
+            using (UnityWebRequest request = UnityWebRequest.Get(url))
+            {
+                request.SendWebRequest();
+                while (!request.isDone)
+                {
+                    await Task.Yield();
+                }
+                if (request.result != UnityWebRequest.Result.Success)
+                {
+                    Debug.LogError(string.Format("Error in request:{0}\nError Message: {1}\nError 404 can be normal (not an error)", url, request.error));
+                }
+                else
+                {
+                    var friendModel = JsonConvert.DeserializeObject<FriendModel>(request.downloadHandler.text);
+                    return friendModel;
+                }
+            }
+            return null;
+        }
+
+        public static async Task<GuildListModel[]> GETAllGuilds()
+        {
+            var url = rootUrl + "guild";
+            using UnityWebRequest request = UnityWebRequest.Get(url);
+            request.SendWebRequest();
+            while (!request.isDone)
+            {
+                await Task.Yield();
+            }
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogError(string.Format("Error in request:{0}\nError Message: {1}\nError 404 can be normal (not an error)", url, request.error));
+            }
+            else
+            {
+                var guildModels = JsonConvert.DeserializeObject<GuildListModel[]>(request.downloadHandler.text);
+                return guildModels;
+            }
+            return null;
+        }
+
+        public static async Task<GuildModel> GETGuildById(int guildId)
+        {
+            var url = rootUrl + "guild/" + guildId;
+            using UnityWebRequest request = UnityWebRequest.Get(url);
+            request.SendWebRequest();
+            while (!request.isDone)
+            {
+                await Task.Yield();
+            }
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogError(string.Format("Error in request:{0}\nError Message: {1}\nError 404 can be normal (not an error)", url, request.error));
+            }
+            else
+            {
+                var guildModel = JsonConvert.DeserializeObject<GuildModel>(request.downloadHandler.text);
+                return guildModel;
+            }
+            return null;
+        }
+
         public static async Task<bool> POSTNewUser(NewUserModel newUser)
         {
             var url = rootUrl + "user";
@@ -222,38 +311,40 @@ namespace RunPG.Multi
             }
         }
 
-        public static IEnumerator POSTAddFriend(int userId, int friend_id)
+        public static async Task<bool> POSTAddFriend(int userId, int friend_id)
         {
-            // var str = "http://178.62.237.73/user/" + PhotonNetwork.NickName + "/friend/7";
-            var str = rootUrl + "user/" + userId + "/friend/" + friend_id;
-            Debug.Log(str);
-            using (UnityWebRequest request = UnityWebRequest.Post(str, "POST"))
+            var url = rootUrl + "user/" + userId + "/friend/" + friend_id;
+            
+            using UnityWebRequest request = UnityWebRequest.Post(url, "POST");
+            request.SendWebRequest();
+            while (!request.isDone)
             {
-                yield return request.SendWebRequest();
-
-                if (request.result != UnityWebRequest.Result.Success)
-                {
-                    Debug.Log(request.error);
-                    // _errorMessage.SetActive(true);
-                    // _errorMessage.GetComponent<Text>().text = "User already exist!";
-                }
+                await Task.Yield();
             }
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogError(string.Format("Error in request:{0}\nError Message: {1}", url, request.error));
+                return false;
+            }
+            return true;
         }
-        public static IEnumerator POSTSendNotification(int senderId, int receiver_id, NotificationType type)
+        
+        public static async Task<bool> POSTSendNotification(int senderId, int receiver_id, NotificationType type)
         {
-            var str = rootUrl + "user/" + receiver_id + "/notification/" + type + "/" + senderId;
-            Debug.Log(str);
-            using (UnityWebRequest request = UnityWebRequest.Post(str, "POST"))
+            var url = rootUrl + "user/" + receiver_id + "/notification/" + type + "/" + senderId;
+            
+            using UnityWebRequest request = UnityWebRequest.Post(url, "POST");
+            request.SendWebRequest();
+            while (!request.isDone)
             {
-                yield return request.SendWebRequest();
-
-                if (request.result != UnityWebRequest.Result.Success)
-                {
-                    Debug.Log(request.error);
-                    // _errorMessage.SetActive(true);
-                    // _errorMessage.GetComponent<Text>().text = "User already exist!";
-                }
+                await Task.Yield();
             }
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogError(string.Format("Error in request:{0}\nError Message: {1}", url, request.error));
+                return false;
+            }
+            return true;
         }
 
         public static async Task<bool> POSTInventoryEquipement(int user_id, NewEquipementModel newEquipment)
@@ -319,19 +410,104 @@ namespace RunPG.Multi
             return true;
         }
 
-        public static IEnumerator DELETENotification(int userId, int friend_id, NotificationType type)
+        public static async Task<bool> POSTJoinGuild(int userId, int guildId)
         {
-            var str = rootUrl + "user/" + userId + "/notification/" + type + '/'+ friend_id;
-            Debug.Log(str);
-            using (UnityWebRequest request = UnityWebRequest.Delete(str))
-            {
-                yield return request.SendWebRequest();
+            var url = rootUrl + "user/" + userId + "/join/" + guildId;
 
-                if (request.result != UnityWebRequest.Result.Success)
-                {
-                    Debug.Log(request.error);
-                }
+            using UnityWebRequest request = UnityWebRequest.Post(url, "POST");
+            request.SendWebRequest();
+            while (!request.isDone)
+            {
+                await Task.Yield();
             }
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogError(string.Format("Error in request:{0}\nError Message: {1}", url, request.error));
+                return false;
+            }
+            return true;
+        }
+
+        public static async Task<GuildListModel> POSTGuild(GuildCreateModel guildCreateModel)
+        {
+            var url = rootUrl + "guild";
+            var content = JsonConvert.SerializeObject(guildCreateModel);
+
+            using UnityWebRequest request = UnityWebRequest.Post(url, "POST");
+            request.SetRequestHeader("Content-Type", "application/json");
+            request.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(content));
+            request.SendWebRequest();
+            while (!request.isDone)
+            {
+                await Task.Yield();
+            }
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogError(string.Format("Error in request:{0}\nError Message: {1}", url, request.error));
+                return null;
+            }
+            var guild = JsonConvert.DeserializeObject<GuildListModel>(request.downloadHandler.text);
+            return guild;
+        }
+
+        public static async Task<bool> PUTGuild(int guildId, GuildPutModel guildModel)
+        {
+            var url = rootUrl + "guild/" + guildId;
+            var content = JsonConvert.SerializeObject(guildModel);
+
+            using UnityWebRequest request = UnityWebRequest.Put(url, "PUT");
+            request.SetRequestHeader("Content-Type", "application/json");
+            request.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(content));
+            request.SendWebRequest();
+            while (!request.isDone)
+            {
+                await Task.Yield();
+            }
+
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogError(string.Format("Error in request:{0}\nError Message: {1}", url, request.error));
+                return false;
+            }
+            return true;
+        }
+
+        public static async Task<bool> DELETENotification(int receiverId, int senderId, NotificationType type)
+        {
+            var url = rootUrl + "user/" + receiverId + "/notification/" + type + '/'+ senderId;
+            
+            using UnityWebRequest request = UnityWebRequest.Delete(url);
+            request.SendWebRequest();
+            while (!request.isDone)
+            {
+                await Task.Yield();
+            }
+
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogError(string.Format("Error in request:{0}\nError Message: {1}", url, request.error));
+                return false;
+            }
+            return true;
+        }
+
+        public static async Task<bool> DELETELeaveGuild(int userId)
+        {
+            var url = rootUrl + "user/" + userId + "/guild";
+
+            using UnityWebRequest request = UnityWebRequest.Delete(url);
+            request.SendWebRequest();
+            while (!request.isDone)
+            {
+                await Task.Yield();
+            }
+
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogError(string.Format("Error in request:{0}\nError Message: {1}", url, request.error));
+                return false;
+            }
+            return true;
         }
     }
 }
