@@ -48,9 +48,6 @@ namespace RunPG.Multi
             friendChatGroup = friendChatCanvas.GetComponent<CanvasGroup>();
 
             notificationManagerScript = notificationManagerCanvas.GetComponent<NotificationManagerScript>();
-            
-            if (PlayerProfile.guildId.HasValue)
-                guildChannelName = $"Guild_{PlayerProfile.guildId}";
         }
         
 
@@ -69,7 +66,21 @@ namespace RunPG.Multi
             Debug.Log("ChatManager:OnConnected called");
             if (PlayerProfile.guildId.HasValue)
             {
-                if (_chatClient.Subscribe(guildChannelName, messagesFromHistory: 50, creationOptions: new ChannelCreationOptions { MaxSubscribers = 50 }))
+                SusbcribeToGuild();
+            }
+            //_chatClient.SetOnlineStatus(ChatUserStatus.Online);
+        }
+
+        public void SusbcribeToGuild()
+        {
+            if (!PlayerProfile.guildId.HasValue)
+                return;
+
+            guildChannelName = $"Guild_{PlayerProfile.guildId}";
+
+            if (_chatClient.PublicChannels.ContainsKey(guildChannelName))
+                return;
+            if (_chatClient.Subscribe(guildChannelName, messagesFromHistory: 50, creationOptions: new ChannelCreationOptions { MaxSubscribers = 50 }))
                 {
                     if (_chatClient.PublicChannels.ContainsKey(guildChannelName))
                     {
@@ -84,8 +95,6 @@ namespace RunPG.Multi
                     
                     Debug.Log($"Subscribed to {guildChannelName}");
                 }
-            }
-            //_chatClient.SetOnlineStatus(ChatUserStatus.Online);
         }
 
         public void OnDisconnected()

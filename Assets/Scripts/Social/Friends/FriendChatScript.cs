@@ -24,14 +24,12 @@ public class FriendChatScript : IChat
         textInput.onSubmit.AddListener(delegate
         {
             chatManagerScript.SendPrivateMessage(currentFriend.name, textInput.text);
-            DisplayMessage(textInput.text, PlayerProfile.pseudo);
             textInput.text = "";
         });
 
         sendButton.onClick.AddListener(delegate
         {
             chatManagerScript.SendPrivateMessage(currentFriend.name, textInput.text);
-            DisplayMessage(textInput.text, PlayerProfile.pseudo);
             textInput.text = "";
         });
     }

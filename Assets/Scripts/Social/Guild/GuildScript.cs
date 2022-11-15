@@ -63,6 +63,7 @@ public class GuildScript : IChat
 
     public async Task Load()
     {
+        chatManagerScript.SusbcribeToGuild();
         await LoadGuild();
         AddGuild();
     }
