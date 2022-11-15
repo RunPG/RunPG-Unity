@@ -17,11 +17,10 @@ public class NotificationManagerScript : MonoBehaviour
     private GameObject guildListNotificationsObject;
 
     [SerializeField]
-    private GameObject lobbyNotificationsObject;
+    private SocialScript socialScript;
 
     NotificationModel[] friendNotifications;
     NotificationModel[] guildNotifications;
-    NotificationModel[] lobbyNotifications;
 
     public bool guildMessagesNotification = false;
 
@@ -31,7 +30,6 @@ public class NotificationManagerScript : MonoBehaviour
     {
         friendNotifications = new NotificationModel[0];
         guildNotifications = new NotificationModel[0];
-        lobbyNotifications = new NotificationModel[0];
         friendMessagesSenders = new HashSet<string>();
         InvokeRepeating(nameof(UpdateNotifications), 0, 30);
     }
@@ -47,19 +45,22 @@ public class NotificationManagerScript : MonoBehaviour
     {
         friendNotifications = await Requests.GETNotificationsByType(PlayerProfile.id, NotificationType.FRIENDLIST);
         guildNotifications = await Requests.GETNotificationsByType(PlayerProfile.id, NotificationType.GUILD);
-        lobbyNotifications = await Requests.GETNotificationsByType(PlayerProfile.id, NotificationType.LOBBY);
     }
 
     public void UpdateNotificationObjects()
     {
         bool showFriendNotifications = friendNotifications.Length > 0 || friendMessagesSenders.Count > 0;
         bool showGuildNotifications = guildNotifications.Length > 0 || guildMessagesNotification;
-        bool showLobbyNotifications = lobbyNotifications.Length > 0;
 
-        menuNotificationsObject.SetActive(showFriendNotifications || showGuildNotifications || showLobbyNotifications);
+        menuNotificationsObject.SetActive(showFriendNotifications || showGuildNotifications);
         friendNotificationsObject.SetActive(showFriendNotifications);
         guildNotificationsObject.SetActive(showGuildNotifications);
         guildListNotificationsObject.SetActive(guildNotifications.Length > 0);
         //lobbyNotificationsObject.SetActive(showLobbyNotifications);
+
+        foreach (var sender in friendMessagesSenders)
+        {
+            socialScript.AddMessageNotification(sender);
+        }
     }
 }

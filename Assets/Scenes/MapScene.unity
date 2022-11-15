@@ -15518,7 +15518,7 @@ MonoBehaviour:
   friendNotificationsObject: {fileID: 53249656}
   guildNotificationsObject: {fileID: 1895249015}
   guildListNotificationsObject: {fileID: 922762658}
-  lobbyNotificationsObject: {fileID: 0}
+  socialScript: {fileID: 1489044283}
   guildMessagesNotification: 0
 --- !u!4 &843594759
 Transform:

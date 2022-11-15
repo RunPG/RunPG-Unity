@@ -41,6 +41,8 @@ public class SocialScript : MonoBehaviour
 
     private string filter;
 
+    private Dictionary<string, GameObject> friendNotificationObjects;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -107,6 +109,7 @@ public class SocialScript : MonoBehaviour
         {
             Instantiate(myFriendsText, friendListLayout.transform);
         }
+        friendNotificationObjects = new Dictionary<string, GameObject>();
         foreach (var friend in filteredFriends)
         {
             Transform friendObject = Instantiate(friendPrefab, friendListLayout.transform).transform;
@@ -116,6 +119,8 @@ public class SocialScript : MonoBehaviour
             
             var messageTransform = friendObject.Find("Message");
             var notificationObject = messageTransform.Find("Notification").gameObject;
+
+            friendNotificationObjects.Add(friend.name, notificationObject);
 
             if (notificationManagerScript.friendMessagesSenders.Contains(friend.name))
             {
@@ -249,6 +254,11 @@ public class SocialScript : MonoBehaviour
         ClearFriendlist();
         AddFriendRequests();
         AddFriends();
+    }
+
+    public void AddMessageNotification(string sender)
+    {
+        friendNotificationObjects[sender].SetActive(true);
     }
 
     enum Order
