@@ -151,11 +151,11 @@ public class PlayerMovement : MonoBehaviour
 					RaycastHit hit;
 					if (Physics.Raycast(ray, out hit))
 					{
-						DungeonPortal portal = hit.transform.gameObject.GetComponent<DungeonPortal>();
-						if (portal != null)
+						POIScript poi = hit.transform.parent.gameObject.GetComponent<POIScript>();
+						if (poi != null)
 						{
 							isUIActive = true;
-							portal.ShowInfo();
+							poi.ShowInfo();
 						}
 					}
 				}

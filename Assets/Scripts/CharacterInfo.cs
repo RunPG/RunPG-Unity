@@ -120,11 +120,11 @@ public class CharacterInfo
         characterInfo.resistance = userCharacterModel.statistics.resistance;
         characterInfo.precision = userCharacterModel.statistics.precision;
 
-        var weaponTask = Requests.GETEquipementById(userCharacterModel.character.weaponId);
-        var helmetTask = Requests.GETEquipementById(userCharacterModel.character.helmetId);
-        var chestplateTask = Requests.GETEquipementById(userCharacterModel.character.chestplateId);
-        var glovesTask = Requests.GETEquipementById(userCharacterModel.character.glovesId);
-        var leggingsTask = Requests.GETEquipementById(userCharacterModel.character.leggingsId);
+        var weaponTask = Requests.GETEquipmentById(userCharacterModel.character.weaponId);
+        var helmetTask = Requests.GETEquipmentById(userCharacterModel.character.helmetId);
+        var chestplateTask = Requests.GETEquipmentById(userCharacterModel.character.chestplateId);
+        var glovesTask = Requests.GETEquipmentById(userCharacterModel.character.glovesId);
+        var leggingsTask = Requests.GETEquipmentById(userCharacterModel.character.leggingsId);
 
         var weaponModel = await weaponTask;
         characterInfo.weapon = weaponModel != null ? new Equipment(weaponModel) : null;

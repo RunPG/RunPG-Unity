@@ -1,18 +1,17 @@
 using RunPG.Multi;
 using System.Collections;
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class DungeonPortal : ActivityScript
+public class ForestPortal : ActivityScript
 {
     [SerializeField]
     private POIScript poi;
     [SerializeField]
-    private GameObject availableDungeon;
+    private GameObject availableForest;
     [SerializeField]
-    private GameObject unavailableDungeon;
+    private GameObject unavailableForest;
 
     private PortalDescription description = null;
 
@@ -20,30 +19,30 @@ public class DungeonPortal : ActivityScript
 
     public override int cooldown => 5;
 
-    public override void Enter()
+    public override async void Enter()
     {
         if (IsInRange())
         {
-            LobbyManager.instance.FindDungeonLobbies(poi.id);
+            await Requests.POSTActivity(PlayerProfile.id, poi.id);
+            SceneManager.LoadScene("TimbermanScene");
         }
     }
 
     public override bool IsInRange()
     {
-        GameObject player = GameObject.Find("LocationBasedGame/Character");
-        return true;// Vector3.Distance(player.transform.position, transform.position) < range;
+        return true;
     }
 
     public override void ShowInfo()
     {
         if (!description)
             description = GameObject.Find("UI/PortalDescription").GetComponent<PortalDescription>();
-        description.Show(poi, "Donjon");
+        description.Show(poi, "Forêt");
     }
 
     public override void SetAvailable(bool state)
     {
-        availableDungeon.SetActive(state);
-        unavailableDungeon.SetActive(!state);
+        availableForest.SetActive(state);
+        unavailableForest.SetActive(!state);
     }
 }

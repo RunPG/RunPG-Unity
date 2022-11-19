@@ -15,16 +15,16 @@ namespace RunPG.Multi
         public string description;
         public Rarity rarity;
         public string heroClass;
-        public EquipmentType equipementType; // TODO rename
+        public EquipmentType equipmentType;
 
-        public EquipmentBaseModel(int id, string name, string description, Rarity rarity, string heroClass, EquipmentType equipementType)
+        public EquipmentBaseModel(int id, string name, string description, Rarity rarity, string heroClass, EquipmentType equipmentType)
         {
             this.id = id;
             this.name = name;
             this.description = description;
             this.rarity = rarity;
             this.heroClass = heroClass;
-            this.equipementType = equipementType;
+            this.equipmentType = equipmentType;
         }
     }
 }

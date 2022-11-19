@@ -12,7 +12,6 @@ using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 public class LobbyManager : MonoBehaviourPunCallbacks
 {
-
     [SerializeField] RoomDisplay roomDisplayPrefab;
     [SerializeField] private Button createButton;
     [SerializeField] private Button leaveButtonRoom;
@@ -21,7 +20,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 
     [SerializeField] private CanvasGroup lobbyList;
     [SerializeField] private CanvasGroup lobby;
-    [SerializeField] private CanvasGroup DungeonDescription;
+    [SerializeField] private CanvasGroup portalDescription;
     [SerializeField] private CanvasGroup InventoryCanvas;
     [SerializeField] private CanvasGroup canvas;
     [SerializeField] private CanvasGroup lobbyPlayerList;
@@ -32,8 +31,13 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     private Transform playerPrefabPos;
     [SerializeField]
     private PlayerDisplay playerDisplayPrefab;
+
+    [SerializeField]
+    private PlayerMovement playerMovement;
+
     private List<PlayerDisplay> playersList = new List<PlayerDisplay>();
     private List<RoomDisplay> roomDisplayListing = new List<RoomDisplay>();
+
     private HashSet<string> roomNameList = new HashSet<string>();
 
     [SerializeField]
@@ -44,6 +48,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     [SerializeField]
     private PlayerMovement playerMovement;
 
+    private long poiId;
 
     /// <summary>
     /// Keep track of the current process. Since connection is asynchronous and is based on several callbacks from Photon,
@@ -64,11 +69,13 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 
         isConnecting = PhotonNetwork.ConnectUsingSettings();
         PhotonNetwork.GameVersion = gameVersion;
+        var phtnView = gameObject.AddComponent<PhotonView>();
+        phtnView.ViewID = 2;
         // #Critical
         // this makes sure we can use PhotonNetwork.LoadLevel() on the master client and all clients in the same room sync their level automatically
         PhotonNetwork.AutomaticallySyncScene = true;
     }
-    public void FindDungeonLobbies()
+    public void FindDungeonLobbies(long poiId)
     {
         lobbyList.alpha = 1;
         lobbyList.interactable = true;
@@ -76,12 +83,14 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         lobby.alpha = 0;
         lobby.interactable = false;
         lobby.blocksRaycasts = false;
-        DungeonDescription.alpha = 0;
-        DungeonDescription.interactable = false;
-        DungeonDescription.blocksRaycasts = false;
+        portalDescription.alpha = 0;
+        portalDescription.interactable = false;
+        portalDescription.blocksRaycasts = false;
         canvas.alpha = 0;
         canvas.interactable = false;
         canvas.blocksRaycasts = false;
+        playerMovement.SetUIState(true);
+        this.poiId = poiId;
     }
 
     public void Start()
@@ -105,10 +114,18 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         if (PhotonNetwork.IsMasterClient)
         {
             Debug.LogFormat("PhotonNetwork : Loading Dungeon");
+            photonView.RPC("UseActivity", RpcTarget.All, null);
             PhotonNetwork.AutomaticallySyncScene = true;
             PhotonNetwork.LoadLevel("DungeonScene");
         }
     }
+
+    [PunRPC]
+    async void UseActivity()
+    {
+        await Requests.POSTActivity(PlayerProfile.id, poiId);
+    }
+
     public void Close()
     {
         lobbyList.alpha = 0;
@@ -336,7 +353,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         Debug.Log("Leave room");
         PhotonNetwork.LeaveRoom();
 
-        FindDungeonLobbies();
+        FindDungeonLobbies(poiId);
     }
     public override void OnJoinedRoom()
     {

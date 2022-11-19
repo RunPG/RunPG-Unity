@@ -156,7 +156,7 @@ namespace RunPG.Multi
 
         public static async Task<EquipmentBaseModel[]> GETEquipements()
         {
-            var url = rootUrl + "equipementBase";
+            var url = rootUrl + "equipmentBase";
             using (UnityWebRequest request = UnityWebRequest.Get(url))
             {
                 request.SendWebRequest();
@@ -177,9 +177,9 @@ namespace RunPG.Multi
             return null;
         }
 
-        public static async Task<EquipmentModel> GETEquipementById(int equipement_id)
+        public static async Task<EquipmentModel> GETEquipmentById(int equipment_id)
         {
-            var url = rootUrl + "equipement/" + equipement_id;
+            var url = rootUrl + "equipment/" + equipment_id;
             using (UnityWebRequest request = UnityWebRequest.Get(url))
             {
                 request.SendWebRequest();
@@ -284,6 +284,27 @@ namespace RunPG.Multi
             {
                 var guildModel = JsonConvert.DeserializeObject<GuildModel>(request.downloadHandler.text);
                 return guildModel;
+            }
+        }
+
+        public static async Task<ActivityModel> GetActivityAvailability(int user_id, long activity_id)
+        {
+            var url = rootUrl + "user/" + user_id + "/activity/" + activity_id;
+            using UnityWebRequest request = UnityWebRequest.Get(url);
+
+            request.SendWebRequest();
+            while (!request.isDone)
+            {
+                await Task.Yield();
+            }
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogError(string.Format("Error in request:{0}\nError Message: {1}", url, request.error));
+            }
+            else
+            {
+                var activity = JsonConvert.DeserializeObject<ActivityModel>(request.downloadHandler.text);
+                return activity;
             }
             return null;
         }
@@ -397,6 +418,23 @@ namespace RunPG.Multi
             using UnityWebRequest request = UnityWebRequest.Post(url, "POST");
             request.SetRequestHeader("Content-Type", "application/json");
             request.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(content));
+            request.SendWebRequest();
+            while (!request.isDone)
+            {
+                await Task.Yield();
+            }
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogError(string.Format("Error in request:{0}\nError Message: {1}", url, request.error));
+                return false;
+            }
+            return true;
+        }
+
+        public static async Task<bool> POSTActivity(int user_id, long activity_id)
+        {
+            var url = rootUrl + "user/" + user_id + "/activity/" + activity_id;
+            using UnityWebRequest request = UnityWebRequest.Post(url, "POST");
             request.SendWebRequest();
             while (!request.isDone)
             {
