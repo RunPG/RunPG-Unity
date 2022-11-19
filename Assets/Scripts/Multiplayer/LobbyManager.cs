@@ -45,8 +45,6 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 
     [SerializeField]
     private LobbyPLayerListScript lobbyPlayerListScript;
-    [SerializeField]
-    private PlayerMovement playerMovement;
 
     private long poiId;
 

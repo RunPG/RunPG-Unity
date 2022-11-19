@@ -279,6 +279,7 @@ namespace RunPG.Multi
             if (request.result != UnityWebRequest.Result.Success)
             {
                 Debug.LogError(string.Format("Error in request:{0}\nError Message: {1}\nError 404 can be normal (not an error)", url, request.error));
+                return null;
             }
             else
             {
