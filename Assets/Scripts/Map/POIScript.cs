@@ -11,6 +11,8 @@ public class POIScript : MonoBehaviour
     private DungeonPortal dungeon;
     [SerializeField]
     private ForestPortal forest;
+    [SerializeField]
+    private BushPortal bushes;
 
     public long id;
     private ActivityScript activity;
@@ -22,15 +24,20 @@ public class POIScript : MonoBehaviour
     async void Start()
     {
         id = long.Parse(transform.name);
-        if (id % 2 == 0)
+        if (id % 4 == 0)
         {
             dungeon.gameObject.SetActive(true);
             activity = dungeon;
         }
-        else
+        else if (id % 4 == 1)
         {
             forest.gameObject.SetActive(true);
             activity = forest;
+        }
+        else
+        {
+            bushes.gameObject.SetActive(true);
+            activity = bushes;
         }
 
         ActivityModel availability = await Requests.GetActivityAvailability(PlayerProfile.id, id);
