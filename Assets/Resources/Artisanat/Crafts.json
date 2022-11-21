@@ -1,0 +1,626 @@
+[
+  {
+    "id": 1,
+    "equipementBase": {
+      "id": 12,
+      "name": "Casque en mythril rafiné",
+      "description": "Un coup de tête avec ce casque ? Deux morts, trois blessés.",
+      "rarity": "EPIC",
+      "heroClass": "PALADIN",
+      "equipmentType": "HELMET"
+    },
+    "materials":[
+      {
+        "id": 5,
+        "name": "Pierre",
+        "description": "Répond présent quand on a besoin de lui.",
+        "quantity": 10
+      },
+      {
+        "id": 7,
+        "name": "Bave de slime",
+        "description": "C'est visqueux ...",
+        "quantity": 5
+      }
+    ],
+    "golds": 500,
+    "crystals": 500
+  },
+  {
+    "id": 2,
+    "equipementBase": {
+      "id": 13,
+      "name": "Plastron en mythril raffiné",
+      "description": "Supporte les chocs frontaux, et tes kilos en trop.",
+      "rarity": "EPIC",
+      "heroClass": "PALADIN",
+      "equipmentType": "CHESTPLATE"
+    },
+    "materials":[
+      {
+        "id": 5,
+        "name": "Pierre",
+        "description": "Répond présent quand on a besoin de lui.",
+        "quantity": 10
+      },
+      {
+        "id": 7,
+        "name": "Bave de slime",
+        "description": "C'est visqueux ...",
+        "quantity": 5
+      }
+    ],
+    "golds": 700,
+    "crystals": 500
+  },
+  {
+    "id": 3,
+    "equipementBase": {
+      "id": 14,
+      "name": "Jambières en mythril raffiné",
+      "description": "Permet de faire des glissades sur place.",
+      "rarity": "EPIC",
+      "heroClass": "PALADIN",
+      "equipmentType": "LEGGINGS"
+    },
+    "materials":[
+      {
+        "id": 5,
+        "name": "Pierre",
+        "description": "Répond présent quand on a besoin de lui.",
+        "quantity": 10
+      },
+      {
+        "id": 7,
+        "name": "Bave de slime",
+        "description": "C'est visqueux ...",
+        "quantity": 5
+      }
+    ],
+    "golds": 700,
+    "crystals": 500
+  },
+  {
+    "id": 4,
+    "equipementBase": {
+      "id": 15,
+      "name": "Gants en mythril raffiné",
+      "description": "Le raffinage les rends plus résistant. Et toi ? Irrésistible <3",
+      "rarity": "EPIC",
+      "heroClass": "PALADIN",
+      "equipmentType": "GLOVES"
+    },
+    "materials":[
+      {
+        "id": 5,
+        "name": "Pierre",
+        "description": "Répond présent quand on a besoin de lui.",
+        "quantity": 10
+      },
+      {
+        "id": 7,
+        "name": "Bave de slime",
+        "description": "C'est visqueux ...",
+        "quantity": 5
+      }
+    ],
+    "golds": 500,
+    "crystals": 500
+  },
+  {
+    "id": 5,
+    "equipementBase": {
+      "id": 16,
+      "name": "Épée & bouclier en mythril raffiné",
+      "description": "Tu feras mieux de vendre ça avant de te blesser avec.",
+      "rarity": "EPIC",
+      "heroClass": "PALADIN",
+      "equipmentType": "WEAPON"
+    },
+    "materials":[
+      {
+        "id": 3,
+        "name": "Branche",
+        "description": "Petit morceau de bois, utile pour se faire une cabane ou une arme.",
+        "quantity": 15
+      },
+      {
+        "id": 5,
+        "name": "Pierre",
+        "description": "Répond présent quand on a besoin de lui.",
+        "quantity": 15
+      },
+      {
+        "id": 7,
+        "name": "Bave de slime",
+        "description": "C'est visqueux ...",
+        "quantity": 10
+      }
+    ],
+    "golds": 800,
+    "crystals": 800
+  },
+  {
+    "id": 6,
+    "equipementBase": {
+      "id": 17,
+      "name": "Casque en diamant",
+      "description": "Ce casque est plus brillant que ton avenir.",
+      "rarity": "LEGENDARY",
+      "heroClass": "PALADIN",
+      "equipmentType": "HELMET"
+    },
+    "materials":[
+      {
+        "id": 5,
+        "name": "Pierre",
+        "description": "Répond présent quand on a besoin de lui.",
+        "quantity": 20
+      },
+      {
+        "id": 6,
+        "name": "Oeil de Daarun",
+        "description": "L'avoir dans sa poche peut confèrer des pouvoirs surréels.",
+        "quantity": 1
+      },
+      {
+        "id": 7,
+        "name": "Bave de slime",
+        "description": "C'est visqueux ...",
+        "quantity": 30
+      }
+    ],
+    "golds": 1000,
+    "crystals": 1000
+  },
+  {
+    "id": 7,
+    "equipementBase": {
+      "id": 18,
+      "name": "Plastron en diamant",
+      "description": "Forgé par les plus grands, il est maintenant à toi. Dommage.",
+      "rarity": "LEGENDARY",
+      "heroClass": "PALADIN",
+      "equipmentType": "CHESTPLATE"
+    },
+    "materials":[
+      {
+        "id": 5,
+        "name": "Pierre",
+        "description": "Répond présent quand on a besoin de lui.",
+        "quantity": 20
+      },
+      {
+        "id": 6,
+        "name": "Oeil de Daarun",
+        "description": "L'avoir dans sa poche peut confèrer des pouvoirs surréels.",
+        "quantity": 1
+      },
+      {
+        "id": 7,
+        "name": "Bave de slime",
+        "description": "C'est visqueux ...",
+        "quantity": 30
+      }
+    ],
+    "golds": 1500,
+    "crystals": 1000
+  },
+  {
+    "id": 8,
+    "equipementBase": {
+      "id": 19,
+      "name": "Jambières en diamant",
+      "description": "Essaie de courir avec ça pour voir.",
+      "rarity": "LEGENDARY",
+      "heroClass": "PALADIN",
+      "equipmentType": "LEGGINGS"
+    },
+    "materials":[
+      {
+        "id": 5,
+        "name": "Pierre",
+        "description": "Répond présent quand on a besoin de lui.",
+        "quantity": 20
+      },
+      {
+        "id": 6,
+        "name": "Oeil de Daarun",
+        "description": "L'avoir dans sa poche peut confèrer des pouvoirs surréels.",
+        "quantity": 1
+      },
+      {
+        "id": 7,
+        "name": "Bave de slime",
+        "description": "C'est visqueux ...",
+        "quantity": 30
+      }
+    ],
+    "golds": 1500,
+    "crystals": 1000
+  },
+  {
+    "id": 9,
+    "equipementBase": {
+      "id": 20,
+      "name": "Gants en diamant",
+      "description": "Un peu mieux que tes vieux gants de cuisine.",
+      "rarity": "LEGENDARY",
+      "heroClass": "PALADIN",
+      "equipmentType": "GLOVES"
+    },
+    "materials":[
+      {
+        "id": 5,
+        "name": "Pierre",
+        "description": "Répond présent quand on a besoin de lui.",
+        "quantity": 20
+      },
+      {
+        "id": 6,
+        "name": "Oeil de Daarun",
+        "description": "L'avoir dans sa poche peut confèrer des pouvoirs surréels.",
+        "quantity": 1
+      },
+      {
+        "id": 7,
+        "name": "Bave de slime",
+        "description": "C'est visqueux ...",
+        "quantity": 30
+      }
+    ],
+    "golds": 1000,
+    "crystals": 1000
+  },
+  {
+    "id": 10,
+    "equipementBase": {
+      "id": 21,
+      "name": "Tic & Tac",
+      "description": "Le duo qui te rend AGILE.",
+      "rarity": "LEGENDARY",
+      "heroClass": "PALADIN",
+      "equipmentType": "WEAPON"
+    },
+    "materials":[
+      {
+        "id": 3,
+        "name": "Branche",
+        "description": "Petit morceau de bois, utile pour se faire une cabane ou une arme.",
+        "quantity": 25
+      },
+      {
+        "id": 5,
+        "name": "Pierre",
+        "description": "Répond présent quand on a besoin de lui.",
+        "quantity": 20
+      },
+      {
+        "id": 6,
+        "name": "Oeil de Daarun",
+        "description": "L'avoir dans sa poche peut confèrer des pouvoirs surréels.",
+        "quantity": 2
+      },
+      {
+        "id": 7,
+        "name": "Bave de slime",
+        "description": "C'est visqueux ...",
+        "quantity": 25
+      }
+    ],
+    "golds": 1700,
+    "crystals": 1700
+  },
+  {
+    "id": 11,
+    "equipementBase": {
+      "id": 27,
+      "name": "Chapeau d'archimage",
+      "description": "Non non, je te jure ce chapeau est magique, no noob no arnak !",
+      "rarity": "EPIC",
+      "heroClass": "MAGE",
+      "equipmentType": "HELMET"
+    },
+    "materials":[
+      {
+        "id": 4,
+        "name": "Fleur",
+        "description": "C'est tout joli, tout mignon, parfait pour nettoyer la vermine.",
+        "quantity": 10
+      },
+      {
+        "id": 7,
+        "name": "Bave de slime",
+        "description": "C'est visqueux ...",
+        "quantity": 5
+      }
+    ],
+    "golds": 500,
+    "crystals": 500
+  },
+  {
+    "id": 12,
+    "equipementBase": {
+      "id": 28,
+      "name": "Robe d'archimage",
+      "description": "Avec son slip assorti Petit Bâteau.",
+      "rarity": "EPIC",
+      "heroClass": "MAGE",
+      "equipmentType": "CHESTPLATE"
+    },
+    "materials":[
+      {
+        "id": 4,
+        "name": "Fleur",
+        "description": "C'est tout joli, tout mignon, parfait pour nettoyer la vermine.",
+        "quantity": 10
+      },
+      {
+        "id": 7,
+        "name": "Bave de slime",
+        "description": "C'est visqueux ...",
+        "quantity": 5
+      }
+    ],
+    "golds": 700,
+    "crystals": 500
+  },
+  {
+    "id": 13,
+    "equipementBase": {
+      "id": 29,
+      "name": "Bottes d'archimage",
+      "description": "Les chaussettes de l'archimage sont-elles sèches ? Archi-sèches ?",
+      "rarity": "EPIC",
+      "heroClass": "MAGE",
+      "equipmentType": "LEGGINGS"
+    },
+    "materials":[
+      {
+        "id": 4,
+        "name": "Fleur",
+        "description": "C'est tout joli, tout mignon, parfait pour nettoyer la vermine.",
+        "quantity": 10
+      },
+      {
+        "id": 7,
+        "name": "Bave de slime",
+        "description": "C'est visqueux ...",
+        "quantity": 5
+      }
+    ],
+    "golds": 700,
+    "crystals": 500
+  },
+  {
+    "id": 14,
+    "equipementBase": {
+      "id": 30,
+      "name": "Gants d'archimage",
+      "description": "Conçus pour tenir bien au chaud vos petites patoches !",
+      "rarity": "EPIC",
+      "heroClass": "MAGE",
+      "equipmentType": "GLOVES"
+    },
+    "materials":[
+      {
+        "id": 4,
+        "name": "Fleur",
+        "description": "C'est tout joli, tout mignon, parfait pour nettoyer la vermine.",
+        "quantity": 10
+      },
+      {
+        "id": 7,
+        "name": "Bave de slime",
+        "description": "C'est visqueux ...",
+        "quantity": 5
+      }
+    ],
+    "golds": 500,
+    "crystals": 500
+  },
+  {
+    "id": 15,
+    "equipementBase": {
+      "id": 31,
+      "name": "Sceptre de pyromancie",
+      "description": "Tu es pyromane ? Arrête.",
+      "rarity": "EPIC",
+      "heroClass": "MAGE",
+      "equipmentType": "WEAPON"
+    },
+    "materials":[
+      {
+        "id": 4,
+        "name": "Fleur",
+        "description": "C'est tout joli, tout mignon, parfait pour nettoyer la vermine.",
+        "quantity": 15
+      },
+      {
+        "id": 5,
+        "name": "Pierre",
+        "description": "Répond présent quand on a besoin de lui.",
+        "quantity": 15
+      },
+      {
+        "id": 7,
+        "name": "Bave de slime",
+        "description": "C'est visqueux ...",
+        "quantity": 10
+      }
+    ],
+    "golds": 800,
+    "crystals": 800
+  },
+  {
+    "id": 16,
+    "equipementBase": {
+      "id": 32,
+      "name": "Capuche antique",
+      "description": "Te rend sombre et mystérieux.",
+      "rarity": "LEGENDARY",
+      "heroClass": "MAGE",
+      "equipmentType": "HELMET"
+    },
+    "materials":[
+      {
+        "id": 4,
+        "name": "Fleur",
+        "description": "C'est tout joli, tout mignon, parfait pour nettoyer la vermine.",
+        "quantity": 20
+      },
+      {
+        "id": 6,
+        "name": "Oeil de Daarun",
+        "description": "L'avoir dans sa poche peut confèrer des pouvoirs surréels.",
+        "quantity": 1
+      },
+      {
+        "id": 7,
+        "name": "Bave de slime",
+        "description": "C'est visqueux ...",
+        "quantity": 30
+      }
+    ],
+    "golds": 1000,
+    "crystals": 1000
+  },
+  {
+    "id": 17,
+    "equipementBase": {
+      "id": 33,
+      "name": "Robe antique",
+      "description": "La température interne est réglée à 24,3 °C de base, avec un petit thermostat dans la poche gauche.",
+      "rarity": "LEGENDARY",
+      "heroClass": "MAGE",
+      "equipmentType": "CHESTPLATE"
+    },
+    "materials":[
+      {
+        "id": 4,
+        "name": "Fleur",
+        "description": "C'est tout joli, tout mignon, parfait pour nettoyer la vermine.",
+        "quantity": 20
+      },
+      {
+        "id": 6,
+        "name": "Oeil de Daarun",
+        "description": "L'avoir dans sa poche peut confèrer des pouvoirs surréels.",
+        "quantity": 1
+      },
+      {
+        "id": 7,
+        "name": "Bave de slime",
+        "description": "C'est visqueux ...",
+        "quantity": 30
+      }
+    ],
+    "golds": 1500,
+    "crystals": 1000
+  },
+  {
+    "id": 18,
+    "equipementBase": {
+      "id": 34,
+      "name": "Bottes antiques",
+      "description": "Vraiment très confortable. C'est le top du top. Résistantes, stylées, le must des bottes de mage. Je recommande !",
+      "rarity": "LEGENDARY",
+      "heroClass": "MAGE",
+      "equipmentType": "LEGGINGS"
+    },
+    "materials":[
+      {
+        "id": 4,
+        "name": "Fleur",
+        "description": "C'est tout joli, tout mignon, parfait pour nettoyer la vermine.",
+        "quantity": 20
+      },
+      {
+        "id": 6,
+        "name": "Oeil de Daarun",
+        "description": "L'avoir dans sa poche peut confèrer des pouvoirs surréels.",
+        "quantity": 1
+      },
+      {
+        "id": 7,
+        "name": "Bave de slime",
+        "description": "C'est visqueux ...",
+        "quantity": 30
+      }
+    ],
+    "golds": 1500,
+    "crystals": 1000
+  },
+  {
+    "id": 19,
+    "equipementBase": {
+      "id": 35,
+      "name": "Gants antiques",
+      "description": "Vous les utiliserez pour combattre le mal, d'autres les utilisent pour faire des ombres chinoises.",
+      "rarity": "LEGENDARY",
+      "heroClass": "MAGE",
+      "equipmentType": "GLOVES"
+    },
+    "materials":[
+      {
+        "id": 4,
+        "name": "Fleur",
+        "description": "C'est tout joli, tout mignon, parfait pour nettoyer la vermine.",
+        "quantity": 20
+      },
+      {
+        "id": 6,
+        "name": "Oeil de Daarun",
+        "description": "L'avoir dans sa poche peut confèrer des pouvoirs surréels.",
+        "quantity": 1
+      },
+      {
+        "id": 7,
+        "name": "Bave de slime",
+        "description": "C'est visqueux ...",
+        "quantity": 30
+      }
+    ],
+    "golds": 1000,
+    "crystals": 1000
+  },
+  {
+    "id": 20,
+    "equipementBase": {
+      "id": 36,
+      "name": "L'observateur",
+      "description": "Avez-vous bien fait votre veille magique ?",
+      "rarity": "LEGENDARY",
+      "heroClass": "MAGE",
+      "equipmentType": "WEAPON"
+    },
+    "materials":[
+      {
+        "id": 4,
+        "name": "Fleur",
+        "description": "C'est tout joli, tout mignon, parfait pour nettoyer la vermine.",
+        "quantity": 25
+      },
+      {
+        "id": 5,
+        "name": "Pierre",
+        "description": "Répond présent quand on a besoin de lui.",
+        "quantity": 20
+      },
+      {
+        "id": 6,
+        "name": "Oeil de Daarun",
+        "description": "L'avoir dans sa poche peut confèrer des pouvoirs surréels.",
+        "quantity": 2
+      },
+      {
+        "id": 7,
+        "name": "Bave de slime",
+        "description": "C'est visqueux ...",
+        "quantity": 25
+      }
+    ],
+    "golds": 1000,
+    "crystals": 1000
+  }
+]
