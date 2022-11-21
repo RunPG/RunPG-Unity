@@ -111,6 +111,7 @@ class BlockModel: MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IPointe
       this.notRevealedObject.SetActive(false);
       if (mineCount > 0) {
         this.mineCountObject.text = mineCount.ToString();
+        this.mineCountObject.color = GetMineTextColor(mineCount);
       }
       demineurScript.BlockRevealed(positionX, positionY);
     }
@@ -126,5 +127,26 @@ class BlockModel: MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IPointe
     flagIconObject.SetActive(false);
     mineIconObject.SetActive(false);
     mineCountObject.text = "";
+  }
+
+  Color GetMineTextColor(int mines)
+  {
+    switch (mines)
+    {
+      case 1:
+        return new Color(0,0,255);
+      case 2:
+        return new Color(0,123,0);
+      case 3:
+        return new Color(255,0,0);
+      case 4:
+        return new Color(0,0,123);
+      case 5:
+        return new Color(123,0,0);
+      case 6:
+        return new Color(0,122,122);
+      default:
+        return new Color(0, 0, 0);
+    }
   }
 }
