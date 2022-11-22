@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Linq;
 using RunPG.Multi;
 using UnityEngine.UI;
+using Mapbox.Json;
 
 public class ArtisanatScript : MonoBehaviour
 {
@@ -14,6 +15,8 @@ public class ArtisanatScript : MonoBehaviour
     [SerializeField]
     private GameObject craftPrefab;
     [SerializeField]
+    private GameObject materialPrefab;
+    [SerializeField]
     private TMP_InputField textInput;
     [SerializeField]
     private CanvasGroup confirmationCanvasGroup;
@@ -21,6 +24,8 @@ public class ArtisanatScript : MonoBehaviour
     private CanvasGroup craftedObjectCanvasGroup;
 
     private string filter;
+
+    private List<InventoryModel> inventory;
     
     private List<CraftModel> crafts;
     private List<CraftModel> filteredCrafts;
@@ -32,11 +37,17 @@ public class ArtisanatScript : MonoBehaviour
             FilterList(textInput.text);
         });
         filter = textInput.text;
+        Load();
     }
 
     void LoadCrafts()
     {
-        crafts = JsonUtility.FromJson<CraftModel[]>(Resources.Load<TextAsset>("Artisanat/Crafts").text).ToList();
+        crafts = JsonConvert.DeserializeObject<CraftModel[]>(Resources.Load<TextAsset>("Artisanat/Crafts").text).ToList();
+    }
+
+    async Task LoadInventory()
+    {
+        inventory = (await Requests.GETUserInventory(PlayerProfile.id)).ToList();
     }
 
     void ClearCraftsList()
@@ -49,40 +60,70 @@ public class ArtisanatScript : MonoBehaviour
 
     void AddCrafts()
     {
-        if (filteredCrafts.Count > 0)
-        {
-            Instantiate(craftPrefab, craftsLayout);
-        }
         foreach (var craft in filteredCrafts)
         {
             var craftObject = Instantiate(craftPrefab, craftsLayout).transform;
+            // craftObject.Find("CraftIcon").GetComponent<Image>().sprite = Resources.Load<Sprite>("Artisanat/Icons/" + craft.icon);
             craftObject.Find("Name").GetComponent<TextMeshProUGUI>().text = craft.equipementBase.name;
-            craftObject.Find("Golds").GetComponent<TextMeshProUGUI>().text = craft.golds.ToString();
-            craftObject.Find("Crystals").GetComponent<TextMeshProUGUI>().text = craft.golds.ToString();
-            craftObject.Find("Craft").GetComponent<Button>().onClick.AddListener(() => Craft(craft));
+            var materialsTransform = craftObject.Find("Materials").transform;
+            bool canCraft = true;
+            foreach (var material in craft.materials)
+            {
+                var foundMaterial = inventory.Find(x =>  x.itemId == material.id);
+                bool hasMaterials = foundMaterial != null && foundMaterial.stackSize >= material.quantity;
+                var materialObject = Instantiate(materialPrefab, materialsTransform).transform;
+                // materialObject.Find("Icon").GetComponent<Image>().sprite = Resources.Load<Sprite>("Artisanat/Icons/" + material.icon);
+                materialObject.Find("Quantity").GetComponent<TextMeshProUGUI>().text = material.quantity.ToString();
+                if (!hasMaterials)
+                {
+                    materialObject.Find("Quantity").GetComponent<TextMeshProUGUI>().color = Color.red;
+                    canCraft = false;
+                }
+            }
+            var craftButton = craftObject.Find("Craft").GetComponent<Button>();
+            craftButton.onClick.AddListener(() => Craft(craft));
+            craftButton.interactable = canCraft;
         }
     }
 
     void Craft(CraftModel craft)
     {
+        var canvasGroup = GetComponent<CanvasGroup>();
+        canvasGroup.interactable = false;
+        canvasGroup.blocksRaycasts = false;
+        
         confirmationCanvasGroup.alpha = 1;
         confirmationCanvasGroup.interactable = true;
         confirmationCanvasGroup.blocksRaycasts = true;
-        confirmationCanvasGroup.transform.Find("Confirm").GetComponent<Button>().onClick.AddListener(async () =>
+
+        confirmationCanvasGroup.transform.Find("Background/Name").GetComponent<TextMeshProUGUI>().text = craft.equipementBase.name;
+
+        var materialGrid = confirmationCanvasGroup.transform.Find("Background/Materials").transform;
+        foreach (Transform child in materialGrid)
+        {
+            Destroy(child.gameObject);
+        }
+        foreach (CraftItemModel material in craft.materials)
+        {
+            var materialObject = Instantiate(materialPrefab, materialGrid).transform;
+            // materialObject.Find("Icon").GetComponent<Image>().sprite = Resources.Load<Sprite>("Artisanat/Icons/" + material.icon);
+            materialObject.Find("Quantity").GetComponent<TextMeshProUGUI>().text = material.quantity.ToString();
+        }
+
+        confirmationCanvasGroup.transform.Find("Background/Confirm").GetComponent<Button>().onClick.AddListener(async () =>
         {
             NewEquipementModel equipment = await CraftNewEquipement(craft.equipementBase);
             confirmationCanvasGroup.alpha = 0;
             confirmationCanvasGroup.interactable = false;
             confirmationCanvasGroup.blocksRaycasts = false;
             showCraftedObject(craft.equipementBase, equipment.statistics);
-
         });
     }
 
     async Task<NewEquipementModel> CraftNewEquipement(EquipmentBaseModel equipmentBase)
     {
         StatisticsModel statistics = new StatisticsModel(0, 10, 10, 10, 10, 10, 10, 10);
-        NewEquipementModel equipment = new NewEquipementModel(equipmentBase.id.ToString(), statistics);
+        NewEquipementModel equipment = new NewEquipementModel(equipmentBase.id, statistics);
         await Requests.POSTInventoryEquipement(PlayerProfile.id, equipment);
         return equipment;
     }
@@ -114,9 +155,10 @@ public class ArtisanatScript : MonoBehaviour
         ReloadGuildList();
     }
 
-    public void Load()
+    public async void Load()
     {
         LoadCrafts();
+        await LoadInventory();
         ReloadGuildList();
     }
 
