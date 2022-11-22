@@ -112,6 +112,7 @@ public class ArtisanatScript : MonoBehaviour
 
         confirmationCanvasGroup.transform.Find("Background/Confirm").GetComponent<Button>().onClick.AddListener(async () =>
         {
+            await DeduceMaterials(craft);
             NewEquipementModel equipment = await CraftNewEquipement(craft.equipementBase);
             confirmationCanvasGroup.alpha = 0;
             confirmationCanvasGroup.interactable = false;
@@ -126,6 +127,14 @@ public class ArtisanatScript : MonoBehaviour
         NewEquipementModel equipment = new NewEquipementModel(equipmentBase.id, statistics);
         await Requests.POSTInventoryEquipement(PlayerProfile.id, equipment);
         return equipment;
+    }
+
+    async Task DeduceMaterials(CraftModel craft)
+    {
+        foreach (var material in craft.materials)
+        {
+            await Requests.POSTInventoryItem(PlayerProfile.id, new ItemModel(material.id, -material.quantity));
+        }
     }
 
     void showCraftedObject(EquipmentBaseModel equipmentBase, StatisticsModel statistics)

@@ -390,6 +390,27 @@ namespace RunPG.Multi
             return true;
         }
 
+        public static async Task<bool> POSTInventoryItem(int user_id, ItemModel item)
+        {
+            var url = rootUrl + "user/" + user_id + "/inventory/item";
+            var content = JsonConvert.SerializeObject(item);
+
+            using UnityWebRequest request = UnityWebRequest.Post(url, "POST");
+            request.SetRequestHeader("Content-Type", "application/json");
+            request.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(content));
+            request.SendWebRequest();
+            while (!request.isDone)
+            {
+                await Task.Yield();
+            }
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogError(string.Format("Error in request:{0}\nError Message: {1}", url, request.error));
+                return false;
+            }
+            return true;
+        }
+
         public static async Task<bool> POSTPlayerEquipment(int user_id, PlayerEquipmentModel equipments)
         {
             var url = rootUrl + "user/" + user_id + "/equiped";

@@ -1,18 +1,14 @@
 namespace RunPG.Multi
 {
-    public class CraftItemModel
+    public class ItemModel
     {
-        public int id;
-        public string name;
-        public string description;
-        public int quantity;
+        public int itemId;
+        public int stackSize;
 
-        public CraftItemModel(int id, string name, string description, int quantity)
+        public ItemModel(int itemId, int stackSize)
         {
-            this.id = id;
-            this.name = name;
-            this.description = description;
-            this.quantity = quantity;
+            this.itemId = itemId;
+            this.stackSize = stackSize;
         }
     }
 }
