@@ -63,7 +63,7 @@ public class ArtisanatScript : MonoBehaviour
         foreach (var craft in filteredCrafts)
         {
             var craftObject = Instantiate(craftPrefab, craftsLayout).transform;
-            // craftObject.Find("CraftIcon").GetComponent<Image>().sprite = Resources.Load<Sprite>("Artisanat/Icons/" + craft.icon);
+            craftObject.Find("CraftIcon").GetComponent<Image>().sprite = craft.equipementBase.equipmentType.GetSprite();
             craftObject.Find("Name").GetComponent<TextMeshProUGUI>().text = craft.equipementBase.name;
             var materialsTransform = craftObject.Find("Materials").transform;
             bool canCraft = true;
@@ -72,7 +72,7 @@ public class ArtisanatScript : MonoBehaviour
                 var foundMaterial = inventory.Find(x =>  x.itemId == material.id);
                 bool hasMaterials = foundMaterial != null && foundMaterial.stackSize >= material.quantity;
                 var materialObject = Instantiate(materialPrefab, materialsTransform).transform;
-                // materialObject.Find("Icon").GetComponent<Image>().sprite = Resources.Load<Sprite>("Artisanat/Icons/" + material.icon);
+                materialObject.Find("Icon").GetComponent<Image>().sprite = Resources.Load<Sprite>("Artisanat/Materials/" + material.id);
                 materialObject.Find("Quantity").GetComponent<TextMeshProUGUI>().text = material.quantity.ToString();
                 if (!hasMaterials)
                 {
@@ -106,7 +106,7 @@ public class ArtisanatScript : MonoBehaviour
         foreach (CraftItemModel material in craft.materials)
         {
             var materialObject = Instantiate(materialPrefab, materialGrid).transform;
-            // materialObject.Find("Icon").GetComponent<Image>().sprite = Resources.Load<Sprite>("Artisanat/Icons/" + material.icon);
+            materialObject.Find("Icon").GetComponent<Image>().sprite = Resources.Load<Sprite>("Artisanat/Materials/" + material.id);
             materialObject.Find("Quantity").GetComponent<TextMeshProUGUI>().text = material.quantity.ToString();
         }
 
@@ -134,14 +134,23 @@ public class ArtisanatScript : MonoBehaviour
         craftedObjectCanvasGroup.interactable = true;
         craftedObjectCanvasGroup.blocksRaycasts = true;
         Transform craftedObject = craftedObjectCanvasGroup.transform;
-        craftedObject.Find("Name").GetComponent<TextMeshProUGUI>().text = equipmentBase.name;
-        craftedObject.Find("ObjectImage").GetComponent<Image>().sprite = Resources.Load<Sprite>("Artisanat/Objects/" + equipmentBase.id);
-        craftedObject.Find("Statistics/vitalityValue").GetComponent<TextMeshProUGUI>().text = statistics.vitality.ToString();
-        craftedObject.Find("Statistics/strengthValue").GetComponent<TextMeshProUGUI>().text = statistics.strength.ToString();
-        craftedObject.Find("Statistics/defenseValue").GetComponent<TextMeshProUGUI>().text = statistics.defense.ToString();
-        craftedObject.Find("Statistics/powerValue").GetComponent<TextMeshProUGUI>().text = statistics.power.ToString();
-        craftedObject.Find("Statistics/resistanceValue").GetComponent<TextMeshProUGUI>().text = statistics.resistance.ToString();
-        craftedObject.Find("Statistics/precisionValue").GetComponent<TextMeshProUGUI>().text = statistics.precision.ToString();
+        craftedObject.Find("Background/Name").GetComponent<TextMeshProUGUI>().text = equipmentBase.name;
+        // craftedObject.Find("ObjectImage").GetComponent<Image>().sprite = Resources.Load<Sprite>("Artisanat/Objects/" + equipmentBase.id);
+        craftedObject.Find("Background/Vitality/Value").GetComponent<TextMeshProUGUI>().text = statistics.vitality.ToString();
+        craftedObject.Find("Background/Strength/Value").GetComponent<TextMeshProUGUI>().text = statistics.strength.ToString();
+        craftedObject.Find("Background/Defense/Value").GetComponent<TextMeshProUGUI>().text = statistics.defense.ToString();
+        craftedObject.Find("Background/Power/Value").GetComponent<TextMeshProUGUI>().text = statistics.power.ToString();
+        craftedObject.Find("Background/Resistance/Value").GetComponent<TextMeshProUGUI>().text = statistics.resistance.ToString();
+        craftedObject.Find("Background/Precision/Value").GetComponent<TextMeshProUGUI>().text = statistics.precision.ToString();
+        craftedObject.GetComponent<Button>().onClick.AddListener(() =>
+        {
+            craftedObjectCanvasGroup.alpha = 0;
+            craftedObjectCanvasGroup.interactable = false;
+            craftedObjectCanvasGroup.blocksRaycasts = false;
+            var canvasGroup = GetComponent<CanvasGroup>();
+            canvasGroup.interactable = true;
+            canvasGroup.blocksRaycasts = true;
+        });
     }
 
     void FilterList()
