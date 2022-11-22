@@ -113,14 +113,17 @@ public class DemineurScript: MonoBehaviour {
     gameInfo.SetActive(true);
     countdown.gameObject.SetActive(true);
     countdown.text = "3";
+    countdown.color = new Color32(255,0,0, 255);
 
     yield return new WaitForSeconds(1f);
 
     countdown.text = "2";
+    countdown.color = new Color32(0,123,0, 255);
 
     yield return new WaitForSeconds(1f);
 
     countdown.text = "1";
+    countdown.color = new Color32(0,0,255, 255);
 
     yield return new WaitForSeconds(1f);
 

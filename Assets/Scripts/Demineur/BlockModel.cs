@@ -134,19 +134,19 @@ class BlockModel: MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IPointe
     switch (mines)
     {
       case 1:
-        return new Color(0,0,255);
+        return new Color32(0,0,255, 255);
       case 2:
-        return new Color(0,123,0);
+        return new Color32(0,123,0, 255);
       case 3:
-        return new Color(255,0,0);
+        return new Color32(255,0,0, 255);
       case 4:
-        return new Color(0,0,123);
+        return new Color32(0,0,123, 255);
       case 5:
-        return new Color(123,0,0);
+        return new Color32(123,0,0, 255);
       case 6:
-        return new Color(0,122,122);
+        return new Color32(0,122,122,255);
       default:
-        return new Color(0, 0, 0);
+        return new Color32(0,0,0,255);
     }
   }
 }
