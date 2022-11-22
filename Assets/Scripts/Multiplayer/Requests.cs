@@ -371,7 +371,7 @@ namespace RunPG.Multi
 
         public static async Task<bool> POSTInventoryEquipement(int user_id, NewEquipementModel newEquipment)
         {
-            var url = rootUrl + "user/" + user_id + "/inventory/equipement";
+            var url = rootUrl + "user/" + user_id + "/inventory/equipment";
             var content = JsonConvert.SerializeObject(newEquipment);
 
             using UnityWebRequest request = UnityWebRequest.Post(url, "POST");
