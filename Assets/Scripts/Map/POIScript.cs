@@ -13,6 +13,8 @@ public class POIScript : MonoBehaviour
     private ForestPortal forest;
     [SerializeField]
     private BushPortal bushes;
+    [SerializeField]
+    private MinesPortal mines;
 
     public long id;
     private ActivityScript activity;
@@ -34,10 +36,15 @@ public class POIScript : MonoBehaviour
             forest.gameObject.SetActive(true);
             activity = forest;
         }
-        else
+        else if (id % 4 == 2)
         {
             bushes.gameObject.SetActive(true);
             activity = bushes;
+        }
+        else
+        {
+            mines.gameObject.SetActive(true);
+            activity = mines;
         }
 
         ActivityModel availability = await Requests.GetActivityAvailability(PlayerProfile.id, id);

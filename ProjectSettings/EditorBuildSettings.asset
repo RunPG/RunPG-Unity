@@ -23,4 +23,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/MemoryScene.unity
     guid: 0313de8695f342442a7ff8d21938ffad
+  - enabled: 1
+    path: Assets/Scenes/DemineurScene.unity
+    guid: b05fa9e268cf1c0458a13e104f4dbc00
   m_configObjects: {}
