@@ -128,7 +128,7 @@ public class MemoryScript : MonoBehaviour
                 if (Physics.Raycast(ray, out hit))
                 {
                     CardScript card = hit.transform.gameObject.GetComponent<CardScript>();
-                    if (card != null)
+                    if (card != null && !card.isFlipped)
                     {
                         canFlip = false;
                         StartCoroutine(FlipCoroutine(card));
@@ -157,7 +157,7 @@ public class MemoryScript : MonoBehaviour
                 if (remainingPairs <= 0)
                 {
                     multiplier++;
-                    StartCoroutine(Reset());
+                    StartCoroutine(ResetCardsCoroutine());
                 }
                 else
                 {
@@ -167,7 +167,7 @@ public class MemoryScript : MonoBehaviour
             }
             else
             {
-                StartCoroutine(FlipBackCoroutine(new List<CardScript>() { firstCard, secondCard }));
+                StartCoroutine(WrongPairCoroutine(firstCard, secondCard));
                 firstCard = null;
                 secondCard = null;
             }
@@ -176,8 +176,9 @@ public class MemoryScript : MonoBehaviour
 
     IEnumerator FlipCoroutine(CardScript card)
     {
+        card.isFlipped = true;
         float elapsedTime = 0f;
-        float duration = 0.1f;
+        float duration = 0.05f;
         while (elapsedTime < duration)
         {
             elapsedTime += Time.deltaTime;
@@ -198,7 +199,7 @@ public class MemoryScript : MonoBehaviour
     IEnumerator FlipBackCoroutine(List<CardScript> cards)
     {
         float elapsedTime = 0f;
-        float duration = 0.2f;
+        float duration = 0.1f;
         while (elapsedTime < duration)
         {
             elapsedTime += Time.deltaTime;
@@ -222,10 +223,20 @@ public class MemoryScript : MonoBehaviour
             }
             yield return null;
         }
+        foreach (var card in cards)
+        {
+            card.isFlipped = false;
+        }
         canFlip = true;
     }
 
-    IEnumerator Reset()
+    IEnumerator WrongPairCoroutine(CardScript first, CardScript second)
+    {
+        yield return new WaitForSeconds(0.1f);
+        yield return StartCoroutine(FlipBackCoroutine(new List<CardScript>() { first, second }));
+    }
+
+    IEnumerator ResetCardsCoroutine()
     {
         yield return StartCoroutine(FlipBackCoroutine(cards));
         remainingPairs = cards.Count / 2;
@@ -236,7 +247,7 @@ public class MemoryScript : MonoBehaviour
     public void SkipResults()
     {
         StopCoroutine(resultsCoroutine);
-        resultsScore.text = score.ToString();
+        resultsScore.text = (score * multiplier).ToString();
         List<int> quantities = GetQuantities();
         firstQuantity.text = "x " + quantities[0].ToString();
         secondQuantity.text = "x " + quantities[1].ToString();
@@ -322,7 +333,6 @@ public class MemoryScript : MonoBehaviour
 
     private IEnumerator ResultCoroutine()
     {
-        Debug.Log("end");
         veil.gameObject.SetActive(true);
         gameInfo.SetActive(false);
         veil.color = new Color(0, 0, 0, 0);

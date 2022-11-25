@@ -32,6 +32,8 @@ public class CardScript : MonoBehaviour
         }
     }
 
+    public bool isFlipped = false;
+
     // Start is called before the first frame update
     void Start()
     {
