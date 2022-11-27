@@ -310,6 +310,28 @@ namespace RunPG.Multi
             return null;
         }
 
+        public static async Task<ItemModel[]> GetItemById(int? item_id)
+        {
+            var url = rootUrl + "item/" + (item_id.HasValue ? "?id=" + item_id : "");
+            using UnityWebRequest request = UnityWebRequest.Get(url);
+
+            request.SendWebRequest();
+            while (!request.isDone)
+            {
+                await Task.Yield();
+            }
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogError(string.Format("Error in request:{0}\nError Message: {1}", url, request.error));
+            }
+            else
+            {
+                var activity = JsonConvert.DeserializeObject<ItemModel[]>(request.downloadHandler.text);
+                return activity;
+            }
+            return null;
+        }
+
         public static async Task<bool> POSTNewUser(NewUserModel newUser)
         {
             var url = rootUrl + "user";

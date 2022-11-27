@@ -14,10 +14,10 @@ namespace RunPG.Multi
         public string name;
         public string description;
         public Rarity rarity;
-        public string heroClass;
+        public HeroClass heroClass;
         public EquipmentType equipmentType;
 
-        public EquipmentBaseModel(int id, string name, string description, Rarity rarity, string heroClass, EquipmentType equipmentType)
+        public EquipmentBaseModel(int id, string name, string description, Rarity rarity, HeroClass heroClass, EquipmentType equipmentType)
         {
             this.id = id;
             this.name = name;
