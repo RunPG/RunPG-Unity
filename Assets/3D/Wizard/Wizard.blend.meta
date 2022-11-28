@@ -21,6 +21,9 @@ ModelImporter:
   - first:
       74: 6388442385777485760
     second: RunningFast
+  - first:
+      74: -5048819315289311036
+    second: "Touch\xE9"
   externalObjects:
   - first:
       type: UnityEngine:Material
@@ -86,40 +89,11 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: TPos
-      takeName: Scene
-      internalID: 0
-      firstFrame: 1
-      lastFrame: 4
-      wrapMode: 0
-      orientationOffsetY: 0
-      level: 0
-      cycleOffset: 0
-      loop: 0
-      hasAdditiveReferencePose: 0
-      loopTime: 1
-      loopBlend: 0
-      loopBlendOrientation: 0
-      loopBlendPositionY: 0
-      loopBlendPositionXZ: 0
-      keepOriginalOrientation: 0
-      keepOriginalPositionY: 1
-      keepOriginalPositionXZ: 0
-      heightFromFeet: 0
-      mirror: 0
-      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
-      curves: []
-      events: []
-      transformMask: []
-      maskType: 3
-      maskSource: {instanceID: 0}
-      additiveReferencePoseFrame: 1
-    - serializedVersion: 16
       name: Idle
       takeName: Scene
       internalID: 0
-      firstFrame: 7
-      lastFrame: 9
+      firstFrame: 1
+      lastFrame: 50
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -147,8 +121,8 @@ ModelImporter:
       name: Fireball
       takeName: Scene
       internalID: 0
-      firstFrame: 11
-      lastFrame: 51
+      firstFrame: 51
+      lastFrame: 91
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -176,8 +150,8 @@ ModelImporter:
       name: Ignite
       takeName: Scene
       internalID: 0
-      firstFrame: 52
-      lastFrame: 90
+      firstFrame: 92
+      lastFrame: 130
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -205,8 +179,8 @@ ModelImporter:
       name: RuningIdle
       takeName: Scene
       internalID: 0
-      firstFrame: 96
-      lastFrame: 155
+      firstFrame: 136
+      lastFrame: 195
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -234,8 +208,8 @@ ModelImporter:
       name: RunningFast
       takeName: Scene
       internalID: 0
-      firstFrame: 161
-      lastFrame: 220
+      firstFrame: 201
+      lastFrame: 260
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -243,6 +217,35 @@ ModelImporter:
       loop: 0
       hasAdditiveReferencePose: 0
       loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 1
+    - serializedVersion: 16
+      name: "Touch\xE9"
+      takeName: Scene
+      internalID: 0
+      firstFrame: 261
+      lastFrame: 275
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
       loopBlend: 0
       loopBlendOrientation: 0
       loopBlendPositionY: 0
