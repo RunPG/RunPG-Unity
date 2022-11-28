@@ -81,6 +81,7 @@ public abstract class Character : MonoBehaviour
             gameObject.SetActive(false);
             healthBarInstance.SetActive(false);
         }
+        PlayAnimation("Touché");
         healthBar.SetHealth(currentHealth);
     }
 

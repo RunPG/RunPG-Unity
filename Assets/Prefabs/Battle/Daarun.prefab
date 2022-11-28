@@ -85,6 +85,7 @@ MonoBehaviour:
   head: {fileID: 2841123729269123785}
   healthBarGameObject: {fileID: 1044444335957610319, guid: cb094f37373ff1e40aae4a65bcf949f5,
     type: 3}
+  laserVfx: {fileID: 0}
 --- !u!135 &5628190122929305539
 SphereCollider:
   m_ObjectHideFlags: 0

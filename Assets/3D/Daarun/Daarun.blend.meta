@@ -12,6 +12,9 @@ ModelImporter:
   - first:
       74: -7860628719842645156
     second: Laser
+  - first:
+      74: -5048819315289311036
+    second: "Touch\xE9"
   externalObjects:
   - first:
       type: UnityEngine:Material
@@ -130,6 +133,35 @@ ModelImporter:
       internalID: 0
       firstFrame: 266
       lastFrame: 325
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 1
+    - serializedVersion: 16
+      name: "Touch\xE9"
+      takeName: Scene
+      internalID: 0
+      firstFrame: 326
+      lastFrame: 340
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
