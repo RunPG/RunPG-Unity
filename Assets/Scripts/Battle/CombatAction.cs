@@ -51,6 +51,75 @@ public class Bond : CombatAction
         {
             critMultiplier = caster.stats.GetCritMultiplier();
         }
+        return Mathf.RoundToInt((10 + 4 * caster.level) * attackMultiplier * critMultiplier);
+    }
+}
+
+public class Laser : CombatAction
+{
+    public override string name => "Laser";
+    public override PossibleTarget possibleTarget => PossibleTarget.Enemy;
+    public override int speed => 100;
+    public override float duration => 2f;
+
+    public override void PlayAction()
+    {
+        caster.PlayAnimation("Laser");
+        CombatManager.Instance.StartCoroutine(DoAction());
+    }
+
+    private IEnumerator DoAction()
+    {
+        yield return new WaitForSeconds(1.8f);
+        List<Character> targets = CombatManager.Instance.GetMyAllies(target);
+        foreach (var t in targets)
+        {
+            t.TakeDamage(GetDamage(t));
+        }
+    }
+
+    private int GetDamage(Character actualTarget)
+    {
+        float attackMultiplier = (float)caster.stats.power / actualTarget.stats.resistance;
+        float critMultiplier = 1f;
+
+        if (caster.stats.RollCrit())
+        {
+            critMultiplier = caster.stats.GetCritMultiplier();
+        }
+
+        return Mathf.RoundToInt((10 + 4 * caster.level) * attackMultiplier * critMultiplier);
+    }
+}
+
+public class QueueDeFer : CombatAction
+{
+    public override string name => "Queue de fer";
+    public override PossibleTarget possibleTarget => PossibleTarget.Enemy;
+    public override int speed => 300;
+    public override float duration => 1.2f;
+
+    public override void PlayAction()
+    {
+        caster.PlayAnimation("QueueDeFer");
+        CombatManager.Instance.StartCoroutine(DoAction());
+    }
+
+    private IEnumerator DoAction()
+    {
+        yield return new WaitForSeconds(0.6f);
+        target.TakeDamage(GetDamage());
+    }
+
+    private int GetDamage()
+    {
+        float attackMultiplier = (float)caster.stats.power / target.stats.resistance;
+        float critMultiplier = 1f;
+
+        if (caster.stats.RollCrit())
+        {
+            critMultiplier = caster.stats.GetCritMultiplier();
+        }
 
         return Mathf.RoundToInt((10 + 4 * caster.level) * attackMultiplier * critMultiplier);
     }

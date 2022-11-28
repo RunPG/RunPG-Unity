@@ -81,12 +81,12 @@ public class DungeonManager : MonoBehaviourPunCallbacks
             {
                 heroClass = PlayerProfile.characterInfo.heroClass.GetName();
                 level = PlayerProfile.characterInfo.level;
-                vitality = PlayerProfile.characterInfo.vitality;
-                strength = PlayerProfile.characterInfo.strength;
-                defense = PlayerProfile.characterInfo.defense;
-                power = PlayerProfile.characterInfo.power;
-                resistance = PlayerProfile.characterInfo.resistance;
-                precision = PlayerProfile.characterInfo.precision;
+                vitality = PlayerProfile.characterInfo.GetTotalVitality();
+                strength = PlayerProfile.characterInfo.GetTotalStrength();
+                defense = PlayerProfile.characterInfo.GetTotalDefense();
+                power = PlayerProfile.characterInfo.GetTotalPower();
+                resistance = PlayerProfile.characterInfo.GetTotalResistance();
+                precision = PlayerProfile.characterInfo.GetTotalPrecision();
             }
             dic.Add("heroClass", heroClass);
             dic.Add("level", level.ToString());
@@ -149,7 +149,7 @@ public class DungeonManager : MonoBehaviourPunCallbacks
     public void StartBattle(DungeonMonsterInfo[] monsters)
     {
         enemies = monsters;
-        SceneManager.LoadScene("UI");
+        SceneManager.LoadScene("BattleScene");
     }
 
 
@@ -243,7 +243,7 @@ public class DungeonManager : MonoBehaviourPunCallbacks
     public DungeonMonsterInfo[] generateBossEnemies()
     {
         DungeonManager.DungeonMonsterInfo[] bossEnemies = new DungeonManager.DungeonMonsterInfo[1];
-        bossEnemies[0] = new DungeonManager.DungeonMonsterInfo("King Slime", dungeonLevel * 2);
+        bossEnemies[0] = new DungeonManager.DungeonMonsterInfo("Daarun", dungeonLevel);
         return bossEnemies;
     }
 
