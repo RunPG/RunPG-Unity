@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028352, g: 0.22571376, b: 0.3069224, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -2047,6 +2047,7 @@ GameObject:
   - component: {fileID: 582054222}
   - component: {fileID: 582054221}
   - component: {fileID: 582054220}
+  - component: {fileID: 582054223}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -2120,6 +2121,39 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 35, y: 0, z: 0}
+--- !u!114 &582054223
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 582054219}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_RenderShadows: 1
+  m_RequiresDepthTextureOption: 2
+  m_RequiresOpaqueTextureOption: 2
+  m_CameraType: 0
+  m_Cameras: []
+  m_RendererIndex: -1
+  m_VolumeLayerMask:
+    serializedVersion: 2
+    m_Bits: 1
+  m_VolumeTrigger: {fileID: 0}
+  m_VolumeFrameworkUpdateModeOption: 2
+  m_RenderPostProcessing: 0
+  m_Antialiasing: 0
+  m_AntialiasingQuality: 2
+  m_StopNaN: 0
+  m_Dithering: 0
+  m_ClearDepth: 1
+  m_AllowXRRendering: 1
+  m_RequiresDepthTexture: 0
+  m_RequiresColorTexture: 0
+  m_Version: 2
 --- !u!1 &592711009
 GameObject:
   m_ObjectHideFlags: 0
@@ -4333,6 +4367,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1149103275}
   - component: {fileID: 1149103274}
+  - component: {fileID: 1149103276}
   m_Layer: 0
   m_Name: Directional Light
   m_TagString: Untagged
@@ -4417,6 +4452,26 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+--- !u!114 &1149103276
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1149103273}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Version: 1
+  m_UsePipelineSettings: 1
+  m_AdditionalLightsShadowResolutionTier: 2
+  m_LightLayerMask: 1
+  m_CustomShadowLayers: 0
+  m_ShadowLayerMask: 1
+  m_LightCookieSize: {x: 1, y: 1}
+  m_LightCookieOffset: {x: 0, y: 0}
 --- !u!1001 &1156538667
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5074,11 +5129,16 @@ MonoBehaviour:
     type: 3}
   slimePrefab: {fileID: 2650298994664610122, guid: b9378826c4382234bb5a32fb130b0623,
     type: 3}
-  kingSilmePrefab: {fileID: 2650298994664610122, guid: 94a141d250dcc8e4cbb55157150334f4,
+  daarunPrefab: {fileID: 2650298994664610122, guid: aa683589617e5f04e9e566a8730bc104,
     type: 3}
   Items:
   - {fileID: 21300000, guid: 2c80f5f41d98a264e84fc927cb197814, type: 3}
   - {fileID: 21300000, guid: 3e0e868aa7f2ac24cb4b72011f279451, type: 3}
+  Status:
+  - {fileID: 21300000, guid: a8394b741139f1f43a20f238e80e106f, type: 3}
+  - {fileID: 21300000, guid: abda633ed73468a4990e133994cf0b3a, type: 3}
+  - {fileID: 21300000, guid: 513b408c54129d940962d8a7286641cc, type: 3}
+  - {fileID: 21300000, guid: 33526b296bbfa4f4787e3fa377faa1d1, type: 3}
   ResultScreen: {fileID: 486151545}
 --- !u!4 &1287583515
 Transform:
@@ -5233,7 +5293,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 18.000122, y: -26}
+  m_AnchoredPosition: {x: 18.000244, y: -26}
   m_SizeDelta: {x: 138.0941, y: 96.3645}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1414741330
