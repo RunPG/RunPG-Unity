@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 public abstract class Skill : CombatAction 
@@ -195,5 +196,52 @@ public class Embrasement : Skill
         }
 
         return Mathf.RoundToInt((20 + 10 * caster.level) * attackMultiplier * critMultiplier * burnMultiplier);
+    }
+}
+
+public class Tempete : Skill
+{
+    public override string name => "Tempete";
+    public override PossibleTarget possibleTarget => PossibleTarget.Enemy;
+    public override int speed => 50;
+    public override float duration => 3f;
+    public override int cooldown => 0;
+
+    private static GameObject lightningRessource = Resources.Load<GameObject>("Lightning");
+
+    public override void PlayAction()
+    {
+        base.PlayAction();
+        caster.PlayAnimation("Tempete");
+        CombatManager.Instance.StartCoroutine(DoAction());
+
+    }
+
+    private IEnumerator DoAction()
+    {
+        yield return new WaitForSeconds(0.5f);
+        List<Character> targets = CombatManager.Instance.GetMyAllies(target);
+        for (int i = 0; i < 5; i++)
+        {
+            int x = Random.Range(0, targets.Count);
+            var pos = targets[x].transform.Find("Ground").transform.position;
+            GameObject lightning = GameObject.Instantiate(lightningRessource, pos, Quaternion.identity);
+            yield return new WaitForSeconds(0.15f);
+            targets[x].TakeDamage(GetDamage(targets[x]));
+            yield return new WaitForSeconds(0.25f);
+        }
+    }
+
+    private int GetDamage(Character actualTarget)
+    {
+        float attackMultiplier = (float)caster.stats.power / actualTarget.stats.resistance;
+        float critMultiplier = 1f;
+
+        if (caster.stats.RollCrit())
+        {
+            critMultiplier = caster.stats.GetCritMultiplier();
+        }
+
+        return 1;// Mathf.RoundToInt((20 + 10 * caster.level) * attackMultiplier * critMultiplier);
     }
 }

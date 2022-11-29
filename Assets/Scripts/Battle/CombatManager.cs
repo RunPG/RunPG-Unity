@@ -66,6 +66,7 @@ public class CombatManager : MonoBehaviourPun
         RegisterCombatAction<Provocation>("Provocation");
         RegisterCombatAction<BouleDeFeu>("Boule de feu");
         RegisterCombatAction<Embrasement>("Embrasement");
+        RegisterCombatAction<Tempete>("Tempete");
         RegisterCombatAction<HealthPotion>("Potion de vie");
         RegisterCombatAction<Bomb>("Bombe");
         RegisterCombatAction<Bond>("Bond");
