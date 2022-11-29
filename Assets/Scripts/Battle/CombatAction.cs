@@ -63,8 +63,6 @@ public class Laser : CombatAction
     public override int speed => 100;
     public override float duration => 2f;
 
-    private static GameObject laserRessource = Resources.Load<GameObject>("Laser");
-
     public override void PlayAction()
     {
         caster.PlayAnimation("Laser");
@@ -74,16 +72,14 @@ public class Laser : CombatAction
     private IEnumerator DoAction()
     {
         yield return new WaitForSeconds(0.2f);
-        var parent = caster.transform.Find("Daarun/Armature/Bone/Bone.001");
-        GameObject laser = GameObject.Instantiate<GameObject>(laserRessource, parent);
+        var laser = caster.transform.Find("Daarun/Armature/Bone/Bone.001/Laser/LaserEffect");
+        laser.GetComponent<VisualEffect>().Play();
         yield return new WaitForSeconds(1.8f);
         List<Character> targets = CombatManager.Instance.GetMyAllies(target);
         foreach (var t in targets)
         {
             t.TakeDamage(GetDamage(t));
         }
-        yield return new WaitForSeconds(0.2f);
-        GameObject.Destroy(laser);
     }
 
     private int GetDamage(Character actualTarget)
