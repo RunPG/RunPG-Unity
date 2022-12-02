@@ -220,14 +220,26 @@ public class Tempete : Skill
     private IEnumerator DoAction()
     {
         yield return new WaitForSeconds(0.5f);
-        List<Character> targets = CombatManager.Instance.GetMyAllies(target);
+        List<Character> targets = CombatManager.Instance.GetAllies(target);
         for (int i = 0; i < 5; i++)
         {
-            int x = Random.Range(0, targets.Count);
-            var pos = targets[x].transform.Find("Ground").transform.position;
+            Character actualTarget;
+            if (i == 0)
+            {
+                actualTarget = target;
+            }
+            else
+            {
+                actualTarget = targets[Random.Range(0, targets.Count)];
+            }
+            var pos = actualTarget.transform.Find("Ground").transform.position;
             GameObject lightning = GameObject.Instantiate(lightningRessource, pos, Quaternion.identity);
             yield return new WaitForSeconds(0.15f);
-            targets[x].TakeDamage(GetDamage(targets[x]));
+            if (Random.Range(0, 2) == 0)
+            {
+                CombatManager.Instance.AddStatus(new ElectrifiedStatus(), actualTarget);
+            }
+            actualTarget.TakeDamage(GetDamage(actualTarget));
             yield return new WaitForSeconds(0.25f);
         }
     }

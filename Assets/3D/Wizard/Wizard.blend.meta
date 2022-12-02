@@ -24,6 +24,12 @@ ModelImporter:
   - first:
       74: -5048819315289311036
     second: "Touch\xE9"
+  - first:
+      74: -6543829208762137156
+    second: Tempest
+  - first:
+      74: 6553277554196112688
+    second: RunningIdle
   externalObjects:
   - first:
       type: UnityEngine:Material
@@ -176,11 +182,40 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 1
     - serializedVersion: 16
-      name: RuningIdle
+      name: Tempest
       takeName: Scene
       internalID: 0
-      firstFrame: 136
-      lastFrame: 195
+      firstFrame: 131
+      lastFrame: 200
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 1
+    - serializedVersion: 16
+      name: RunningIdle
+      takeName: Scene
+      internalID: 0
+      firstFrame: 206
+      lastFrame: 265
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -208,8 +243,8 @@ ModelImporter:
       name: RunningFast
       takeName: Scene
       internalID: 0
-      firstFrame: 201
-      lastFrame: 260
+      firstFrame: 271
+      lastFrame: 330
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -237,8 +272,8 @@ ModelImporter:
       name: "Touch\xE9"
       takeName: Scene
       internalID: 0
-      firstFrame: 261
-      lastFrame: 275
+      firstFrame: 331
+      lastFrame: 345
       wrapMode: 0
       orientationOffsetY: 0
       level: 0

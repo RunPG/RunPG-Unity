@@ -16,7 +16,9 @@ public abstract class Status
 
     public int remainingTurns = 0;
 
-    public void CleanStatus()
+    public GameObject StatusObject;
+
+   public void CleanStatus()
     {
         remainingTurns = 0;
     }
@@ -89,7 +91,7 @@ public class ElectrifiedStatus : Status
 
     public ElectrifiedStatus()
     {
-        remainingTurns = 4;
+        remainingTurns = 3;
     }
 
     public ElectrifiedStatus(int turns)

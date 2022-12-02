@@ -156,17 +156,18 @@ public abstract class Character : MonoBehaviour
         statusList.RemoveAll(s => s.GetType() == typeof(StunStatus));
     }
 
-    public void AddStatusIcon(string name)
+    public GameObject AddStatusIcon(string name)
     {
         GameObject newStatusGameObject = Instantiate(statusUI.Find("StatusExample").gameObject, statusUI, false);
         newStatusGameObject.name = name;
         newStatusGameObject.SetActive(true);
         Image newStatusImage = newStatusGameObject.GetComponent<Image>();
         newStatusImage.sprite = CombatManager.Instance.GetStatusSprite(name);
+        return newStatusGameObject;
     }
 
-    public void DeleteStatusIcon(string name)
+    public void DeleteStatusIcon(Status status)
     {
-        Destroy(statusUI.Find(name).gameObject);
+        Destroy(status.StatusObject);
     }
 }

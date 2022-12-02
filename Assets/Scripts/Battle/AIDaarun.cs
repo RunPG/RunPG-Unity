@@ -13,7 +13,7 @@ public class AIDaarun : AICharacter
         {
             Laser laser = new Laser();
             laser.caster = this;
-            List<Character> enemies = CombatManager.Instance.GetMyEnemies(this);
+            List<Character> enemies = CombatManager.Instance.GetEnemies(this);
             laser.target = enemies[0];
 
             CombatManager.Instance.AddAction(laser);
@@ -22,7 +22,7 @@ public class AIDaarun : AICharacter
         {
             QueueDeFer queueDeFer = new QueueDeFer();
             queueDeFer.caster = this;
-            List<Character> enemies = CombatManager.Instance.GetMyEnemies(this);
+            List<Character> enemies = CombatManager.Instance.GetEnemies(this);
             queueDeFer.target = enemies[Random.Range(0, enemies.Count)];
 
             CombatManager.Instance.AddAction(queueDeFer);

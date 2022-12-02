@@ -125,23 +125,23 @@ public class CombatManager : MonoBehaviourPun
     }
 
 
-    public List<Character> GetMyAllies(Character myCharacter)
+    public List<Character> GetAllies(Character ofCharacter, bool included = true)
     {
         List<Character> allies = new List<Character>();
         foreach (var character in characters)
         {
-            if (character.CompareTag(myCharacter.tag) && character.isAlive())
+            if ((included || character != ofCharacter) && character.CompareTag(ofCharacter.tag) && character.isAlive())
                 allies.Add(character);
         }
         return allies;
     }
 
-    public List<Character> GetMyEnemies(Character myCharacter)
+    public List<Character> GetEnemies(Character ofCharacter)
     {
         List<Character> enemies = new List<Character>();
         foreach (var character in characters)
         {
-            if (!character.CompareTag(myCharacter.tag) && character.isAlive())
+            if (!character.CompareTag(ofCharacter.tag) && character.isAlive())
                 enemies.Add(character);
         }
         return enemies;
@@ -263,8 +263,8 @@ public class CombatManager : MonoBehaviourPun
                         taunt.DecraseTurns();
                         if (!taunt.IsAffected())
                         {
+                            action.caster.DeleteStatusIcon(taunt);
                             action.caster.GetStatus().Remove(taunt);
-                            action.caster.DeleteStatusIcon("Provocation");
                         }
                     }
 
@@ -277,6 +277,9 @@ public class CombatManager : MonoBehaviourPun
             }
 
             ResolveBurnStatus();
+            yield return new WaitForSeconds(0.2f);
+            ResolveElectrifiedStatus();
+            yield return new WaitForSeconds(0.2f);
 
             if (characters.Where(c => c.isAlive() && c.CompareTag("Team1")).Count() == 0)
             {
@@ -299,7 +302,7 @@ public class CombatManager : MonoBehaviourPun
             Character c = characters.Find(c => c.characterName == character.name);
             if (c != null)
             {
-                character.ratioHP = ((float) c.currentHealth) / c.maxHealth;
+                character.ratioHP = ((float)c.currentHealth) / c.maxHealth;
             }
             else
             {
@@ -351,8 +354,9 @@ public class CombatManager : MonoBehaviourPun
                 }
                 else
                 {
+                    status.StatusObject = target.AddStatusIcon(status.name);
                     statusList.Add(status);
-                    target.AddStatusIcon(status.name);
+
                 }
                 break;
             case global::Status.StatusBehaviour.AddDuration:
@@ -363,13 +367,13 @@ public class CombatManager : MonoBehaviourPun
                 }
                 else
                 {
+                    status.StatusObject = target.AddStatusIcon(status.name);
                     statusList.Add(status);
-                    target.AddStatusIcon(status.name);
                 }
                 break;
             case global::Status.StatusBehaviour.Stack:
+                status.StatusObject = target.AddStatusIcon(status.name);
                 statusList.Add(status);
-                target.AddStatusIcon(status.name);
                 break;
         }
     }
@@ -383,12 +387,12 @@ public class CombatManager : MonoBehaviourPun
             {
                 if (statusList[i].name == "Brulure")
                 {
-                    character.TakeDamage(5);
+                    character.TakeDamage(10);
                     statusList[i].DecraseTurns();
                     if (!statusList[i].IsAffected())
                     {
+                        character.DeleteStatusIcon(statusList[i]);
                         statusList.RemoveAt(i);
-                        character.DeleteStatusIcon("Brulure");
                     }
                 }
             }
@@ -405,17 +409,18 @@ public class CombatManager : MonoBehaviourPun
                 if (statusList[i].name == "Electrocution")
                 {
                     character.TakeDamage(5);
-                    if (statusList[i].remainingTurns > 1)
+                    List<Character> possibleTargets = GetAllies(character, false);
+                    if (possibleTargets.Count() > 0)
                     {
-                        List<Character> possibleTargets = GetMyAllies(character);
-                        if (possibleTargets.Count() > 0)
-                        {
-                            int x = UnityEngine.Random.Range(0, possibleTargets.Count);
-                            CombatManager.Instance.AddStatus(new ElectrifiedStatus(statusList[i].remainingTurns - 1), possibleTargets[x]);
-                        }
+                        int x = UnityEngine.Random.Range(0, possibleTargets.Count);
+                        possibleTargets[x].TakeDamage(5);
                     }
-                    statusList.RemoveAt(i);
-                    character.DeleteStatusIcon("Electrocution");
+                    statusList[i].DecraseTurns();
+                    if (!statusList[i].IsAffected())
+                    {
+                        character.DeleteStatusIcon(statusList[i]);
+                        statusList.RemoveAt(i);
+                    }
                 }
             }
         }
