@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.VFX;
 
 public abstract class Status
 {
@@ -89,13 +90,36 @@ public class ElectrifiedStatus : Status
     public override StatusBehaviour statusBehaviour => StatusBehaviour.Stack;
     public override string name => "Electrocution";
 
+    private static GameObject electricArcRessource = Resources.Load<GameObject>("ElectricArc");
+
     public ElectrifiedStatus()
     {
-        remainingTurns = 3;
+        remainingTurns = 1;
     }
 
     public ElectrifiedStatus(int turns)
     {
         remainingTurns = turns;
+    }
+
+    public void PlayFX(Character mainTarget, Character secondTarget)
+    {
+        CombatManager.Instance.StartCoroutine(FXCoroutine(mainTarget, secondTarget));
+    }
+
+    private IEnumerator FXCoroutine(Character mainTarget, Character secondTarget)
+    {
+        GameObject electricArc = GameObject.Instantiate(electricArcRessource, Vector3.zero, Quaternion.identity);
+        Vector3 start = mainTarget.transform.Find("Head").position;
+        Vector3 end = secondTarget.transform.Find("Head").position;
+        Vector3 direction = end - start;
+        Vector3 perpendicular = Vector3.Cross(direction, Vector3.up).normalized;
+        electricArc.transform.Find("pos 1").position = start;
+        electricArc.transform.Find("pos 2").position = Vector3.Lerp(start, end, 0.25f) + (Quaternion.AngleAxis(Random.Range(0, 359), direction.normalized) * (0.1f * perpendicular));
+        electricArc.transform.Find("pos 3").position = Vector3.Lerp(start, end, 0.75f) + (Quaternion.AngleAxis(Random.Range(0, 359), direction.normalized) * (0.1f * perpendicular));
+        electricArc.transform.Find("pos 4").position = end;
+        electricArc.GetComponentInChildren<VisualEffect>().Play();
+        yield return new WaitForSeconds(0.2f);
+        GameObject.Destroy(electricArc);
     }
 }

@@ -408,12 +408,13 @@ public class CombatManager : MonoBehaviourPun
             {
                 if (statusList[i].name == "Electrocution")
                 {
-                    character.TakeDamage(5);
                     List<Character> possibleTargets = GetAllies(character, false);
                     if (possibleTargets.Count() > 0)
                     {
                         int x = UnityEngine.Random.Range(0, possibleTargets.Count);
+                        character.TakeDamage(5);
                         possibleTargets[x].TakeDamage(5);
+                        ((ElectrifiedStatus)statusList[i]).PlayFX(character, possibleTargets[x]);
                     }
                     statusList[i].DecraseTurns();
                     if (!statusList[i].IsAffected())

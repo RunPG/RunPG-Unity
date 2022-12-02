@@ -241,6 +241,7 @@ public class Tempete : Skill
             }
             actualTarget.TakeDamage(GetDamage(actualTarget));
             yield return new WaitForSeconds(0.25f);
+            GameObject.Destroy(lightning);
         }
     }
 
