@@ -533,6 +533,25 @@ namespace RunPG.Multi
             return true;
         }
 
+        public static async Task<bool> PUTXp(int userId)
+        {
+            var url = rootUrl + "user/" + userId + "/xp";
+
+            using UnityWebRequest request = UnityWebRequest.Put(url, "PUT");
+            request.SendWebRequest();
+            while (!request.isDone)
+            {
+                await Task.Yield();
+            }
+
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogError(string.Format("Error in request:{0}\nError Message: {1}", url, request.error));
+                return false;
+            }
+            return true;
+        }
+
         public static async Task<bool> DELETENotification(int receiverId, int senderId, NotificationType type)
         {
             var url = rootUrl + "user/" + receiverId + "/notification/" + type + '/'+ senderId;

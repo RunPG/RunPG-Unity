@@ -112,6 +112,7 @@ public class CharacterProfileScript : MonoBehaviour
 
         if (PlayerProfile.id != -1)
         {
+            await Requests.PUTXp(PlayerProfile.id);
             InventoryModel[] inventory = await Requests.GETUserInventory(PlayerProfile.id);
             PlayerProfile.characterInfo = await CharacterInfo.Load(PlayerProfile.id);
 
@@ -333,7 +334,9 @@ public class CharacterProfileScript : MonoBehaviour
         int maxXP = PlayerProfile.characterInfo.GetRequiredExperience();
         xpTextMesh.text = string.Format("{0} / {1}", currentXP, maxXP);
         xpBarSlider.value = ((float)currentXP * 100) / maxXP;
+        levelTextMesh.text = PlayerProfile.characterInfo.level.ToString();
         LevelUpButton.SetActive(currentXP >= maxXP);
+        xpTextMesh.gameObject.SetActive(currentXP < maxXP);
     }
 
     public void RefreshStat()

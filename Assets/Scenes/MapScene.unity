@@ -1008,7 +1008,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1413331745}
         m_TargetAssemblyTypeName: LevelUpManager, Assembly-CSharp
-        m_MethodName: DecreaseVitality
+        m_MethodName: DecreaseDefense
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2418,7 +2418,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1413331745}
         m_TargetAssemblyTypeName: LevelUpManager, Assembly-CSharp
-        m_MethodName: DecreaseVitality
+        m_MethodName: DecreaseResistance
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -5440,7 +5440,7 @@ CanvasGroup:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 318763122}
   m_Enabled: 1
-  m_Alpha: 0
+  m_Alpha: 1
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
@@ -6222,7 +6222,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1413331745}
         m_TargetAssemblyTypeName: LevelUpManager, Assembly-CSharp
-        m_MethodName: IncreaseVitality
+        m_MethodName: IncreasePower
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -11052,7 +11052,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1413331745}
         m_TargetAssemblyTypeName: LevelUpManager, Assembly-CSharp
-        m_MethodName: DecreaseVitality
+        m_MethodName: DecreasePrecision
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -14284,7 +14284,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1413331745}
         m_TargetAssemblyTypeName: LevelUpManager, Assembly-CSharp
-        m_MethodName: DecreaseVitality
+        m_MethodName: DecreasePower
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -14417,7 +14417,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1413331745}
         m_TargetAssemblyTypeName: LevelUpManager, Assembly-CSharp
-        m_MethodName: IncreaseVitality
+        m_MethodName: IncreasePrecision
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -22655,7 +22655,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1413331745}
         m_TargetAssemblyTypeName: LevelUpManager, Assembly-CSharp
-        m_MethodName: IncreaseVitality
+        m_MethodName: IncreaseStrength
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -23320,7 +23320,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1413331745}
         m_TargetAssemblyTypeName: LevelUpManager, Assembly-CSharp
-        m_MethodName: DecreaseVitality
+        m_MethodName: DecreaseStrength
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -23792,7 +23792,7 @@ CanvasGroup:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1413331739}
   m_Enabled: 1
-  m_Alpha: 1
+  m_Alpha: 0
   m_Interactable: 0
   m_BlocksRaycasts: 0
   m_IgnoreParentGroups: 0
@@ -30823,7 +30823,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1413331745}
         m_TargetAssemblyTypeName: LevelUpManager, Assembly-CSharp
-        m_MethodName: IncreaseVitality
+        m_MethodName: IncreaseDefense
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -34355,7 +34355,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1413331745}
         m_TargetAssemblyTypeName: LevelUpManager, Assembly-CSharp
-        m_MethodName: IncreaseVitality
+        m_MethodName: IncreaseResistance
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
