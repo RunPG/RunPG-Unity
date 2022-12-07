@@ -276,10 +276,10 @@ public class CombatManager : MonoBehaviourPun
                 yield return new WaitForSeconds(action.duration);
             }
 
-            ResolveBurnStatus();
-            yield return new WaitForSeconds(0.2f);
-            ResolveElectrifiedStatus();
-            yield return new WaitForSeconds(0.2f);
+            if (ResolveBurnStatus())
+                yield return new WaitForSeconds(1f);
+            if (ResolveElectrifiedStatus())
+                yield return new WaitForSeconds(1f);
 
             if (characters.Where(c => c.isAlive() && c.CompareTag("Team1")).Count() == 0)
             {
@@ -378,16 +378,21 @@ public class CombatManager : MonoBehaviourPun
         }
     }
 
-    private void ResolveBurnStatus()
+    private bool ResolveBurnStatus()
     {
+        bool result = false;
         foreach (var character in characters)
         {
+            if (!character.isAlive())
+                continue;
             List<Status> statusList = character.GetStatus();
             for (int i = statusList.Count - 1; i >= 0; i--)
             {
                 if (statusList[i].name == "Brulure")
                 {
+                    result = true;
                     character.TakeDamage(10);
+                    ((BurnStatus)statusList[i]).PlayFX(character);
                     statusList[i].DecraseTurns();
                     if (!statusList[i].IsAffected())
                     {
@@ -397,12 +402,16 @@ public class CombatManager : MonoBehaviourPun
                 }
             }
         }
+        return result;
     }
 
-    private void ResolveElectrifiedStatus()
+    private bool ResolveElectrifiedStatus()
     {
+        bool result = false;
         foreach (var character in characters)
         {
+            if (!character.isAlive())
+                continue;
             List<Status> statusList = character.GetStatus();
             for (int i = statusList.Count - 1; i >= 0; i--)
             {
@@ -411,6 +420,7 @@ public class CombatManager : MonoBehaviourPun
                     List<Character> possibleTargets = GetAllies(character, false);
                     if (possibleTargets.Count() > 0)
                     {
+                        result = true;
                         int x = UnityEngine.Random.Range(0, possibleTargets.Count);
                         character.TakeDamage(5);
                         possibleTargets[x].TakeDamage(5);
@@ -425,6 +435,7 @@ public class CombatManager : MonoBehaviourPun
                 }
             }
         }
+        return result;
     }
 
     public Sprite GetItemSprite(string itemName)

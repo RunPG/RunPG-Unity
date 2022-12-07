@@ -74,6 +74,8 @@ public class BurnStatus : Status
     public override StatusBehaviour statusBehaviour => StatusBehaviour.AddDuration;
     public override string name => "Brulure";
 
+    private static GameObject burnResource = Resources.Load<GameObject>("Burn");
+
     public BurnStatus()
     {
         remainingTurns = 3;
@@ -83,6 +85,19 @@ public class BurnStatus : Status
     {
         remainingTurns = turns;
     }
+
+    public void PlayFX(Character target)
+    {
+        CombatManager.Instance.StartCoroutine(FXCoroutine(target));
+    }
+
+    private IEnumerator FXCoroutine(Character target)
+    {
+        GameObject burn = GameObject.Instantiate(burnResource, Vector3.zero, Quaternion.identity);
+        burn.transform.position = target.transform.Find("Head").position;
+        yield return new WaitForSeconds(0.5f);
+        GameObject.Destroy(burn);
+    }
 }
 
 public class ElectrifiedStatus : Status
@@ -90,7 +105,7 @@ public class ElectrifiedStatus : Status
     public override StatusBehaviour statusBehaviour => StatusBehaviour.Stack;
     public override string name => "Electrocution";
 
-    private static GameObject electricArcRessource = Resources.Load<GameObject>("ElectricArc");
+    private static GameObject electricArcResource = Resources.Load<GameObject>("ElectricArc");
 
     public ElectrifiedStatus()
     {
@@ -109,7 +124,7 @@ public class ElectrifiedStatus : Status
 
     private IEnumerator FXCoroutine(Character mainTarget, Character secondTarget)
     {
-        GameObject electricArc = GameObject.Instantiate(electricArcRessource, Vector3.zero, Quaternion.identity);
+        GameObject electricArc = GameObject.Instantiate(electricArcResource, Vector3.zero, Quaternion.identity);
         Vector3 start = mainTarget.transform.Find("Head").position;
         Vector3 end = secondTarget.transform.Find("Head").position;
         Vector3 direction = end - start;
