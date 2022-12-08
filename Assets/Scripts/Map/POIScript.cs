@@ -1,8 +1,5 @@
 using RunPG.Multi;
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using UnityEngine;
 
 public class POIScript : MonoBehaviour
@@ -79,5 +76,11 @@ public class POIScript : MonoBehaviour
         {
             activity.SetAvailable(true);
         }
+    }
+
+    public int GetAcitivity()
+    {
+        id = long.Parse(transform.name);
+        return (int)(id % 4);
     }
 }

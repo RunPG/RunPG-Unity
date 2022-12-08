@@ -218,7 +218,6 @@ public class CharacterProfileScript : MonoBehaviour
 
             newEquipment.Find("Image").GetComponent<Image>().sprite = equipment.GetEquipmentSprite();
             newEquipment.Find("Name").GetComponent<TextMeshProUGUI>().text = equipment.name;
-            newEquipment.Find("Level").GetComponent<TextMeshProUGUI>().text = string.Format("Lv. {0}", equipment.level);
 
             newEquipment.GetComponent<Image>().sprite = equipment.rarity.GetSprite();
             
@@ -250,13 +249,14 @@ public class CharacterProfileScript : MonoBehaviour
 
             if (equipment.heroClass != PlayerProfile.characterInfo.heroClass)
             {
-                button.interactable = false;
-                button.transform.Find("Text").GetComponent<TextMeshProUGUI>().text = equipment.heroClass.ToString();
+                button.gameObject.SetActive(false);
+                newEquipment.Find("Level").GetComponent<TextMeshProUGUI>().text = string.Format("Nv. {0} - {1}", equipment.level, equipment.heroClass.ToString());
             }
             else if (equipedItem.id == equipment.id)
             {
                 button.interactable = false;
                 button.transform.Find("Text").GetComponent<TextMeshProUGUI>().text = "Equipé";
+                newEquipment.Find("Level").GetComponent<TextMeshProUGUI>().text = string.Format("Nv. {0}", equipment.level);
             }
             else
             {

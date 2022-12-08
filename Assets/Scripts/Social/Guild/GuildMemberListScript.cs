@@ -74,7 +74,7 @@ public class GuildMemberListScript : MonoBehaviour
             Transform userObject = Instantiate(userPrefab, userListLayout.transform).transform;
             userObject.Find("Class").GetComponent<Image>().sprite = member.heroClass.GetSprite();
             userObject.Find("Name").GetComponent<TextMeshProUGUI>().text = member.name;
-            userObject.Find("Level").GetComponent<TextMeshProUGUI>().text = string.Format("Lv. {0}", member.level);
+            userObject.Find("Level/Value").GetComponent<TextMeshProUGUI>().text = member.level.ToString();
 
             if (guildScript.guildOwner.id == PlayerProfile.id)
                 userObject.Find("RemoveButton").GetComponent<Button>().onClick.AddListener(() => RemoveMember(member));
@@ -101,7 +101,7 @@ public class GuildMemberListScript : MonoBehaviour
             Transform userObject = Instantiate(requestUserPrefab, userListLayout.transform).transform;
             userObject.Find("Class").GetComponent<Image>().sprite = user.heroClass.GetSprite();
             userObject.Find("Name").GetComponent<TextMeshProUGUI>().text = user.name;
-            userObject.Find("Level").GetComponent<TextMeshProUGUI>().text = string.Format("Lv. {0}", user.level);
+            userObject.Find("Level/Value").GetComponent<TextMeshProUGUI>().text = user.level.ToString();
             userObject.Find("AcceptButton").GetComponent<Button>().onClick.AddListener(() => AcceptJoinRequest(user));
             userObject.Find("DeclineButton").GetComponent<Button>().onClick.AddListener(() => DeclineJoinRequest(user));
         }

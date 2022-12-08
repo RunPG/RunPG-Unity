@@ -332,6 +332,28 @@ namespace RunPG.Multi
             return null;
         }
 
+        public static async Task<CaloriesModel> GetCaloriesToday(int userId)
+        {
+            var url = rootUrl + "user/" + userId + "/caloriesToday" ;
+            using UnityWebRequest request = UnityWebRequest.Get(url);
+
+            request.SendWebRequest();
+            while (!request.isDone)
+            {
+                await Task.Yield();
+            }
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogError(string.Format("Error in request:{0}\nError Message: {1}", url, request.error));
+            }
+            else
+            {
+                var calroies = JsonConvert.DeserializeObject<CaloriesModel>(request.downloadHandler.text);
+                return calroies;
+            }
+            return null;
+        }
+
         public static async Task<bool> POSTNewUser(NewUserModel newUser)
         {
             var url = rootUrl + "user";
