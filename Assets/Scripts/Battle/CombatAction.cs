@@ -61,7 +61,7 @@ public class Laser : CombatAction
     public override string name => "Laser";
     public override PossibleTarget possibleTarget => PossibleTarget.Enemy;
     public override int speed => 100;
-    public override float duration => 2f;
+    public override float duration => 3f;
 
     public override void PlayAction()
     {

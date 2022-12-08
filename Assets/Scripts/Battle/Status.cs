@@ -94,7 +94,7 @@ public class BurnStatus : Status
     private IEnumerator FXCoroutine(Character target)
     {
         GameObject burn = GameObject.Instantiate(burnResource, Vector3.zero, Quaternion.identity);
-        burn.transform.position = target.transform.Find("Head").position;
+        burn.transform.position = target.transform.Find("Body").position;
         yield return new WaitForSeconds(0.5f);
         GameObject.Destroy(burn);
     }
@@ -125,8 +125,8 @@ public class ElectrifiedStatus : Status
     private IEnumerator FXCoroutine(Character mainTarget, Character secondTarget)
     {
         GameObject electricArc = GameObject.Instantiate(electricArcResource, Vector3.zero, Quaternion.identity);
-        Vector3 start = mainTarget.transform.Find("Head").position;
-        Vector3 end = secondTarget.transform.Find("Head").position;
+        Vector3 start = mainTarget.transform.Find("Body").position;
+        Vector3 end = secondTarget.transform.Find("Body").position;
         Vector3 direction = end - start;
         Vector3 perpendicular = Vector3.Cross(direction, Vector3.up).normalized;
         electricArc.transform.Find("pos 1").position = start;

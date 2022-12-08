@@ -31,6 +31,37 @@ Transform:
   m_Father: {fileID: 2632967393868017583}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &3445601970635106943
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1672417476391509751}
+  m_Layer: 0
+  m_Name: Body
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1672417476391509751
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3445601970635106943}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.1154, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2632967393868017583}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6064169955920937260
 GameObject:
   m_ObjectHideFlags: 0
@@ -64,6 +95,7 @@ Transform:
   - {fileID: 2904747786657302660}
   - {fileID: 3478713694791465194}
   - {fileID: 2921802546892446423}
+  - {fileID: 1672417476391509751}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -79,24 +111,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ae7243f4bfa2f544a396b92bd174d4a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 100
-  status:
-  - {fileID: 21300000, guid: a8394b741139f1f43a20f238e80e106f, type: 3}
-  - {fileID: 21300000, guid: abda633ed73468a4990e133994cf0b3a, type: 3}
-  - {fileID: 21300000, guid: 8a4cb3f4760b1e2479dfd40d51d58723, type: 3}
-  - {fileID: 21300000, guid: 513b408c54129d940962d8a7286641cc, type: 3}
-  - {fileID: 21300000, guid: 33526b296bbfa4f4787e3fa377faa1d1, type: 3}
   animator: {fileID: 2940826630529345993}
   healthBarPosition: {fileID: 3478713694791465194}
   head: {fileID: 2921802546892446423}
   healthBarGameObject: {fileID: 5442145643889852401, guid: 58fb3f8a85fa6e346bd0c3a075d4a7b9,
     type: 3}
-  name: 
-  skillNames:
-  - Entaille
-  - Entaille
-  - Provocation
-  - Provocation
 --- !u!136 &895006624564519602
 CapsuleCollider:
   m_ObjectHideFlags: 0

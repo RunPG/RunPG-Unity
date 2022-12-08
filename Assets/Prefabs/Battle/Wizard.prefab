@@ -55,7 +55,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 920316670865067015}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0.9, z: 4.8}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -95,6 +95,7 @@ Transform:
   - {fileID: 7985204774768259575}
   - {fileID: 5516915872241451436}
   - {fileID: 1006908850054742157}
+  - {fileID: 2309794239251484610}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -110,24 +111,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ae7243f4bfa2f544a396b92bd174d4a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 100
-  status:
-  - {fileID: 21300000, guid: a8394b741139f1f43a20f238e80e106f, type: 3}
-  - {fileID: 21300000, guid: abda633ed73468a4990e133994cf0b3a, type: 3}
-  - {fileID: 21300000, guid: 8a4cb3f4760b1e2479dfd40d51d58723, type: 3}
-  - {fileID: 21300000, guid: 513b408c54129d940962d8a7286641cc, type: 3}
-  - {fileID: 21300000, guid: 33526b296bbfa4f4787e3fa377faa1d1, type: 3}
   animator: {fileID: 7171566785710481535}
   healthBarPosition: {fileID: 5516915872241451436}
   head: {fileID: 1006908850054742157}
   healthBarGameObject: {fileID: 5442145643889852401, guid: 58fb3f8a85fa6e346bd0c3a075d4a7b9,
     type: 3}
-  name: 
-  skillNames:
-  - Boule de feu
-  - Boule de feu
-  - Embrasement
-  - Embrasement
 --- !u!136 &1932481685353180089
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -172,6 +160,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 7043387920726131580}
   m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &5759542133556131569
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2309794239251484610}
+  m_Layer: 0
+  m_Name: Body
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2309794239251484610
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5759542133556131569}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.1026, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7043387920726131580}
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &7591833198329189916
 PrefabInstance:

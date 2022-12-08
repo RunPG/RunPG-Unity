@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.VFX;
 
 public abstract class Skill : CombatAction 
 {
@@ -123,7 +124,7 @@ public class BouleDeFeu : Skill
     {
         yield return new WaitForSeconds(0.8f);
         Vector3 startPos = caster.transform.Find("Wizard/Armature/Root/Spine1/Spine2/Shoulder.R/UpperArm.R/LowerArm.R/Hand.R/Hand.R_end/FireballStart").position;
-        Vector3 endPos = target.transform.position;
+        Vector3 endPos = target.transform.Find("Body").position;
         GameObject fireball = GameObject.Instantiate<GameObject>(fireballRessource, startPos, Quaternion.LookRotation(endPos - startPos));
 
 
@@ -138,6 +139,9 @@ public class BouleDeFeu : Skill
 
         target.TakeDamage(GetDamage());
         CombatManager.Instance.AddStatus(new BurnStatus(), target);
+        fireball.GetComponentInChildren<VisualEffect>().Stop();
+        fireball.GetComponentInChildren<VisualEffect>().SendEvent("Explode");
+        yield return new WaitForSeconds(0.2f);
         GameObject.Destroy(fireball);
     }
 
@@ -255,6 +259,6 @@ public class Tempete : Skill
             critMultiplier = caster.stats.GetCritMultiplier();
         }
 
-        return 1;// Mathf.RoundToInt((20 + 10 * caster.level) * attackMultiplier * critMultiplier);
+        return Mathf.RoundToInt((20 + 10 * caster.level) * attackMultiplier * critMultiplier);
     }
 }
