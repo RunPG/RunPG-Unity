@@ -148,7 +148,7 @@ GameObject:
   - component: {fileID: 1092203183991883339}
   - component: {fileID: 5108816308719119779}
   m_Layer: 5
-  m_Name: AcceptButton
+  m_Name: Accept
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -774,7 +774,7 @@ GameObject:
   - component: {fileID: 8005999001661102096}
   - component: {fileID: 1291311836756795060}
   m_Layer: 5
-  m_Name: DeclineButton
+  m_Name: Decline
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

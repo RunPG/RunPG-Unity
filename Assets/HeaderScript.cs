@@ -45,6 +45,14 @@ public class HeaderScript : MonoBehaviour
 
         goldText.text = PlayerProfile.characterInfo.gold.ToString();
         caloriesText.text = PlayerProfile.characterInfo.calories.ToString();
+        if (currentXP > maxXP)
+        {
+            xpBarSlider.transform.Find("Fill").GetComponent<Image>().color = new Color32(244,176,0, 255);
+        }
+        else
+        {
+            xpBarSlider.transform.Find("Fill").GetComponent<Image>().color = new Color32(0, 178,22, 255);
+        }
         xpText.text = string.Format("{0} / {1}", currentXP, maxXP);
         xpBarSlider.value = ((float)currentXP * 100) / maxXP;
         levelText.text = PlayerProfile.characterInfo.level.ToString();

@@ -21,9 +21,9 @@ public class PortalDescription : MonoBehaviour
 
     private string[] activitiesDescriptions = {
         "Détruit après l’invasion de la légion des Slimes, ce donjon servait d’oubliette pour les hors-la-loi sous le règne du roi Kiékié II.",
-        "La fôret enchantée est un lieu magique où les arbres sont vivants et les animaux parlent. C’est un lieu de paix et de sérénité.",
-        "Les buissons renferment des créatures étranges venuent d'un autre monde, Pokémon. Attention, vous trouverez peiut-être un Shiny !",
-        "Mont cristal est une mine remplie de crystal où vie Myla une mineuse dont l'infeciton d'Hallownest a transformé en une créature monstrueuse."
+        "La forêt enchantée est un lieu magique où les arbres sont vivants et les animaux parlent. C’est un lieu de paix et de sérénité.",
+        "Les buissons renferment des créatures étranges venuent d'un autre monde. Attention, vous trouverez peut-être un Shiny !",
+        "Le Mont cristal habrite une mine remplie de crystal. Ici prospère Myla une mineuse dont l'infecton d'Hallownest l'a transformé en une créature monstrueuse."
     };
 
     public void Hide()

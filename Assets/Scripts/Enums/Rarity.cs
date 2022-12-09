@@ -56,4 +56,17 @@ static class RarityMethods
             _ => Resources.Load<Sprite>("Inventory/Rarity/Common")
         };
     }
+
+    public static Sprite GetItemSprite(this Rarity rarity)
+    {
+        return rarity switch
+        {
+            Rarity.COMMON => Resources.Load<Sprite>("Inventory/Rarity/Common_Item"),
+            Rarity.RARE => Resources.Load<Sprite>("Inventory/Rarity/Rare_Item"),
+            Rarity.EPIC => Resources.Load<Sprite>("Inventory/Rarity/Epic_Item"),
+            Rarity.LEGENDARY => Resources.Load<Sprite>("Inventory/Rarity/Legendary_Item"),
+            Rarity.RELIC => Resources.Load<Sprite>("Inventory/Rarity/Legendary_Item"),
+            _ => Resources.Load<Sprite>("Inventory/Rarity/Common_Item")
+        };
+    }
 }
