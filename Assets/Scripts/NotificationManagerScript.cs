@@ -19,6 +19,8 @@ public class NotificationManagerScript : MonoBehaviour
     [SerializeField]
     private SocialScript socialScript;
 
+    public static NotificationManagerScript instance;
+
     NotificationModel[] friendNotifications;
     NotificationModel[] guildNotifications;
 
@@ -28,6 +30,13 @@ public class NotificationManagerScript : MonoBehaviour
     
     void Start()
     {
+        if (instance == null)
+            instance = this;
+        else if (instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
         friendNotifications = new NotificationModel[0];
         guildNotifications = new NotificationModel[0];
         friendMessagesSenders = new HashSet<string>();
@@ -49,6 +58,7 @@ public class NotificationManagerScript : MonoBehaviour
 
     public void UpdateNotificationObjects()
     {
+        guildMessagesNotification = PlayerProfile.guildId.HasValue ? guildMessagesNotification : false;
         bool showFriendNotifications = friendNotifications.Length > 0 || friendMessagesSenders.Count > 0;
         bool showGuildNotifications = guildNotifications.Length > 0 || guildMessagesNotification;
 
@@ -56,11 +66,20 @@ public class NotificationManagerScript : MonoBehaviour
         friendNotificationsObject.SetActive(showFriendNotifications);
         guildNotificationsObject.SetActive(showGuildNotifications);
         guildListNotificationsObject.SetActive(guildNotifications.Length > 0);
-        //lobbyNotificationsObject.SetActive(showLobbyNotifications);
 
         foreach (var sender in friendMessagesSenders)
         {
             socialScript.AddMessageNotification(sender);
+        }
+    }
+
+    public async Task ClearGuildNotification()
+    {
+        guildMessagesNotification = false;
+        var notifications = await Requests.GETNotificationsByType(PlayerProfile.id, NotificationType.GUILD);
+        foreach (var notification in notifications)
+        {
+            await Requests.DELETENotification(notification.receiverId, notification.senderId, notification.type);
         }
     }
 }

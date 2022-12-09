@@ -310,6 +310,50 @@ namespace RunPG.Multi
             return null;
         }
 
+        public static async Task<ItemModel[]> GetItemById(int? item_id)
+        {
+            var url = rootUrl + "item/" + (item_id.HasValue ? "?id=" + item_id : "");
+            using UnityWebRequest request = UnityWebRequest.Get(url);
+
+            request.SendWebRequest();
+            while (!request.isDone)
+            {
+                await Task.Yield();
+            }
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogError(string.Format("Error in request:{0}\nError Message: {1}", url, request.error));
+            }
+            else
+            {
+                var activity = JsonConvert.DeserializeObject<ItemModel[]>(request.downloadHandler.text);
+                return activity;
+            }
+            return null;
+        }
+
+        public static async Task<CaloriesModel> GetCaloriesToday(int userId)
+        {
+            var url = rootUrl + "user/" + userId + "/caloriesToday" ;
+            using UnityWebRequest request = UnityWebRequest.Get(url);
+
+            request.SendWebRequest();
+            while (!request.isDone)
+            {
+                await Task.Yield();
+            }
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogError(string.Format("Error in request:{0}\nError Message: {1}", url, request.error));
+            }
+            else
+            {
+                var calroies = JsonConvert.DeserializeObject<CaloriesModel>(request.downloadHandler.text);
+                return calroies;
+            }
+            return null;
+        }
+
         public static async Task<bool> POSTNewUser(NewUserModel newUser)
         {
             var url = rootUrl + "user";
@@ -497,6 +541,25 @@ namespace RunPG.Multi
             using UnityWebRequest request = UnityWebRequest.Put(url, "PUT");
             request.SetRequestHeader("Content-Type", "application/json");
             request.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(content));
+            request.SendWebRequest();
+            while (!request.isDone)
+            {
+                await Task.Yield();
+            }
+
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogError(string.Format("Error in request:{0}\nError Message: {1}", url, request.error));
+                return false;
+            }
+            return true;
+        }
+
+        public static async Task<bool> PUTXp(int userId)
+        {
+            var url = rootUrl + "user/" + userId + "/xp";
+
+            using UnityWebRequest request = UnityWebRequest.Put(url, "PUT");
             request.SendWebRequest();
             while (!request.isDone)
             {

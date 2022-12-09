@@ -22,8 +22,10 @@ namespace RunPG.Multi
         public int glovesId;
         public int weaponId;
         public HeroClass heroClass;
+        public int gold;
+        public int crystal;
 
-        public CharacterModel(int id, int experience, int statisticsId, int? firstSpellId, int? secondSpellId, int? thirdSpellId, int? fourthSpellId, int helmetId, int chestplateId, int leggingsId, int glovesId, int weaponId, HeroClass heroClass)
+        public CharacterModel(int id, int experience, int statisticsId, int? firstSpellId, int? secondSpellId, int? thirdSpellId, int? fourthSpellId, int helmetId, int chestplateId, int leggingsId, int glovesId, int weaponId, HeroClass heroClass, int gold, int crystal)
         {
             this.id = id;
             this.experience = experience;
@@ -38,6 +40,8 @@ namespace RunPG.Multi
             this.glovesId = glovesId;
             this.weaponId = weaponId;
             this.heroClass = heroClass;
+            this.gold = gold;
+            this.crystal = crystal;
         }
     }
 }

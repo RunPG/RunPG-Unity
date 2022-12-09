@@ -130,6 +130,7 @@ public class LevelUpManager : MonoBehaviour
         profile.RefreshStat();
         profile.RefreshXp();
         
+        HeaderScript.instance.UpdateHeader();
         ShowPopUp(false);
     }
 

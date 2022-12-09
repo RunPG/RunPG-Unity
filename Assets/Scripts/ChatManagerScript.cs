@@ -28,9 +28,19 @@ namespace RunPG.Multi
         private CanvasGroup friendChatGroup;
 
         private NotificationManagerScript notificationManagerScript;
+        public static ChatManagerScript instance;
 
         private void Awake()
         {
+            if (instance == null)
+            {
+                instance = this;
+            }
+            else
+            {
+                Destroy(gameObject);
+                return;
+            }
             _chatClient = new ChatClient(this);
             _chatClient.ChatRegion = "EU";
 

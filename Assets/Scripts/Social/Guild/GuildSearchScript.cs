@@ -68,7 +68,6 @@ public class GuildSearchScript : MonoBehaviour
             var user = await Requests.GETUserById(notification.senderId);
             try
             {
-                Debug.Log("Guild id: " + user.guildId);
                 if (user.guildId.HasValue)
                 {
                     var guild = await Requests.GETGuildById(user.guildId.Value);
@@ -104,6 +103,8 @@ public class GuildSearchScript : MonoBehaviour
             guildObject.Find("Join").GetComponent<Button>().onClick.AddListener(() =>
             {
                 JoinGuild(guild);
+                guildObject.Find("Join/Text").GetComponent<TextMeshProUGUI>().text = "";
+
                 guildObject.Find("Join").GetComponent<Image>().sprite = Resources.Load<Sprite>("Social/Accept");
             });
         }
@@ -191,6 +192,7 @@ public class GuildSearchScript : MonoBehaviour
 
     void ReloadGuildList()
     {
+        guildScript.ClearChat();
         FilterList();
         ClearGuildList();
         AddInvitations();

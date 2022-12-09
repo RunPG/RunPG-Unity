@@ -21,7 +21,7 @@ static class HeroClassMethods
         {
             HeroClass.MAGE => "Sorcier",
             HeroClass.BERSERKER => "Berserk",
-            HeroClass.PRIEST => "Prètre",
+            HeroClass.PRIEST => "Prï¿½tre",
             HeroClass.ROGUE => "Assassin",
             HeroClass.PALADIN => "Paladin",
             _ => "",
@@ -63,6 +63,8 @@ public class CharacterInfo
     public Equipment chestplate;
     public Equipment gloves;
     public Equipment leggings;
+    public int gold;
+    public int calories;
 
     public int GetTotalVitality()
     {
@@ -137,6 +139,22 @@ public class CharacterInfo
         var leggingsModels = await leggingsTask;
         characterInfo.leggings = leggingsModels != null ? new Equipment(leggingsModels) : null;
 
+        characterInfo.gold = userCharacterModel.character.gold;
+        var caloriesModel = await Requests.GetCaloriesToday(id);
+        if (caloriesModel != null)
+            characterInfo.calories = caloriesModel.calories;
+
         return characterInfo;
+    }
+
+    public async Task updateHeaderInformations(int id)
+    {
+        var userCharacterModel = await Requests.GETUserCharacter(id);
+        this.experience = userCharacterModel.character.experience;
+        this.gold = userCharacterModel.character.gold;
+        var caloriesModel = await Requests.GetCaloriesToday(id);
+        if (caloriesModel != null)
+            this.calories = caloriesModel.calories;
+
     }
 }

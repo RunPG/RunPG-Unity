@@ -43,4 +43,30 @@ static class RarityMethods
             _ => ""
         };
     }
+
+    public static Sprite GetSprite(this Rarity rarity)
+    {
+        return rarity switch
+        {
+            Rarity.COMMON => Resources.Load<Sprite>("Inventory/Rarity/Common"),
+            Rarity.RARE => Resources.Load<Sprite>("Inventory/Rarity/Rare"),
+            Rarity.EPIC => Resources.Load<Sprite>("Inventory/Rarity/Epic"),
+            Rarity.LEGENDARY => Resources.Load<Sprite>("Inventory/Rarity/Legendary"),
+            Rarity.RELIC => Resources.Load<Sprite>("Inventory/Rarity/Legendary"),
+            _ => Resources.Load<Sprite>("Inventory/Rarity/Common")
+        };
+    }
+
+    public static Sprite GetItemSprite(this Rarity rarity)
+    {
+        return rarity switch
+        {
+            Rarity.COMMON => Resources.Load<Sprite>("Inventory/Rarity/Common_Item"),
+            Rarity.RARE => Resources.Load<Sprite>("Inventory/Rarity/Rare_Item"),
+            Rarity.EPIC => Resources.Load<Sprite>("Inventory/Rarity/Epic_Item"),
+            Rarity.LEGENDARY => Resources.Load<Sprite>("Inventory/Rarity/Legendary_Item"),
+            Rarity.RELIC => Resources.Load<Sprite>("Inventory/Rarity/Legendary_Item"),
+            _ => Resources.Load<Sprite>("Inventory/Rarity/Common_Item")
+        };
+    }
 }
