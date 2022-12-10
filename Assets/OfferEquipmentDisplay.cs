@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public class OfferEquipmentDisplay : OfferDisplay
 {
-    Equipment equipment;
+    public Equipment equipment;
     [SerializeField]
     private TextMeshProUGUI nameText;
     [SerializeField]

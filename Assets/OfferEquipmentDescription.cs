@@ -54,21 +54,21 @@ public class OfferEquipmentDescription : MonoBehaviour
         GetComponent<Button>().onClick.AddListener(ClosePopUp);
     }
 
-    public void LoadPopUp(CanvasGroup mainWindowCanvasGroup, Equipment equipment, MarketModel market)
+    public void LoadPopUp(CanvasGroup mainWindowCanvasGroup, OfferEquipmentDisplay offerEquipmentDisplay, MarketModel market)
     {
         errorMessage.text = "";
-        objectName.text = equipment.name;
-        levelClass.text = string.Format("Nv. {0} - {1}", equipment.level, equipment.heroClass.ToString());
-        description.text = equipment.description;
-        backgroundImage.sprite = equipment.rarity.GetItemSprite();
-        itemImage.sprite = equipment.GetEquipmentSprite();
+        objectName.text = offerEquipmentDisplay.equipment.name;
+        levelClass.text = string.Format("Nv. {0} - {1}", offerEquipmentDisplay.equipment.level, offerEquipmentDisplay.equipment.heroClass.ToString());
+        description.text = offerEquipmentDisplay.equipment.description;
+        backgroundImage.sprite = offerEquipmentDisplay.equipment.rarity.GetItemSprite();
+        itemImage.sprite = offerEquipmentDisplay.equipment.GetEquipmentSprite();
 
-        vitality.text = equipment.vitality.ToString();
-        strength.text = equipment.strength.ToString();
-        defense.text = equipment.defense.ToString();
-        power.text = equipment.power.ToString();
-        resistance.text = equipment.resistance.ToString();
-        precision.text = equipment.precision.ToString();
+        vitality.text = offerEquipmentDisplay.equipment.vitality.ToString();
+        strength.text = offerEquipmentDisplay.equipment.strength.ToString();
+        defense.text = offerEquipmentDisplay.equipment.defense.ToString();
+        power.text = offerEquipmentDisplay.equipment.power.ToString();
+        resistance.text = offerEquipmentDisplay.equipment.resistance.ToString();
+        precision.text = offerEquipmentDisplay.equipment.precision.ToString();
 
         closeButton.onClick.RemoveAllListeners();
         closeButton.onClick.AddListener(ClosePopUp);
