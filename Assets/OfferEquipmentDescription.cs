@@ -1,9 +1,12 @@
+using RunPG.Multi;
+using System.Collections;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-
-public class ObjectDescriptionScript : MonoBehaviour
+public class OfferEquipmentDescription : MonoBehaviour
 {
+
     [Header("Item Informations")]
     [SerializeField]
     private TextMeshProUGUI description;
@@ -34,30 +37,29 @@ public class ObjectDescriptionScript : MonoBehaviour
     [Space(10)]
     [Header("Buttons")]
     [SerializeField]
-    private Button equipButton;
+    private Button buyButton;
     [SerializeField]
     private Button closeButton;
     private CanvasGroup canvasGroup;
     private CanvasGroup mainWindowCanvasGroup;
 
+    [Space(10)]
+    [Header("Buttons")]
+    [SerializeField]
+    private TextMeshProUGUI errorMessage;
+    private MarketModel market;
     void Start()
     {
         canvasGroup = gameObject.GetComponent<CanvasGroup>();
         GetComponent<Button>().onClick.AddListener(ClosePopUp);
     }
 
-    public void LoadPopUp(CanvasGroup mainWindowCanvasGroup, Equipment equipment, bool isEquiped)
+    public void LoadPopUp(CanvasGroup mainWindowCanvasGroup, Equipment equipment, MarketModel market)
     {
+        errorMessage.text = "";
         objectName.text = equipment.name;
         levelClass.text = string.Format("Nv. {0} - {1}", equipment.level, equipment.heroClass.ToString());
-        if (equipment.description != null)
-        {
-            description.text = equipment.description;
-        }
-        else
-        {
-            description.text = "No description";
-        }
+        description.text = equipment.description;
         backgroundImage.sprite = equipment.rarity.GetItemSprite();
         itemImage.sprite = equipment.GetEquipmentSprite();
 
@@ -68,11 +70,6 @@ public class ObjectDescriptionScript : MonoBehaviour
         resistance.text = equipment.resistance.ToString();
         precision.text = equipment.precision.ToString();
 
-        equipButton.onClick.RemoveAllListeners();
-        equipButton.interactable = !isEquiped;
-
-        if (!isEquiped)
-            equipButton.onClick.AddListener(() => { CharacterProfileScript.instance.Equip(equipment); ClosePopUp(); });
         closeButton.onClick.RemoveAllListeners();
         closeButton.onClick.AddListener(ClosePopUp);
 
@@ -82,8 +79,26 @@ public class ObjectDescriptionScript : MonoBehaviour
         canvasGroup.blocksRaycasts = true;
         mainWindowCanvasGroup.interactable = false;
         mainWindowCanvasGroup.blocksRaycasts = false;
-    }
 
+        buyButton.onClick.RemoveAllListeners();
+        buyButton.onClick.AddListener(BuyEquipment);
+    }
+    public async void BuyEquipment()
+    {
+        bool res = await Requests.POSTBuyItem(market.id, PlayerProfile.id);
+        if (res)
+        {
+            ClosePopUp();
+            /* PlayerProfile.gold -= market.goldPrice;
+             PlayerProfile.equipments.Add(equipment);
+             PlayerProfile.Save();*/
+        }
+        else
+        {
+            errorMessage.text = "Achat impossible !";
+            //error msg;
+        }
+    }
     public void ClosePopUp()
     {
         canvasGroup.alpha = 0;
@@ -92,4 +107,5 @@ public class ObjectDescriptionScript : MonoBehaviour
         mainWindowCanvasGroup.interactable = true;
         mainWindowCanvasGroup.blocksRaycasts = true;
     }
+
 }

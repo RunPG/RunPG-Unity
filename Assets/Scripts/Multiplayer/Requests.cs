@@ -611,5 +611,149 @@ namespace RunPG.Multi
             }
             return true;
         }
+        public static async Task<MarketModel[]> GETallOpenItems()
+        {
+            var url = rootUrl + "market/";
+            using UnityWebRequest request = UnityWebRequest.Get(url);
+            request.SendWebRequest();
+            while (!request.isDone)
+            {
+                await Task.Yield();
+            }
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogError(string.Format("Error in request:{0}\nError Message: {1}\nError 404 can be normal (not an error)", url, request.error));
+            }
+            else
+            {
+                var marketModels = JsonConvert.DeserializeObject<MarketModel[]>(request.downloadHandler.text);
+                return marketModels;
+            }
+            return null;
+        }
+
+        public static async Task<bool> GETItemByID(int itemId)
+        {
+            var url = rootUrl + "market/" + itemId;
+
+            using UnityWebRequest request = UnityWebRequest.Get(url);
+            request.SendWebRequest();
+            while (!request.isDone)
+            {
+                await Task.Yield();
+            }
+
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogError(string.Format("Error in request:{0}\nError Message: {1}", url, request.error));
+                return false;
+            }
+            return true;
+        }
+
+        public static async Task<bool> DELETEItem(int itemId)
+        {
+            var url = rootUrl + "market/" + itemId;
+
+            using UnityWebRequest request = UnityWebRequest.Delete(url);
+            request.SendWebRequest();
+            while (!request.isDone)
+            {
+                await Task.Yield();
+            }
+
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogError(string.Format("Error in request:{0}\nError Message: {1}", url, request.error));
+                return false;
+            }
+            return true;
+        }
+        public static async Task<bool> POSTCreateItem(int inventoryId, int price, int stackSize)
+        {
+            var url = rootUrl + "market/";
+
+            using UnityWebRequest request = UnityWebRequest.Post(url, "POST");
+            request.SetRequestHeader("Content-Type", "application/json");
+            NewItemModel newItem = new NewItemModel(inventoryId, price, stackSize);
+            var content = JsonConvert.SerializeObject(newItem);
+
+            request.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(content));
+
+            request.SendWebRequest();
+            while (!request.isDone)
+            {
+                await Task.Yield();
+            }
+
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogError(string.Format("Error in request:{0}\nError Message: {1}", url, request.error));
+                return false;
+            }
+            return true;
+        }
+        public static async Task<bool> POSTBuyItem(int itemId, int buyerId)
+        {
+            var url = rootUrl + "market/" + itemId + "/buy";
+
+            using UnityWebRequest request = UnityWebRequest.Post(url, "Post");
+            request.SetRequestHeader("Content-Type", "application/json");
+
+            var content = JsonConvert.SerializeObject(buyerId);
+
+            request.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(content));
+
+            request.SendWebRequest();
+            while (!request.isDone)
+            {
+                await Task.Yield();
+            }
+
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogError(string.Format("Error in request:{0}\nError Message: {1}", url, request.error));
+                return false;
+            }
+            return true;
+        }
+        public static async Task<bool> GETByEquipmentBaseId(int id)
+        {
+            var url = rootUrl + "market/equipmentBase" + id;
+
+            using UnityWebRequest request = UnityWebRequest.Get(url);
+            request.SendWebRequest();
+            while (!request.isDone)
+            {
+                await Task.Yield();
+            }
+
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogError(string.Format("Error in request:{0}\nError Message: {1}", url, request.error));
+                return false;
+            }
+            return true;
+        }
+        public static async Task<bool> GETByItemId(int id)
+        {
+            var url = rootUrl + "market/item" + id;
+
+            using UnityWebRequest request = UnityWebRequest.Get(url);
+            request.SendWebRequest();
+            while (!request.isDone)
+            {
+                await Task.Yield();
+            }
+
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogError(string.Format("Error in request:{0}\nError Message: {1}", url, request.error));
+                return false;
+            }
+            return true;
+        }
+
+
     }
 }
