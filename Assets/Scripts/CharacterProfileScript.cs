@@ -1,12 +1,8 @@
 using RunPG.Multi;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using static Rarity;
 
 public class CharacterProfileScript : MonoBehaviour
 {
@@ -15,7 +11,9 @@ public class CharacterProfileScript : MonoBehaviour
     private TextMeshProUGUI usernameTextMesh;
 
     [SerializeField]
-    private TextMeshProUGUI levelClasseTextMesh;
+    private TextMeshProUGUI classeTextMesh;
+    [SerializeField]
+    private TextMeshProUGUI levelTextMesh;
 
     [SerializeField]
     private Slider xpBarSlider;
@@ -96,16 +94,27 @@ public class CharacterProfileScript : MonoBehaviour
     [SerializeField]
     private GameObject inventoryLayout;
     [SerializeField]
-    private GameObject equippedItemPrefab;
+    private GameObject equipmentPrefab;
     [SerializeField]
     private GameObject itemPrefab;
 
     private GameObject selectedFilterBackground;
     private List<List<Equipment>> equipments;
 
+    [Space(10)]
+    [Header("PopUp")]
+    [SerializeField]
+    private ObjectDescriptionScript objectDescriptionScript;
+
+    public static CharacterProfileScript instance;
+
     // Start is called before the first frame update
     async void Start()
     {
+        if (instance == null)
+            instance = this;
+        else if (instance != this)
+            Destroy(this);
         selectedFilterBackground = weaponBackground;
         equipments = new List<List<Equipment>>();
 
@@ -114,21 +123,31 @@ public class CharacterProfileScript : MonoBehaviour
 
         if (PlayerProfile.id != -1)
         {
+            await Requests.PUTXp(PlayerProfile.id);
             InventoryModel[] inventory = await Requests.GETUserInventory(PlayerProfile.id);
             PlayerProfile.characterInfo = await CharacterInfo.Load(PlayerProfile.id);
 
+
+
             foreach (InventoryModel inventoryItem in inventory)
             {
-                if (inventoryItem.equipementId.HasValue)
+                if (inventoryItem.equipmentId.HasValue)
                 {
-                    var equipmentModel = await Requests.GETEquipmentById(inventoryItem.equipementId.Value);
+                    var equipmentModel = await Requests.GETEquipmentById(inventoryItem.equipmentId.Value);
                     var equipment = new Equipment(equipmentModel);
                     equipments[equipment.type.GetIndex()].Add(equipment);
                 }
                 else if (inventoryItem.itemId != null)
                 {
-                    //TODO
+                    var itemModel = await Requests.GetItemById(inventoryItem.itemId.Value);
+                    var equipment = new Equipment(itemModel[0], inventoryItem.stackSize);
+                    equipments[itemModel[0].isConsomable ? 5 : 6].Add(equipment);
                 }
+            }
+
+            foreach (List<Equipment> equipmentList in equipments)
+            {
+                Debug.Log("count:" + equipmentList.Count);
             }
 
             SetUsername(PlayerProfile.pseudo);
@@ -194,19 +213,71 @@ public class CharacterProfileScript : MonoBehaviour
         for (int equipmentIndex = 0; equipmentIndex < filterList.Count; equipmentIndex++)
         {
             var equipment = filterList[equipmentIndex];
-            var newItem = Instantiate(IsEquiped(equipment) ? equippedItemPrefab : itemPrefab, inventoryLayout.transform).transform;
-            newItem.Find("Image").GetComponent<Image>().sprite = equipment.type.GetSprite();
-            newItem.Find("Name").GetComponent<TextMeshProUGUI>().text = equipment.name;
-            newItem.Find("Level").GetComponent<TextMeshProUGUI>().text = string.Format("Lv. {0}", equipment.level);
 
-            var rarity = newItem.Find("Rarity").GetComponent<TextMeshProUGUI>();
-            rarity.text = equipment.rarity.GetName();
-            rarity.color = equipment.rarity.GetColor();
+            if (equipment.isItem)
+            {
+                var newItem = Instantiate(itemPrefab, inventoryLayout.transform).transform;
+                newItem.GetComponent<Image>().sprite = equipment.rarity.GetSprite();
+                newItem.Find("Name").GetComponent<TextMeshProUGUI>().text = equipment.name;
+                newItem.Find("Image").GetComponent<Image>().sprite = equipment.GetEquipmentSprite();
+                newItem.Find("Quantity").GetComponent<TextMeshProUGUI>().text = equipment.stackSize.ToString();
+                continue;
+            }
 
-            if (!IsEquiped(equipment))
+            var equipedItem = GetEquiped(equipment.type);
+            var newEquipment = Instantiate(equipmentPrefab, inventoryLayout.transform).transform;
+
+            newEquipment.Find("Image").GetComponent<Image>().sprite = equipment.GetEquipmentSprite();
+            newEquipment.Find("Name").GetComponent<TextMeshProUGUI>().text = equipment.name;
+
+            newEquipment.GetComponent<Image>().sprite = equipment.rarity.GetSprite();
+            
+            var vitalityText = newEquipment.Find("Stats/Vitality/Value").GetComponent<TextMeshProUGUI>();
+            vitalityText.text = equipment.vitality.ToString();
+            vitalityText.color = GetStatisticColor(equipedItem.vitality, equipment.vitality);
+
+            var strengthText = newEquipment.Find("Stats/Strength/Value").GetComponent<TextMeshProUGUI>();
+            strengthText.text = equipment.strength.ToString();
+            strengthText.color = GetStatisticColor(equipedItem.strength, equipment.strength);
+
+            var defenseText = newEquipment.Find("Stats/Defense/Value").GetComponent<TextMeshProUGUI>();
+            defenseText.text = equipment.defense.ToString();
+            defenseText.color = GetStatisticColor(equipedItem.defense, equipment.defense);
+
+            var resistanceText = newEquipment.Find("Stats/Resistance/Value").GetComponent<TextMeshProUGUI>();
+            resistanceText.text = equipment.resistance.ToString();
+            resistanceText.color = GetStatisticColor(equipedItem.resistance, equipment.resistance);
+
+            var powerText = newEquipment.Find("Stats/Power/Value").GetComponent<TextMeshProUGUI>();
+            powerText.text = equipment.power.ToString();
+            powerText.color = GetStatisticColor(equipedItem.power, equipment.power);
+
+            var precisionText = newEquipment.Find("Stats/Precision/Value").GetComponent<TextMeshProUGUI>();
+            precisionText.text = equipment.precision.ToString();
+            precisionText.color = GetStatisticColor(equipedItem.precision, equipment.precision);
+
+            var isEquiped = equipedItem.id == equipment.id;
+
+            newEquipment.Find("ShowDescription").GetComponent<Button>().onClick.AddListener(() => {
+                objectDescriptionScript.LoadPopUp(GetComponent<CanvasGroup>(), equipment, isEquiped);
+                });
+
+            Button button = newEquipment.Find("Button").GetComponent<Button>();
+
+            if (equipment.heroClass != PlayerProfile.characterInfo.heroClass)
+            {
+                button.gameObject.SetActive(false);
+                newEquipment.Find("Level").GetComponent<TextMeshProUGUI>().text = string.Format("Nv. {0} - {1}", equipment.level, equipment.heroClass.ToString());
+            }
+            else if (isEquiped)
+            {
+                button.interactable = false;
+                button.transform.Find("Text").GetComponent<TextMeshProUGUI>().text = "Equipé";
+                newEquipment.Find("Level").GetComponent<TextMeshProUGUI>().text = string.Format("Nv. {0}", equipment.level);
+            }
+            else
             {
                 var itemIndexCopy = equipmentIndex;
-                Button button = newItem.Find("Button").GetComponent<Button>();
                 button.onClick.RemoveAllListeners();
                 button.onClick.AddListener(async delegate {
                     PlayerEquipmentModel playerEquipment = new PlayerEquipmentModel(PlayerProfile.characterInfo.helmet.id, PlayerProfile.characterInfo.chestplate.id,
@@ -251,6 +322,47 @@ public class CharacterProfileScript : MonoBehaviour
         }
     }
 
+    public async void Equip(Equipment equipment)
+    {
+        PlayerEquipmentModel playerEquipment = new PlayerEquipmentModel(PlayerProfile.characterInfo.helmet.id, PlayerProfile.characterInfo.chestplate.id,
+            PlayerProfile.characterInfo.gloves.id, PlayerProfile.characterInfo.leggings.id, PlayerProfile.characterInfo.weapon.id);
+        switch (equipment.type)
+        {
+            case EquipmentType.WEAPON:
+                playerEquipment.weaponId = equipment.id;
+                if (!await Requests.POSTPlayerEquipment(PlayerProfile.id, playerEquipment))
+                    return;
+                PlayerProfile.characterInfo.weapon = equipment;
+                break;
+            case EquipmentType.HELMET:
+                playerEquipment.helmetId = equipment.id;
+                if (!await Requests.POSTPlayerEquipment(PlayerProfile.id, playerEquipment))
+                    return;
+                PlayerProfile.characterInfo.helmet = equipment;
+                break;
+            case EquipmentType.CHESTPLATE:
+                playerEquipment.chestplateId = equipment.id;
+                if (!await Requests.POSTPlayerEquipment(PlayerProfile.id, playerEquipment))
+                    return;
+                PlayerProfile.characterInfo.chestplate = equipment;
+                break;
+            case EquipmentType.GLOVES:
+                playerEquipment.glovesId = equipment.id;
+                if (!await Requests.POSTPlayerEquipment(PlayerProfile.id, playerEquipment))
+                    return;
+                PlayerProfile.characterInfo.gloves = equipment;
+                break;
+            case EquipmentType.LEGGINGS:
+                playerEquipment.leggingsId = equipment.id;
+                if (!await Requests.POSTPlayerEquipment(PlayerProfile.id, playerEquipment))
+                    return;
+                PlayerProfile.characterInfo.leggings = equipment;
+                break;
+        }
+        RefreshStat();
+        LoadInventory(GetEquipmentIndex(equipment));
+    }
+
     private void LoadSortedInventory(int filterIndex)
     {
         var filteredEquipments = equipments[filterIndex];
@@ -280,7 +392,9 @@ public class CharacterProfileScript : MonoBehaviour
         int maxXP = PlayerProfile.characterInfo.GetRequiredExperience();
         xpTextMesh.text = string.Format("{0} / {1}", currentXP, maxXP);
         xpBarSlider.value = ((float)currentXP * 100) / maxXP;
+        levelTextMesh.text = PlayerProfile.characterInfo.level.ToString();
         LevelUpButton.SetActive(currentXP >= maxXP);
+        xpTextMesh.gameObject.SetActive(currentXP < maxXP);
     }
 
     public void RefreshStat()
@@ -306,6 +420,26 @@ public class CharacterProfileScript : MonoBehaviour
         };
     }
 
+    Equipment GetEquiped(EquipmentType type)
+    {
+        return type switch
+        {
+            EquipmentType.WEAPON => PlayerProfile.characterInfo.weapon,
+            EquipmentType.HELMET => PlayerProfile.characterInfo.helmet,
+            EquipmentType.CHESTPLATE => PlayerProfile.characterInfo.chestplate,
+            EquipmentType.GLOVES => PlayerProfile.characterInfo.gloves,
+            EquipmentType.LEGGINGS => PlayerProfile.characterInfo.leggings,
+            _ => null
+        };
+    }
+
+    Color GetStatisticColor(int equipedValue, int itemValue)
+    {
+        if (equipedValue == itemValue)
+            return Color.white;
+        return equipedValue > itemValue ? Color.red : Color.green;
+    }
+
     void SelectFilter(GameObject backgroundFilter)
     {
         var previousRectTransform = selectedFilterBackground.GetComponent<RectTransform>();
@@ -322,8 +456,9 @@ public class CharacterProfileScript : MonoBehaviour
     }
 
     void SetLevelClass(int level, HeroClass classe)
-    {        
-        levelClasseTextMesh.text = string.Format("Lv.{0} - {1}", level, classe.GetName());
+    {
+        classeTextMesh.text = string.Format(classe.GetName());
+        levelTextMesh.text = string.Format(level.ToString());
     }
 
     void SetVitality(int vitality)
@@ -359,5 +494,24 @@ public class CharacterProfileScript : MonoBehaviour
     void SetImage(HeroClass classe)
     {
         classeImage.sprite = classe.GetSprite();
+    }
+
+    private int GetEquipmentIndex(Equipment equipment)
+    {
+        switch (equipment.type)
+        {
+            case EquipmentType.WEAPON:
+                return 0;
+            case EquipmentType.HELMET:
+                return 1;
+            case EquipmentType.CHESTPLATE:
+                return 2;
+            case EquipmentType.GLOVES:
+                return 3;
+            case EquipmentType.LEGGINGS:
+                return 4;
+            default:
+                return 0;
+        }
     }
 }

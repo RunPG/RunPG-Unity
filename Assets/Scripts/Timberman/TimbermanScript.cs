@@ -271,7 +271,7 @@ public class TimbermanScript : MonoBehaviour
         while (elapsedTime < 0.5f)
         {
             elapsedTime += Time.deltaTime;
-            firstQuantity.text = "x " + Mathf.RoundToInt(Mathf.Lerp(0, quantities[0], EasingFunc.EaseOutQuad(elapsedTime / 1f))).ToString();
+            firstQuantity.text = "x " + Mathf.RoundToInt(Mathf.Lerp(0, quantities[0], EasingFunc.EaseOutQuad(elapsedTime / 0.5f))).ToString();
             yield return null;
         }
 
@@ -281,7 +281,7 @@ public class TimbermanScript : MonoBehaviour
         while (elapsedTime < 0.5f)
         {
             elapsedTime += Time.deltaTime;
-            secondQuantity.text = "x " + Mathf.RoundToInt(Mathf.Lerp(0, quantities[1], EasingFunc.EaseOutQuad(elapsedTime / 1f))).ToString();
+            secondQuantity.text = "x " + Mathf.RoundToInt(Mathf.Lerp(0, quantities[1], EasingFunc.EaseOutQuad(elapsedTime / 0.5f))).ToString();
             yield return null;
         }
 
@@ -291,7 +291,7 @@ public class TimbermanScript : MonoBehaviour
         while (elapsedTime < 0.5f)
         {
             elapsedTime += Time.deltaTime;
-            thirdQuantity.text = "x " + Mathf.RoundToInt(Mathf.Lerp(0, quantities[2], EasingFunc.EaseOutQuad(elapsedTime / 1f))).ToString();
+            thirdQuantity.text = "x " + Mathf.RoundToInt(Mathf.Lerp(0, quantities[2], EasingFunc.EaseOutQuad(elapsedTime / 0.5f))).ToString();
             yield return null;
         }
 

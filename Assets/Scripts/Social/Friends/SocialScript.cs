@@ -115,7 +115,7 @@ public class SocialScript : MonoBehaviour
             Transform friendObject = Instantiate(friendPrefab, friendListLayout.transform).transform;
             friendObject.Find("Class").GetComponent<Image>().sprite = friend.heroClass.GetSprite();
             friendObject.Find("Name").GetComponent<TextMeshProUGUI>().text = friend.name;
-            friendObject.Find("Level").GetComponent<TextMeshProUGUI>().text = string.Format("Lv. {0}", friend.level);
+            friendObject.Find("Level/Value").GetComponent<TextMeshProUGUI>().text = friend.level.ToString();
             
             var messageTransform = friendObject.Find("Message");
             var notificationObject = messageTransform.Find("Notification").gameObject;
@@ -157,7 +157,7 @@ public class SocialScript : MonoBehaviour
             Transform friendObject = Instantiate(friendRequestPrefab, friendListLayout.transform).transform;
             friendObject.Find("Class").GetComponent<Image>().sprite = friend.heroClass.GetSprite();
             friendObject.Find("Name").GetComponent<TextMeshProUGUI>().text = friend.name;
-            friendObject.Find("Level").GetComponent<TextMeshProUGUI>().text = string.Format("Lv. {0}", friend.level);
+            friendObject.Find("Level/Value").GetComponent<TextMeshProUGUI>().text = friend.level.ToString();
             friendObject.Find("Accept").GetComponent<Button>().onClick.AddListener(() => AcceptFriendRequest(friend));
             friendObject.Find("Decline").GetComponent<Button>().onClick.AddListener(() => DeclineFriendRequest(friend));
         }

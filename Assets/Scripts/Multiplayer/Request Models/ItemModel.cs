@@ -1,14 +1,18 @@
 namespace RunPG.Multi
 {
-    public class ItemModel
-    {
-        public int itemId;
-        public int stackSize;
+  public class ItemModel
+  {
+    public int id;
+    public string name;
+    public string description;
+    public bool isConsomable;
 
-        public ItemModel(int itemId, int stackSize)
-        {
-            this.itemId = itemId;
-            this.stackSize = stackSize;
-        }
+    public ItemModel(int id, string name, string description, bool isConsomable)
+    {
+      this.id = id;
+      this.name = name;
+      this.description = description;
+      this.isConsomable = isConsomable;
     }
+  }
 }

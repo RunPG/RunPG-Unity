@@ -119,10 +119,10 @@ public class PlayerCharacter : Character
             return;
         }
 
-        buttonSkill1.GetComponentInChildren<Text>().text = skills[0].name;
-        buttonSkill2.GetComponentInChildren<Text>().text = skills[1].name;
-        buttonSkill3.GetComponentInChildren<Text>().text = skills[2].name;
-        buttonSkill4.GetComponentInChildren<Text>().text = skills[3].name;
+        buttonSkill1.GetComponentInChildren<TextMeshProUGUI>().text = skills[0].name;
+        buttonSkill2.GetComponentInChildren<TextMeshProUGUI>().text = skills[1].name;
+        buttonSkill3.GetComponentInChildren<TextMeshProUGUI>().text = skills[2].name;
+        buttonSkill4.GetComponentInChildren<TextMeshProUGUI>().text = skills[3].name;
 
         buttonSkill1.interactable = skills[0].remainingCooldownTurns == 0;
         veil1.SetActive(skills[0].remainingCooldownTurns != 0);

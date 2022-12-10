@@ -35,10 +35,13 @@ public class CombatManager : MonoBehaviourPun
     [SerializeField]
     private GameObject slimePrefab;
     [SerializeField]
-    private GameObject kingSilmePrefab;
+    private GameObject daarunPrefab;
 
     [SerializeField]
-    private List<Sprite> Items = new List<Sprite>();
+    private List<Sprite> Items;
+
+    [SerializeField]
+    private List<Sprite> Status;
 
     [SerializeField]
     private GameObject ResultScreen;
@@ -66,6 +69,8 @@ public class CombatManager : MonoBehaviourPun
         RegisterCombatAction<HealthPotion>("Potion de vie");
         RegisterCombatAction<Bomb>("Bombe");
         RegisterCombatAction<Bond>("Bond");
+        RegisterCombatAction<QueueDeFer>("Queue de fer");
+        RegisterCombatAction<Laser>("Laser");
     }
     private void Start()
     {
@@ -337,7 +342,7 @@ public class CombatManager : MonoBehaviourPun
         Status s = null;
         switch (status.statusBehaviour)
         {
-            case Status.StatusBehaviour.Replace:
+            case global::Status.StatusBehaviour.Replace:
                 int i = statusList.FindIndex(x => x.name == status.name);
                 if (i != -1)
                 {
@@ -349,7 +354,7 @@ public class CombatManager : MonoBehaviourPun
                     target.AddStatusIcon(status.name);
                 }
                 break;
-            case Status.StatusBehaviour.AddDuration:
+            case global::Status.StatusBehaviour.AddDuration:
                 s = statusList.Find(x => x.name == status.name);
                 if (s != null)
                 {
@@ -361,7 +366,7 @@ public class CombatManager : MonoBehaviourPun
                     target.AddStatusIcon(status.name);
                 }
                 break;
-            case Status.StatusBehaviour.Stack:
+            case global::Status.StatusBehaviour.Stack:
                 statusList.Add(status);
                 target.AddStatusIcon(status.name);
                 break;
@@ -429,6 +434,21 @@ public class CombatManager : MonoBehaviourPun
         return null;
     }
 
+    public Sprite GetStatusSprite(string statusName)
+    {
+        foreach (var elt in Status)
+        {
+            if (elt.name == statusName)
+            {
+                return elt;
+            }
+        }
+
+        logger.LogError("CombatManager", "Error on get status sprite");
+
+        return null;
+    }
+
     private void InitPlayer(int index)
     {
         if (dungeonManager.characters[index].ratioHP <= 0)
@@ -481,7 +501,7 @@ public class CombatManager : MonoBehaviourPun
         GameObject monster = name switch
         {
             "Slime" => Instantiate(slimePrefab, EnemyPositions[length - 1][index], Quaternion.identity),
-            "King Slime" => Instantiate(kingSilmePrefab, EnemyPositions[length - 1][index], Quaternion.identity),
+            "Daarun" => Instantiate(daarunPrefab, EnemyPositions[length - 1][index], Quaternion.identity),
             _ => throw new Exception("Monster doesn't exist: " + name),
         };
 

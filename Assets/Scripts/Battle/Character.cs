@@ -20,9 +20,6 @@ public abstract class Character : MonoBehaviour
 
     protected Image selector;
 
-    [SerializeField]
-    private List<Sprite> status;
-
     protected Dictionary<string, int> inventory = new Dictionary<string, int>();
 
     protected List<Status> statusList = new List<Status>();
@@ -84,6 +81,7 @@ public abstract class Character : MonoBehaviour
             gameObject.SetActive(false);
             healthBarInstance.SetActive(false);
         }
+        PlayAnimation("Touché");
         healthBar.SetHealth(currentHealth);
     }
 
@@ -164,7 +162,7 @@ public abstract class Character : MonoBehaviour
         newStatusGameObject.name = name;
         newStatusGameObject.SetActive(true);
         Image newStatusImage = newStatusGameObject.GetComponent<Image>();
-        newStatusImage.sprite = status.Find(elt => elt.name == name);
+        newStatusImage.sprite = CombatManager.Instance.GetStatusSprite(name);
     }
 
     public void DeleteStatusIcon(string name)
