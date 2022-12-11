@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RunPG.Multi
 {
@@ -30,7 +28,7 @@ namespace RunPG.Multi
       this.precision = precision;
     }
 
-    public static StatisticsModel GenerateStatistics(int level, HeroClass? heroClass)
+    public static StatisticsModel GenerateStatistics(int level, HeroClass? heroClass, Rarity rarity)
     {
       var weight = heroClass == HeroClass.MAGE ?
        new List<int>() { 5, 5, 5, 17, 10, 12 }
@@ -40,7 +38,10 @@ namespace RunPG.Multi
       var stats = new StatisticsModel(0, level, 0, 0, 0, 0, 0, 0);
       var totalWeight = weight.Sum();
       var random = new Random();
-      for (int i = 0; i < level; i++)
+
+      var levelRarity = level * rarity.GetRarityMultiplier();
+
+      for (int i = 0; i < levelRarity; i++)
       {
         var x = random.Next(0, totalWeight);
         var tmp = 0;

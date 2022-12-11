@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
@@ -201,8 +200,7 @@ public class ArtisanatScript : MonoBehaviour
 
   async Task<Equipment> CraftNewEquipement(EquipmentBaseModel equipmentBase)
   {
-    var offset = equipmentBase.rarity == Rarity.EPIC ? PlayerProfile.characterInfo.level + 5 : PlayerProfile.characterInfo.level + 10;
-    StatisticsModel statistics = StatisticsModel.GenerateStatistics(PlayerProfile.characterInfo.level, equipmentBase.heroClass);
+    StatisticsModel statistics = StatisticsModel.GenerateStatistics(PlayerProfile.characterInfo.level, equipmentBase.heroClass, equipmentBase.rarity);
 
     NewEquipementModel equipment = new NewEquipementModel(equipmentBase.id, statistics);
     var craftedEquipment = await Requests.POSTInventoryEquipement(PlayerProfile.id, equipment);
