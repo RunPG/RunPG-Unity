@@ -63,9 +63,8 @@ public class ObjectDescriptionScript : MonoBehaviour
 
     equipButton.onClick.RemoveAllListeners();
     equipButton.interactable = !isEquiped && equipment.heroClass == PlayerProfile.characterInfo.heroClass;
+    equipButton.onClick.AddListener(() => { CharacterProfileScript.instance.Equip(equipment); ClosePopUp(); });
 
-    if (!isEquiped)
-      equipButton.onClick.AddListener(() => { CharacterProfileScript.instance.Equip(equipment); ClosePopUp(); });
     closeButton.onClick.RemoveAllListeners();
     closeButton.onClick.AddListener(ClosePopUp);
 
