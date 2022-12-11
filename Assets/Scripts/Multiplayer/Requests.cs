@@ -413,7 +413,7 @@ namespace RunPG.Multi
       return true;
     }
 
-    public static async Task<bool> POSTInventoryEquipement(int user_id, NewEquipementModel newEquipment)
+    public static async Task<InventoryModel> POSTInventoryEquipement(int user_id, NewEquipementModel newEquipment)
     {
       var url = rootUrl + "user/" + user_id + "/inventory/equipment";
       var content = JsonConvert.SerializeObject(newEquipment);
@@ -429,9 +429,10 @@ namespace RunPG.Multi
       if (request.result != UnityWebRequest.Result.Success)
       {
         Debug.LogError(string.Format("Error in request:{0}\nError Message: {1}", url, request.error));
-        return false;
+        return null;
       }
-      return true;
+      var activity = JsonConvert.DeserializeObject<InventoryModel>(request.downloadHandler.text);
+      return activity;
     }
 
     public static async Task<bool> POSTInventoryItem(int user_id, PostItemModel item)
@@ -619,6 +620,29 @@ namespace RunPG.Multi
       var url = rootUrl + "user/" + userId + "/guild";
 
       using UnityWebRequest request = UnityWebRequest.Delete(url);
+      request.SendWebRequest();
+      while (!request.isDone)
+      {
+        await Task.Yield();
+      }
+
+      if (request.result != UnityWebRequest.Result.Success)
+      {
+        Debug.LogError(string.Format("Error in request:{0}\nError Message: {1}", url, request.error));
+        return false;
+      }
+      return true;
+    }
+
+    public static async Task<bool> DELETEInventoryItem(int user_id, PostItemModel item)
+    {
+      var url = rootUrl + "user/" + user_id + "/inventory/item";
+      var content = JsonConvert.SerializeObject(item);
+
+
+      using UnityWebRequest request = UnityWebRequest.Delete(url);
+      request.SetRequestHeader("Content-Type", "application/json");
+      request.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(content));
       request.SendWebRequest();
       while (!request.isDone)
       {
