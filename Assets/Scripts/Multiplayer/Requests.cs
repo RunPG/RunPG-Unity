@@ -633,25 +633,6 @@ namespace RunPG.Multi
             return null;
         }
 
-        public static async Task<bool> GETItemByID(int itemId)
-        {
-            var url = rootUrl + "market/" + itemId;
-
-            using UnityWebRequest request = UnityWebRequest.Get(url);
-            request.SendWebRequest();
-            while (!request.isDone)
-            {
-                await Task.Yield();
-            }
-
-            if (request.result != UnityWebRequest.Result.Success)
-            {
-                Debug.LogError(string.Format("Error in request:{0}\nError Message: {1}", url, request.error));
-                return false;
-            }
-            return true;
-        }
-
         public static async Task<bool> DELETEItem(int itemId)
         {
             var url = rootUrl + "market/" + itemId;
@@ -665,7 +646,7 @@ namespace RunPG.Multi
 
             if (request.result != UnityWebRequest.Result.Success)
             {
-                Debug.LogError(string.Format("Error in request:{0}\nError Message: {1}", url, request.error));
+                Debug.LogError(string.Format("Delete: Error in request:{0}\nError Message: {1}", url, request.error));
                 return false;
             }
             return true;

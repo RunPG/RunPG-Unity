@@ -1,36 +1,57 @@
 using RunPG.Multi;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEditor.PackageManager.Requests;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class MarketPlace : MonoBehaviour
 {
+    [Header("Prefabs")]  
+    
     [SerializeField]
     private OfferEquipmentDisplay OfferEquipmentDisplay;
     [SerializeField]
     private OfferEquipmentDisplay OfferItemDisplay;
+    
+    [Space(10)]
+    [Header("All Offers")]
+    
     [SerializeField]
-    private Transform AllOffersPrefabPos;
+    private Transform AllOffersPrefabPos;   
+    [SerializeField]
+    private Button AllOffersButton;
+    [SerializeField]
+    private CanvasGroup AllOffers;
+    
+    [Space(10)]
+    [Header("My Offers")]
+    
     [SerializeField]
     private Transform MyOffersPrefabPos;
+    [SerializeField]
+    private Button MyOffersButton;
+    [SerializeField]
+    private CanvasGroup MyOffers;
+
+    [Space(10)]
+    [Header("PopUps")]
     [SerializeField]
     private OfferEquipmentDescription offerEquipmentDescription;
     [SerializeField]
     private OfferEquipmentDescription offerItemDescription;
     [SerializeField]
-    private Button AllOffersButton;
-    [SerializeField]
-    private Button MyOffersButton;
-    [SerializeField]
-    private CanvasGroup MyOffers;
-    [SerializeField]
-    private CanvasGroup AllOffers;
+    private CreateOfferPopUp createOfferPopUp;
+
+
+    [Space(10)]
+    [Header("Buttons")]
     
+    [SerializeField]
+    private Button postOfferButton;
     private List<OfferDisplay> AllofferDisplays;
     private List<OfferDisplay> MyofferDisplays;
-
     async void Start()
     {
         AllofferDisplays = new List<OfferDisplay>();
@@ -39,14 +60,14 @@ public class MarketPlace : MonoBehaviour
 
         AllOffersButton.onClick.AddListener(ShowAllOffers);
         MyOffersButton.onClick.AddListener(ShowMyOffers);
+
+        postOfferButton.onClick.AddListener(OpenCreateOfferPopUp);
         //ALL OFFERS
         var allOffers = await Requests.GETallOpenItems();
         foreach (var marketModel in allOffers)
         {
-            Debug.Log("OFFER GOT");
             if (marketModel.equipmentId.HasValue)
             {
-                Debug.Log("ISEQUIPMENT");
 
                 var equipmentModel = await Requests.GETEquipmentById(marketModel.equipmentId.Value);
                 var equipment = new Equipment(equipmentModel);
@@ -54,13 +75,26 @@ public class MarketPlace : MonoBehaviour
             }
             else
             {
-                Debug.Log("ITEM");
                 var itemModel = await Requests.GetItemById(marketModel.itemId.Value);
                 var equipment = new Equipment(itemModel[0], marketModel.stackSize);
                 InstantiateOfferDisplay(marketModel, equipment, OfferItemDisplay);
             }
             
         }
+    }
+    public void PostOffer()
+    {
+        //Requests.POSTCreateItem( inventoryId,  price, stackSize);
+    }
+    
+    public void OpenCreateOfferPopUp()
+    {
+        var canvasGroup = createOfferPopUp.GetComponent<CanvasGroup>();
+        canvasGroup.alpha = 1;
+        canvasGroup.interactable = true;
+        canvasGroup.blocksRaycasts = true;
+        GetComponent<CanvasGroup>().interactable = false;
+
     }
     public void InstantiateOfferDisplay(MarketModel market, Equipment equipment, OfferEquipmentDisplay offerDisplay)
     {
@@ -71,22 +105,19 @@ public class MarketPlace : MonoBehaviour
             prefab.buyButton.onClick.AddListener(() =>
             {
                 offerEquipmentDescription.LoadPopUp(GetComponent<CanvasGroup>(), prefab, market);
-                MyofferDisplays.Remove(prefab);
+               // MyofferDisplays.Remove(prefab);
             });
             MyofferDisplays.Add(prefab);
         }
         else
         {
-            Debug.Log("Instantiate");
-
-            var prefab = Instantiate(offerDisplay, MyOffersPrefabPos);
+            var prefab = Instantiate(offerDisplay, AllOffersPrefabPos);
             prefab.SetInformations(market, equipment);
             prefab.buyButton.onClick.AddListener(() =>
             {
                 offerEquipmentDescription.LoadPopUp(GetComponent<CanvasGroup>(), prefab, market);
-                MyofferDisplays.Remove(prefab);
             });
-            MyofferDisplays.Add(prefab);
+            AllofferDisplays.Add(prefab);
         } 
     }
     public void ShowAllOffers()

@@ -99,7 +99,7 @@ public class CharacterProfileScript : MonoBehaviour
     private GameObject itemPrefab;
 
     private GameObject selectedFilterBackground;
-    private List<List<Equipment>> equipments;
+    public List<List<Equipment>> equipments { get; private set; }
 
     [Space(10)]
     [Header("PopUp")]
@@ -107,9 +107,10 @@ public class CharacterProfileScript : MonoBehaviour
     private ObjectDescriptionScript objectDescriptionScript;
 
     public static CharacterProfileScript instance;
-
-    // Start is called before the first frame update
-    async void Start()
+    [SerializeField]
+    private GameObject offerCreationPopUp;
+// Start is called before the first frame update
+async void Start()
     {
         if (instance == null)
             instance = this;
@@ -376,7 +377,6 @@ public class CharacterProfileScript : MonoBehaviour
                 return b.level - a.level;
             return b.rarity - a.rarity;
         });
-
         LoadInventory(filterIndex);
     }
 
@@ -420,7 +420,7 @@ public class CharacterProfileScript : MonoBehaviour
         };
     }
 
-    Equipment GetEquiped(EquipmentType type)
+    public Equipment GetEquiped(EquipmentType type)
     {
         return type switch
         {
@@ -432,8 +432,8 @@ public class CharacterProfileScript : MonoBehaviour
             _ => null
         };
     }
-
-    Color GetStatisticColor(int equipedValue, int itemValue)
+    
+    public Color GetStatisticColor(int equipedValue, int itemValue)
     {
         if (equipedValue == itemValue)
             return Color.white;

@@ -40,11 +40,13 @@ public class OfferEquipmentDescription : MonoBehaviour
     private Button buyButton;
     [SerializeField]
     private Button closeButton;
+    [SerializeField]
+    private Button deleteButton;
     private CanvasGroup canvasGroup;
     private CanvasGroup mainWindowCanvasGroup;
 
     [Space(10)]
-    [Header("Buttons")]
+    [Header("Error")]
     [SerializeField]
     private TextMeshProUGUI errorMessage;
     private MarketModel market;
@@ -86,8 +88,26 @@ public class OfferEquipmentDescription : MonoBehaviour
         mainWindowCanvasGroup.blocksRaycasts = false;
 
         buyButton.onClick.RemoveAllListeners();
-        buyButton.GetComponentInChildren<TextMeshProUGUI>().text =  market.goldPrice.ToString();
-        buyButton.onClick.AddListener(BuyEquipment);
+        closeButton.onClick.RemoveAllListeners();
+
+        closeButton.gameObject.SetActive(true);
+        buyButton.gameObject.SetActive(false);
+
+        if (market.sellerId == PlayerProfile.id)
+        {
+            closeButton.onClick.AddListener(() => DeleteMyOffer(offerEquipmentDisplay));
+        }
+        else
+        {
+            buyButton.GetComponentInChildren<TextMeshProUGUI>().text = market.goldPrice.ToString();
+            buyButton.onClick.AddListener(BuyEquipment);
+        }
+    }
+    public async void DeleteMyOffer(OfferEquipmentDisplay offerEquipmentDisplay)
+    {
+        await Requests.DELETEItem(market.id);
+        offerEquipmentDisplay.gameObject.Destroy();
+        ClosePopUp();
     }
     public async void BuyEquipment()
     {
