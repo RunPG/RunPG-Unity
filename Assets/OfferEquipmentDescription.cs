@@ -13,14 +13,14 @@ public class OfferEquipmentDescription : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI objectName;
     [SerializeField]
-    private TextMeshProUGUI levelClass;
-    [SerializeField]
     private Image backgroundImage;
     [SerializeField]
     private Image itemImage;
 
     [Space(10)]
     [Header("Statistics informations")]
+    [SerializeField]
+    private TextMeshProUGUI levelClass;
     [SerializeField]
     private TextMeshProUGUI vitality;
     [SerializeField]
@@ -48,6 +48,7 @@ public class OfferEquipmentDescription : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI errorMessage;
     private MarketModel market;
+    private MarketPlace marketPlace;
     void Start()
     {
         canvasGroup = gameObject.GetComponent<CanvasGroup>();
@@ -63,14 +64,17 @@ public class OfferEquipmentDescription : MonoBehaviour
         description.text = offerEquipmentDisplay.equipment.description;
         backgroundImage.sprite = offerEquipmentDisplay.equipment.rarity.GetItemSprite();
         itemImage.sprite = offerEquipmentDisplay.equipment.GetEquipmentSprite();
-
-        vitality.text = offerEquipmentDisplay.equipment.vitality.ToString();
-        strength.text = offerEquipmentDisplay.equipment.strength.ToString();
-        defense.text = offerEquipmentDisplay.equipment.defense.ToString();
-        power.text = offerEquipmentDisplay.equipment.power.ToString();
-        resistance.text = offerEquipmentDisplay.equipment.resistance.ToString();
-        precision.text = offerEquipmentDisplay.equipment.precision.ToString();
-
+        
+        if (!offerEquipmentDisplay.equipment.isItem)
+        {
+            vitality.text = offerEquipmentDisplay.equipment.vitality.ToString();
+            strength.text = offerEquipmentDisplay.equipment.strength.ToString();
+            defense.text = offerEquipmentDisplay.equipment.defense.ToString();
+            power.text = offerEquipmentDisplay.equipment.power.ToString();
+            resistance.text = offerEquipmentDisplay.equipment.resistance.ToString();
+            precision.text = offerEquipmentDisplay.equipment.precision.ToString();
+        }
+        
         closeButton.onClick.RemoveAllListeners();
         closeButton.onClick.AddListener(ClosePopUp);
 
@@ -90,6 +94,7 @@ public class OfferEquipmentDescription : MonoBehaviour
         bool res = await Requests.POSTBuyItem(market.id, PlayerProfile.id);
         if (res)
         {
+            
             ClosePopUp();
         }
         else

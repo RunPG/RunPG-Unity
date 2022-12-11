@@ -8,8 +8,18 @@ using UnityEngine.UI;
 public class OfferEquipmentDisplay : OfferDisplay
 {
     public Equipment equipment;
+    
+    [Header("Item Informations")]
+
     [SerializeField]
     private TextMeshProUGUI nameText;
+    [SerializeField]
+    private Image raretyImage;
+    [SerializeField]
+    private Image equipmentImage;
+    
+    [Space(10)]
+    [Header("Statistics informations")]
     [SerializeField]
     private TextMeshProUGUI levelText;
     [SerializeField]
@@ -24,27 +34,43 @@ public class OfferEquipmentDisplay : OfferDisplay
     private TextMeshProUGUI resistanceText;
     [SerializeField]
     private TextMeshProUGUI precisionText;
+
+    [Space(10)]
+    [Header("Stack Size")]
     [SerializeField]
-    private Image raretyImage;
-    [SerializeField]
-    private Image equipmentImage;
+    private TextMeshProUGUI stackSizeText;
+
     public void SetInformations(MarketModel market, Equipment equipment)
     {
-        
+
         base.SetInformations(market);
 
         this.equipment = equipment;
 
         raretyImage.sprite = RarityMethods.GetSprite(equipment.rarity);
         equipmentImage.sprite = EquipmentMethods.GetEquipmentSprite(equipment);
-        
         nameText.text = equipment.name;
-        levelText.text = equipment.level.ToString();
-        vitalityText.text = equipment.vitality.ToString();
-        strengthText.text = equipment.strength.ToString();
-        defenseText.text = equipment.defense.ToString();
-        powerText.text = equipment.power.ToString();
-        resistanceText.text = equipment.resistance.ToString();
-        precisionText.text = equipment.precision.ToString();
+
+        if (!equipment.isItem)
+        {
+            levelText.text = string.Format("Nv. {0} - {1}", equipment.level, equipment.heroClass.ToString());
+            vitalityText.text = equipment.vitality.ToString();
+            strengthText.text = equipment.strength.ToString();
+            defenseText.text = equipment.defense.ToString();
+            powerText.text = equipment.power.ToString();
+            resistanceText.text = equipment.resistance.ToString();
+            precisionText.text = equipment.precision.ToString();
+        }
+        else
+        {
+            if (equipment.stackSize == null)
+            {
+                Debug.Log("STACK SIZE IS NULL");
+            }
+            else
+            {
+                stackSizeText.text = equipment.stackSize.ToString();
+            }
+        }
     }
 }
