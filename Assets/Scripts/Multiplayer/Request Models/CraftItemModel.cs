@@ -2,25 +2,34 @@ using UnityEngine;
 
 namespace RunPG.Multi
 {
-  public class ItemModel
+  public class CraftItemModel
   {
     public int id;
     public string name;
     public string description;
-    public bool isConsomable;
+    public int quantity;
+    public Rarity rarity;
 
-    public ItemModel(int id, string name, string description, bool isConsomable)
+    public CraftItemModel(int id, string name, string description, int quantity)
     {
       this.id = id;
       this.name = name;
       this.description = description;
-      this.isConsomable = isConsomable;
+      this.quantity = quantity;
+      this.rarity = id switch
+      {
+        < 6 => Rarity.COMMON,
+        < 9 => Rarity.RARE,
+        < 12 => Rarity.EPIC,
+        12 => Rarity.LEGENDARY,
+        _ => Rarity.COMMON
+      };
     }
   }
 
-  static class ItemModelMethods
+  static class CraftItemModelMethods
   {
-    public static Sprite GetSprite(this ItemModel itemModel)
+    public static Sprite GetSprite(this CraftItemModel itemModel)
     {
       return itemModel.id switch
       {
@@ -32,18 +41,6 @@ namespace RunPG.Multi
         12 => Resources.Load<Sprite>("Inventory/Items/Eye"),
         13 => Resources.Load<Sprite>("Inventory/Items/Slime"),
         _ => Resources.Load<Sprite>("Inventory/Items/HealthPotion")
-      };
-    }
-
-    public static Rarity GetRarity(this ItemModel itemModel)
-    {
-      return itemModel.id switch
-      {
-        < 6 => Rarity.COMMON,
-        < 9 => Rarity.RARE,
-        < 12 => Rarity.EPIC,
-        12 => Rarity.LEGENDARY,
-        _ => Rarity.COMMON
       };
     }
   }
