@@ -32,7 +32,7 @@ namespace RunPG.Multi
     {
       var weight = heroClass == HeroClass.MAGE ?
        new List<int>() { 5, 5, 5, 17, 10, 12 }
-       : heroClass == HeroClass.MAGE ?
+       : heroClass == HeroClass.PALADIN ?
        new List<int>() { 11, 8, 11, 8, 11, 5 }
        : new List<int>() { 10, 10, 10, 10, 10, 10 };
       var stats = new StatisticsModel(0, level, 0, 0, 0, 0, 0, 0);
