@@ -1,12 +1,14 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using RunPG.Multi;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class DemineurScript: MonoBehaviour {
+public class DemineurScript : MonoBehaviour
+{
   [SerializeField]
   private GameObject gameInfo;
   [SerializeField]
@@ -34,7 +36,7 @@ public class DemineurScript: MonoBehaviour {
   private TextMeshProUGUI thirdQuantity;
   [SerializeField]
   private Button resultButton;
-  
+
 
 
   private Coroutine timerCoroutine;
@@ -56,7 +58,8 @@ public class DemineurScript: MonoBehaviour {
   private int spottedMines;
   private int score;
 
-  void Start() {
+  void Start()
+  {
     resultButton.onClick.AddListener(() => SkipResults());
 
 
@@ -100,8 +103,15 @@ public class DemineurScript: MonoBehaviour {
     return quantities;
   }
 
-  public void Leave()
+  public async void Leave()
   {
+    List<int> quantities = GetQuantities();
+    if (quantities[0] > 0)
+      await Requests.POSTInventoryItem(PlayerProfile.id, new PostItemModel(5, quantities[0]));
+    if (quantities[1] > 0)
+      await Requests.POSTInventoryItem(PlayerProfile.id, new PostItemModel(8, quantities[1]));
+    if (quantities[2] > 0)
+      await Requests.POSTInventoryItem(PlayerProfile.id, new PostItemModel(11, quantities[2]));
     SceneManager.LoadScene("MapScene");
   }
 
@@ -113,17 +123,17 @@ public class DemineurScript: MonoBehaviour {
     gameInfo.SetActive(true);
     countdown.gameObject.SetActive(true);
     countdown.text = "3";
-    countdown.color = new Color32(255,0,0, 255);
+    countdown.color = new Color32(255, 0, 0, 255);
 
     yield return new WaitForSeconds(1f);
 
     countdown.text = "2";
-    countdown.color = new Color32(0,123,0, 255);
+    countdown.color = new Color32(0, 123, 0, 255);
 
     yield return new WaitForSeconds(1f);
 
     countdown.text = "1";
-    countdown.color = new Color32(0,0,255, 255);
+    countdown.color = new Color32(0, 0, 255, 255);
 
     yield return new WaitForSeconds(1f);
 
@@ -137,10 +147,10 @@ public class DemineurScript: MonoBehaviour {
     float elapsedTime = 0f;
     while (elapsedTime < 30f)
     {
-        elapsedTime += Time.deltaTime;
-        TimeSpan remainingTime = new TimeSpan(0, 0, Mathf.RoundToInt(30f - elapsedTime));
-        timer.text = remainingTime.ToString(@"m\:ss");
-        yield return null;
+      elapsedTime += Time.deltaTime;
+      TimeSpan remainingTime = new TimeSpan(0, 0, Mathf.RoundToInt(30f - elapsedTime));
+      timer.text = remainingTime.ToString(@"m\:ss");
+      yield return null;
     }
     End();
   }
@@ -162,18 +172,18 @@ public class DemineurScript: MonoBehaviour {
     float elapsedTime = 0f;
     while (elapsedTime < 0.5f)
     {
-        elapsedTime += Time.deltaTime;
-        veil.color = new Color(0, 0, 0, Mathf.Lerp(0f, 0.95f, elapsedTime / 0.5f));
-        yield return null;
+      elapsedTime += Time.deltaTime;
+      veil.color = new Color(0, 0, 0, Mathf.Lerp(0f, 0.95f, elapsedTime / 0.5f));
+      yield return null;
     }
 
     RectTransform rect = results.GetComponent<RectTransform>();
     elapsedTime = 0f;
     while (elapsedTime < 0.5f)
     {
-        elapsedTime += Time.deltaTime;
-        rect.pivot = new Vector2(0.5f, Mathf.Lerp(0, 1, EasingFunc.EaseOutBounce(elapsedTime / 0.5f)));
-        yield return null;
+      elapsedTime += Time.deltaTime;
+      rect.pivot = new Vector2(0.5f, Mathf.Lerp(0, 1, EasingFunc.EaseOutBounce(elapsedTime / 0.5f)));
+      yield return null;
     }
 
     resultButton.gameObject.SetActive(true);
@@ -183,9 +193,9 @@ public class DemineurScript: MonoBehaviour {
     elapsedTime = 0f;
     while (elapsedTime < 0.5f)
     {
-        elapsedTime += Time.deltaTime;
-        resultsScore.text = Mathf.RoundToInt(Mathf.Lerp(0, score, EasingFunc.EaseOutQuad(elapsedTime / 0.5f))).ToString();
-        yield return null;
+      elapsedTime += Time.deltaTime;
+      resultsScore.text = Mathf.RoundToInt(Mathf.Lerp(0, score, EasingFunc.EaseOutQuad(elapsedTime / 0.5f))).ToString();
+      yield return null;
     }
 
     yield return new WaitForSeconds(0.1f);
@@ -195,9 +205,9 @@ public class DemineurScript: MonoBehaviour {
     elapsedTime = 0f;
     while (elapsedTime < 0.5f)
     {
-        elapsedTime += Time.deltaTime;
-        firstQuantity.text = "x " + Mathf.RoundToInt(Mathf.Lerp(0, quantities[0], EasingFunc.EaseOutQuad(elapsedTime / 0.5f))).ToString();
-        yield return null;
+      elapsedTime += Time.deltaTime;
+      firstQuantity.text = "x " + Mathf.RoundToInt(Mathf.Lerp(0, quantities[0], EasingFunc.EaseOutQuad(elapsedTime / 0.5f))).ToString();
+      yield return null;
     }
 
     yield return new WaitForSeconds(0.1f);
@@ -205,9 +215,9 @@ public class DemineurScript: MonoBehaviour {
     elapsedTime = 0f;
     while (elapsedTime < 0.5f)
     {
-        elapsedTime += Time.deltaTime;
-        secondQuantity.text = "x " + Mathf.RoundToInt(Mathf.Lerp(0, quantities[1], EasingFunc.EaseOutQuad(elapsedTime / 0.5f))).ToString();
-        yield return null;
+      elapsedTime += Time.deltaTime;
+      secondQuantity.text = "x " + Mathf.RoundToInt(Mathf.Lerp(0, quantities[1], EasingFunc.EaseOutQuad(elapsedTime / 0.5f))).ToString();
+      yield return null;
     }
 
     yield return new WaitForSeconds(0.1f);
@@ -215,9 +225,9 @@ public class DemineurScript: MonoBehaviour {
     elapsedTime = 0f;
     while (elapsedTime < 0.5f)
     {
-        elapsedTime += Time.deltaTime;
-        thirdQuantity.text = "x " + Mathf.RoundToInt(Mathf.Lerp(0, quantities[2], EasingFunc.EaseOutQuad(elapsedTime / 0.5f))).ToString();
-        yield return null;
+      elapsedTime += Time.deltaTime;
+      thirdQuantity.text = "x " + Mathf.RoundToInt(Mathf.Lerp(0, quantities[2], EasingFunc.EaseOutQuad(elapsedTime / 0.5f))).ToString();
+      yield return null;
     }
 
     resultButton.onClick.RemoveAllListeners();
@@ -229,9 +239,11 @@ public class DemineurScript: MonoBehaviour {
   void InitBlocks()
   {
     blocks = new List<List<BlockModel>>();
-    for (int i = 0; i < 6; i++) {
+    for (int i = 0; i < 6; i++)
+    {
       blocks.Add(new List<BlockModel>());
-      for (int j = 0; j < 6; j++) {
+      for (int j = 0; j < 6; j++)
+      {
         GameObject blockObject = Instantiate(blockPrefab, gridTransform);
         BlockModel blockModel = blockObject.GetComponent<BlockModel>();
         blockModel.Init(this, i, j);
@@ -246,16 +258,23 @@ public class DemineurScript: MonoBehaviour {
     remainingBlocks = 31;
     spottedMines = 0;
 
-    for (int k = 0; k < 5; k++) {
+    for (int k = 0; k < 5; k++)
+    {
       int i = UnityEngine.Random.Range(0, 6);
       int j = UnityEngine.Random.Range(0, 6);
-      if (blocks[i][j].isMine) {
+      if (blocks[i][j].isMine)
+      {
         k--;
-      } else {
+      }
+      else
+      {
         blocks[i][j].isMine = true;
-        for (int l = i - 1; l <= i + 1; l++) {
-          for (int m = j - 1; m <= j + 1; m++) {
-            if (l >= 0 && l < 6 && m >= 0 && m < 6) {
+        for (int l = i - 1; l <= i + 1; l++)
+        {
+          for (int m = j - 1; m <= j + 1; m++)
+          {
+            if (l >= 0 && l < 6 && m >= 0 && m < 6)
+            {
               blocks[l][m].mineCount++;
             }
           }
@@ -266,8 +285,10 @@ public class DemineurScript: MonoBehaviour {
 
   void ResetBlocks()
   {
-    for (int i = 0; i < 6; i++) {
-      for (int j = 0; j < 6; j++) {
+    for (int i = 0; i < 6; i++)
+    {
+      for (int j = 0; j < 6; j++)
+      {
         blocks[i][j].Reset();
       }
     }
@@ -277,7 +298,8 @@ public class DemineurScript: MonoBehaviour {
   {
     remainingMines--;
     remainingMinesIndicator.text = remainingMines.ToString();
-    if (remainingBlocks == 0 && remainingMines == 0) {
+    if (remainingBlocks == 0 && remainingMines == 0)
+    {
       Restart();
     }
   }
@@ -294,14 +316,19 @@ public class DemineurScript: MonoBehaviour {
   public void BlockRevealed(int positionX, int positionY)
   {
     remainingBlocks--;
-    if (remainingBlocks == 0 && remainingMines == 0) {
+    if (remainingBlocks == 0 && remainingMines == 0)
+    {
       Restart();
       return;
     }
-    if (blocks[positionX][positionY].mineCount == 0) {
-      for (int i = positionX - 1; i <= positionX + 1; i++) {
-        for (int j = positionY - 1; j <= positionY + 1; j++) {
-          if (i >= 0 && i < 6 && j >= 0 && j < 6 && !blocks[i][j].isRevealed) {
+    if (blocks[positionX][positionY].mineCount == 0)
+    {
+      for (int i = positionX - 1; i <= positionX + 1; i++)
+      {
+        for (int j = positionY - 1; j <= positionY + 1; j++)
+        {
+          if (i >= 0 && i < 6 && j >= 0 && j < 6 && !blocks[i][j].isRevealed)
+          {
             blocks[i][j].RevealBlock();
           }
         }
@@ -313,9 +340,11 @@ public class DemineurScript: MonoBehaviour {
   {
     remainingMines--;
     remainingMinesIndicator.text = remainingMines.ToString();
-    if (isMine) {
+    if (isMine)
+    {
       spottedMines++;
-      if (remainingBlocks == 0 && remainingMines == 0) {
+      if (remainingBlocks == 0 && remainingMines == 0)
+      {
         Restart();
       }
     }
@@ -323,7 +352,8 @@ public class DemineurScript: MonoBehaviour {
 
   public void BlockUnflagged(bool isMine)
   {
-    if (isMine) {
+    if (isMine)
+    {
       spottedMines--;
     }
     remainingMines++;
