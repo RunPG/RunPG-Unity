@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Mapbox.Json.Linq;
+using Newtonsoft.Json;
 using Photon.Pun;
 using System;
 using System.Collections;
@@ -699,10 +700,8 @@ namespace RunPG.Multi
 
             using UnityWebRequest request = UnityWebRequest.Post(url, "Post");
             request.SetRequestHeader("Content-Type", "application/json");
-
-            var content = JsonConvert.SerializeObject(buyerId);
-
-            request.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(content));
+            JObject jobject = new JObject(new JProperty("buyerId", buyerId));
+            request.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(jobject.ToString()));
 
             request.SendWebRequest();
             while (!request.isDone)

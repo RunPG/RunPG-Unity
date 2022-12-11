@@ -56,6 +56,7 @@ public class OfferEquipmentDescription : MonoBehaviour
 
     public void LoadPopUp(CanvasGroup mainWindowCanvasGroup, OfferEquipmentDisplay offerEquipmentDisplay, MarketModel market)
     {
+        this.market = market;
         errorMessage.text = "";
         objectName.text = offerEquipmentDisplay.equipment.name;
         levelClass.text = string.Format("Nv. {0} - {1}", offerEquipmentDisplay.equipment.level, offerEquipmentDisplay.equipment.heroClass.ToString());
@@ -81,6 +82,7 @@ public class OfferEquipmentDescription : MonoBehaviour
         mainWindowCanvasGroup.blocksRaycasts = false;
 
         buyButton.onClick.RemoveAllListeners();
+        buyButton.GetComponentInChildren<TextMeshProUGUI>().text =  market.goldPrice.ToString();
         buyButton.onClick.AddListener(BuyEquipment);
     }
     public async void BuyEquipment()
@@ -89,9 +91,6 @@ public class OfferEquipmentDescription : MonoBehaviour
         if (res)
         {
             ClosePopUp();
-            /* PlayerProfile.gold -= market.goldPrice;
-             PlayerProfile.equipments.Add(equipment);
-             PlayerProfile.Save();*/
         }
         else
         {

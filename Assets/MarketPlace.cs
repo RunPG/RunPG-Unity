@@ -20,9 +20,9 @@ public class MarketPlace : MonoBehaviour
     [SerializeField]
     private Button MyOffersButton;
     [SerializeField]
-    private GameObject MyOffers;
+    private CanvasGroup MyOffers;
     [SerializeField]
-    private GameObject AllOffers;
+    private CanvasGroup AllOffers;
     
     private List<OfferDisplay> AllofferDisplays;
     private List<OfferDisplay> MyofferDisplays;
@@ -31,63 +31,80 @@ public class MarketPlace : MonoBehaviour
     // Start is called before the first frame update
     async void Start()
     {
+        AllofferDisplays = new List<OfferDisplay>();
+        MyofferDisplays = new List<OfferDisplay>();
 
+
+        AllOffersButton.onClick.AddListener(ShowAllOffers);
+        MyOffersButton.onClick.AddListener(ShowMyOffers);
         //ALL OFFERS
         var allOffers = await Requests.GETallOpenItems();
         foreach (var marketModel in allOffers)
         {
-            Debug.Log(marketModel.id);
             if (!marketModel.isSold)
             {
-                if (marketModel.equipmentId.HasValue)
-                {
-                    var prefab = Instantiate(OfferEquipmentDisplay, AllOffersPrefabPos);
-                    var equipmentModel = await Requests.GETEquipmentById(marketModel.equipmentId.Value);
-                    var equipment = new Equipment(equipmentModel);
-                    prefab.SetInformations(marketModel, equipment);
-                    
-                    prefab.buyButton.onClick.AddListener(() => { offerEquipmentDescription.LoadPopUp(GetComponent<CanvasGroup>(), prefab, marketModel); });
-                    AllofferDisplays.Add(prefab);
-                }
-                else
-                {
-                    
-                    /*var prefab = Instantiate(OfferItemDisplay, prefabPos);
-                    var item = await Requests.GETEquipmentById(marketModel.itemId.Value);
-                    prefab.SetInformations();*/
-                     
-                }
-            }
-        }
-        //MY OFFERS
-       /* var marketModels = await Requests.GetAll();
-        foreach (var marketModel in marketModels)
-        {
-            Debug.Log(marketModel.id);
-            if (!marketModel.isSold)
-            {
-                if (marketModel.equipmentId.HasValue)
-                {
-                    var prefab = Instantiate(OfferEquipmentDisplay, AllOffersPrefabPos);
-                    var equipmentModel = await Requests.GETEquipmentById(marketModel.equipmentId.Value);
-                    var equipment = new Equipment(equipmentModel);
-                    prefab.SetInformations(marketModel, equipment);
 
-                    prefab.buyButton.onClick.AddListener(() => { offerEquipmentDescription.LoadPopUp(GetComponent<CanvasGroup>(), prefab, marketModel); });
-                    AllofferDisplays.Add(prefab);
+                if (marketModel.equipmentId.HasValue)
+                {
+                   
+                    if (marketModel.sellerId == PlayerProfile.id)
+                    {
+                        var prefab = Instantiate(OfferEquipmentDisplay, MyOffersPrefabPos);
+                        var equipmentModel = await Requests.GETEquipmentById(marketModel.equipmentId.Value);
+                        var equipment = new Equipment(equipmentModel);
+                        prefab.SetInformations(marketModel, equipment);
+
+                        prefab.buyButton.onClick.AddListener(() => { offerEquipmentDescription.LoadPopUp(GetComponent<CanvasGroup>(), prefab, marketModel);
+                            MyofferDisplays.Remove(prefab);
+                        });
+                        MyofferDisplays.Add(prefab);
+                    }
+                    else
+                    {
+                        var prefab = Instantiate(OfferEquipmentDisplay, AllOffersPrefabPos);
+                        var equipmentModel = await Requests.GETEquipmentById(marketModel.equipmentId.Value);
+                        var equipment = new Equipment(equipmentModel);
+                        prefab.SetInformations(marketModel, equipment);
+
+                        prefab.buyButton.onClick.AddListener(() => { offerEquipmentDescription.LoadPopUp(GetComponent<CanvasGroup>(), prefab, marketModel);
+                            AllofferDisplays.Remove(prefab);
+                        });
+                        AllofferDisplays.Add(prefab);
+                    }
                 }
                 else
                 {
+
                     /*var prefab = Instantiate(OfferItemDisplay, prefabPos);
                     var item = await Requests.GETEquipmentById(marketModel.itemId.Value);
                     prefab.SetInformations();*/
 
-           /*     }
+               
+                }
             }
-        }*/
-
+        }    
+    }
+    public void ShowAllOffers()
+    {
+        AllOffers.alpha = 1;
+        AllOffers.interactable = true;
+        AllOffers.blocksRaycasts = true;
+        
+        MyOffers.alpha = 0;
+        MyOffers.interactable = false;
+        MyOffers.blocksRaycasts = false;
     }
 
+    public void ShowMyOffers()
+    {
+        AllOffers.alpha = 0;
+        AllOffers.interactable = false;
+        AllOffers.blocksRaycasts = false;
+
+        MyOffers.alpha = 1;
+        MyOffers.interactable = true;
+        MyOffers.blocksRaycasts = true;
+    }
     // Update is called once per frame
     void Update()
     {
