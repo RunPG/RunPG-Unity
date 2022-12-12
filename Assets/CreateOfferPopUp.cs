@@ -30,20 +30,126 @@ public class CreateOfferPopUp : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI errorText;
     [Space(10)]
-    [Header("Canvas Group")]
+    [Header("Market place")]
     [SerializeField]
-    private CanvasGroup marketPlaceCanvasGroup;
     private MarketPlace marketPlace;
 
     private Equipment selectedEquipment;
     CharacterProfileScript characterProfileScript;
-    
+
+    [Space(10)]
+    [Header("Inventory Filter")]
+    [SerializeField]
+    private Button weaponButton;
+    [SerializeField]
+    private GameObject weaponBackground;
+
+    [Space(10)]
+    [SerializeField]
+    private Button helmetButton;
+    [SerializeField]
+    private GameObject helmetBackground;
+
+    [Space(10)]
+    [SerializeField]
+    private Button chestButton;
+    [SerializeField]
+    private GameObject chestBackground;
+
+    [Space(10)]
+    [SerializeField]
+    private Button glovesButton;
+    [SerializeField]
+    private GameObject glovesBackground;
+
+    [Space(10)]
+    [SerializeField]
+    private Button bootsButton;
+    [SerializeField]
+    private GameObject bootsBackground;
+
+    [Space(10)]
+    [SerializeField]
+    private Button consumablesButton;
+    [SerializeField]
+    private GameObject consumablesBackground;
+
+    [Space(10)]
+    [SerializeField]
+    private Button ressourcesButton;
+    [SerializeField]
+    private GameObject ressourcesBackground;
+    private GameObject selectedFilterBackground;
+
+
     // Start is called before the first frame update
     void Start()
     {
+        selectedFilterBackground = weaponBackground;
+
         characterProfileScript = CharacterProfileScript.instance;
         postOfferButton.onClick.AddListener(PostOffer);
         GetComponent<Button>().onClick.AddListener(ClosePopUp);
+
+        weaponButton.onClick.AddListener(delegate {
+            SelectFilter(weaponBackground);
+            LoadSortedInventory(0);
+        });
+
+        helmetButton.onClick.AddListener(delegate {
+            SelectFilter(helmetBackground);
+            LoadSortedInventory(1);
+        });
+
+        chestButton.onClick.AddListener(delegate {
+            SelectFilter(chestBackground);
+            LoadSortedInventory(2);
+        });
+
+        glovesButton.onClick.AddListener(delegate {
+            SelectFilter(glovesBackground);
+            LoadSortedInventory(3);
+        });
+
+        bootsButton.onClick.AddListener(delegate {
+            SelectFilter(bootsBackground);
+            LoadSortedInventory(4);
+        });
+
+        consumablesButton.onClick.AddListener(delegate {
+            SelectFilter(consumablesBackground);
+            LoadSortedInventory(5);
+        });
+
+        ressourcesButton.onClick.AddListener(delegate {
+            SelectFilter(ressourcesBackground);
+            LoadSortedInventory(6);
+        });
+    }
+    void SelectFilter(GameObject backgroundFilter)
+    {
+        var previousRectTransform = selectedFilterBackground.GetComponent<RectTransform>();
+        previousRectTransform.offsetMin = new Vector2(previousRectTransform.offsetMin.x, 10);
+
+        var acutalRectTransform = backgroundFilter.GetComponent<RectTransform>();
+        acutalRectTransform.offsetMin = new Vector2(acutalRectTransform.offsetMin.x, 0);
+        selectedFilterBackground = backgroundFilter;
+    }
+
+    private void LoadSortedInventory(int filterIndex)
+    {
+        var filteredEquipments = characterProfileScript.equipments[filterIndex];
+        filteredEquipments.Sort((a, b) =>
+        {
+            /*if (IsEquiped(a))
+                return -1;
+            if (IsEquiped(b))
+                return 1;*/
+            if (b.level - a.level != 0)
+                return b.level - a.level;
+            return b.rarity - a.rarity;
+        });
+        LoadInventoryOfferCreator(filterIndex);
     }
     public void ClosePopUp()
     {
@@ -53,6 +159,7 @@ public class CreateOfferPopUp : MonoBehaviour
         canvasGroup.alpha = 0;
         canvasGroup.interactable = false;
         canvasGroup.blocksRaycasts = false;
+        var marketPlaceCanvasGroup = marketPlace.GetComponent<CanvasGroup>();
         marketPlaceCanvasGroup.interactable = true;
         marketPlaceCanvasGroup.blocksRaycasts = true;
     }
@@ -71,6 +178,11 @@ public class CreateOfferPopUp : MonoBehaviour
             if (inv.equipmentId == selectedEquipment.id)
             {              
                 var newMarket = await Requests.POSTCreateItem(inv.id, Int16.Parse(goldPriceInput.text), Int16.Parse(StackSizeInput.text));
+                if (newMarket == null)
+                {
+                    errorText.text = "Erreur";
+                    return;
+                }
                 marketPlace.InstantiateOfferDisplay(newMarket, selectedEquipment);
                 ClosePopUp();
                 return;

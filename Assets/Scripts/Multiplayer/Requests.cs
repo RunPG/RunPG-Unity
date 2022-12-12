@@ -674,6 +674,7 @@ namespace RunPG.Multi
                 Debug.LogError(string.Format("Error in request:{0}\nError Message: {1}", url, request.error));
                 return null;
             }
+            Debug.Log("POST CREATE ITEM" + request.downloadHandler.text);
             var marketModel = JsonConvert.DeserializeObject<MarketModel>(request.downloadHandler.text);
             return marketModel;
         }
