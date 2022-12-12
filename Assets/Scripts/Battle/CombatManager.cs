@@ -329,6 +329,7 @@ public class CombatManager : MonoBehaviourPun
       var quantity = monsterRewards[monsterReward];
       var itemModel = CraftItemModel.GetFromName(monsterReward, quantity);
       var newItem = new PostItemModel(itemModel.id, quantity);
+
       Requests.POSTInventoryItem(PlayerProfile.id, newItem);
 
       rarity.sprite = itemModel.rarity.GetItemSprite();
