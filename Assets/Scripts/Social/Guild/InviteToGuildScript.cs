@@ -56,7 +56,7 @@ public class InviteToGuildScript : MonoBehaviour
             UserCharacterModel userCharacterModel = await Requests.GETUserCharacter(userModel.id);
             userTransform.Find("Class").GetComponent<Image>().sprite = userCharacterModel.character.heroClass.GetSprite();
             userTransform.Find("Name").GetComponent<TextMeshProUGUI>().text = userModel.name;
-            userTransform.Find("Level").GetComponent<TextMeshProUGUI>().text = string.Format("Lv. {0}", userCharacterModel.statistics.level);
+            userTransform.Find("Level/Value").GetComponent<TextMeshProUGUI>().text = userCharacterModel.statistics.level.ToString();
 
             NotificationModel notificationModel = await Requests.GETNotificationsByTypeBySender(userModel.id, NotificationType.GUILD, PlayerProfile.id);
             if (notificationModel != null)

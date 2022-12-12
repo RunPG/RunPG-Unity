@@ -1,8 +1,5 @@
 using RunPG.Multi;
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using UnityEngine;
 
 public class POIScript : MonoBehaviour
@@ -13,6 +10,8 @@ public class POIScript : MonoBehaviour
     private ForestPortal forest;
     [SerializeField]
     private BushPortal bushes;
+    [SerializeField]
+    private MinesPortal mines;
 
     public long id;
     private ActivityScript activity;
@@ -34,10 +33,15 @@ public class POIScript : MonoBehaviour
             forest.gameObject.SetActive(true);
             activity = forest;
         }
-        else
+        else if (id % 4 == 2)
         {
             bushes.gameObject.SetActive(true);
             activity = bushes;
+        }
+        else
+        {
+            mines.gameObject.SetActive(true);
+            activity = mines;
         }
 
         ActivityModel availability = await Requests.GetActivityAvailability(PlayerProfile.id, id);
@@ -72,5 +76,11 @@ public class POIScript : MonoBehaviour
         {
             activity.SetAvailable(true);
         }
+    }
+
+    public int GetAcitivity()
+    {
+        id = long.Parse(transform.name);
+        return (int)(id % 4);
     }
 }

@@ -41,4 +41,12 @@ public class IChat : MonoBehaviour
             CanvasGroup.blocksRaycasts = false;
         });
     }
+
+    public void ClearChat()
+    {
+        foreach (Transform child in messagesLayout.transform)
+        {
+            Destroy(child.gameObject);
+        }
+    }
 }
