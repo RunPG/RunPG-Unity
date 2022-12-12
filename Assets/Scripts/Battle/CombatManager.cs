@@ -17,10 +17,11 @@ public class CombatManager : MonoBehaviourPun
 
     private ILogger logger = Debug.unityLogger;
 
+    private Dictionary<string, int> monsterRewards = new Dictionary<string, int>();
+
     public static CombatManager Instance { get; private set; }
 
     private Dictionary<string, Func<CombatAction>> combatActions = new Dictionary<string, Func<CombatAction>>();
-
 
     private List<Character> characters;
 
@@ -38,7 +39,7 @@ public class CombatManager : MonoBehaviourPun
     private GameObject kingSilmePrefab;
 
     [SerializeField]
-    private List<Sprite> Items = new List<Sprite>();
+    private List<Sprite> ItemSprites = new List<Sprite>();
 
     [SerializeField]
     private GameObject ResultScreen;
@@ -46,6 +47,8 @@ public class CombatManager : MonoBehaviourPun
     private List<CombatAction> queue = new List<CombatAction>();
 
     private DungeonManager dungeonManager;
+
+    
 
     private void Awake()
     {
@@ -93,7 +96,6 @@ public class CombatManager : MonoBehaviourPun
     public void AddAction(CombatAction action)
     {
         Dictionary<string, string> dataToShare = new Dictionary<string, string>();
-        dataToShare.Add("ally", "true");
         dataToShare.Add("name", action.caster.characterName);
         dataToShare.Add("target", action.target.characterName);
         dataToShare.Add("action", action.name);
@@ -250,7 +252,6 @@ public class CombatManager : MonoBehaviourPun
                     || action.possibleTarget == CombatAction.PossibleTarget.All))
                 {
                     TauntStatus taunt = (TauntStatus)action.caster.GetStatus().Find(x => x.name == "Provocation");
-                    print(taunt.remainingTurns);
                     if (taunt != null)
                     {
                         action.target = taunt.GetTaunter();
@@ -286,8 +287,12 @@ public class CombatManager : MonoBehaviourPun
                 ResultScreen.GetComponentInChildren<TextMeshProUGUI>().color = Color.yellow;
                 break;
             }
+
+            // end of turn
         }
 
+
+        // end of battle
         foreach (var character in DungeonManager.instance.characters)
         {
             Character c = characters.Find(c => c.characterName == character.name);
@@ -417,7 +422,7 @@ public class CombatManager : MonoBehaviourPun
 
     public Sprite GetItemSprite(string itemName)
     {
-        foreach (var elt in Items)
+        foreach (var elt in ItemSprites)
         {
             if (elt.name == itemName)
             {
@@ -466,6 +471,21 @@ public class CombatManager : MonoBehaviourPun
             monster.Add("length", dungeonManager.enemies.Length.ToString());
             monster.Add("level", dungeonManager.enemies[index].level.ToString());
             photonView.RPC("AddMonster", RpcTarget.All, monster);
+        }
+    }
+
+    public void AddReward(Tuple<string, int> reward)
+    {
+        if (reward.Item2 == 0)
+            return;
+
+        if (monsterRewards.ContainsKey(reward.Item1))
+        {
+            monsterRewards[reward.Item1] += reward.Item2;
+        }
+        else
+        {
+            monsterRewards.Add(reward.Item1, reward.Item2);
         }
     }
 
