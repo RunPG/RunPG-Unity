@@ -186,7 +186,7 @@ public class CharacterProfileScript : MonoBehaviour
         if (inventoryItem.equipmentId.HasValue)
         {
           var equipmentModel = await Requests.GETEquipmentById(inventoryItem.equipmentId.Value);
-          var equipment = new Equipment(equipmentModel);
+          var equipment = new Equipment(equipmentModel, inventoryItem.stackSize);
           tmpEquipment[equipment.type.GetIndex()].Add(equipment);
         }
         else if (inventoryItem.itemId != null)
