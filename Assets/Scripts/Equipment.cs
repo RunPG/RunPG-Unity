@@ -1,6 +1,4 @@
 using RunPG.Multi;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Equipment
@@ -22,7 +20,7 @@ public class Equipment
   public bool isConsomable;
   public bool isItem;
 
-  public Equipment(EquipmentModel model)
+  public Equipment(EquipmentModel model, int stackSize = 1)
   {
     id = model.id;
     type = model.equipmentBase.equipmentType;
@@ -37,7 +35,7 @@ public class Equipment
     power = model.statistics.power;
     resistance = model.statistics.resistance;
     precision = model.statistics.precision;
-    stackSize = 1;
+    this.stackSize = stackSize;
     isConsomable = false;
     isItem = false;
   }

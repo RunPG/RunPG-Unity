@@ -50,7 +50,15 @@ public class ObjectDescriptionScript : MonoBehaviour
   {
     objectName.text = equipment.name;
     levelClass.text = string.Format("Nv. {0} - {1}", equipment.level, equipment.heroClass.GetName());
-    description.text = equipment.description;
+    if (equipment.description != null)
+    {
+      description.text = equipment.description;
+    }
+    else
+    {
+      description.text = "No description";
+    }
+
     backgroundImage.sprite = equipment.rarity.GetItemSprite();
     itemImage.sprite = equipment.GetEquipmentSprite();
 
