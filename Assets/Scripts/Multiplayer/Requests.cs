@@ -1,14 +1,8 @@
 ﻿using Newtonsoft.Json;
-using Photon.Pun;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
-using UnityEngine.UI;
 namespace RunPG.Multi
 {
   public static class Requests
@@ -154,9 +148,9 @@ namespace RunPG.Multi
       return null;
     }
 
-    public static async Task<EquipmentBaseModel[]> GETEquipements()
+    public static async Task<EquipmentBaseModel[]> GETEquipements(int? equipmentId)
     {
-      var url = rootUrl + "equipmentBase";
+      var url = rootUrl + "equipmentBase" + (equipmentId != null ? "?id=" + equipmentId : "");
       using (UnityWebRequest request = UnityWebRequest.Get(url))
       {
         request.SendWebRequest();

@@ -40,6 +40,7 @@ namespace RunPG.Multi
       var random = new Random();
 
       var levelRarity = level * rarity.GetRarityMultiplier();
+      levelRarity = levelRarity < 5 ? 5 : levelRarity;
 
       for (int i = 0; i < levelRarity; i++)
       {
