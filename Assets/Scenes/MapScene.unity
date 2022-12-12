@@ -8535,7 +8535,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.48235297, g: 0.21568629, b: 0.21568629, a: 1}
+  m_Color: {r: 0.1764706, g: 0.19215687, b: 0.25882354, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -8574,7 +8574,7 @@ RectTransform:
   m_Children:
   - {fileID: 555835809}
   m_Father: {fileID: 1361514562}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.101266995}
   m_AnchorMax: {x: 1, y: 0.7845292}
@@ -10219,14 +10219,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.4039216, g: 0.17254902, b: 0.17254902, a: 1}
+  m_Color: {r: 0.1764706, g: 0.19215687, b: 0.25882354, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: 39b2855ecea4107419d8a32d10c90289, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -13964,7 +13964,7 @@ MonoBehaviour:
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
   m_Interactable: 1
-  m_TargetGraphic: {fileID: 0}
+  m_TargetGraphic: {fileID: 474682891}
   m_TextViewport: {fileID: 1538999252}
   m_TextComponent: {fileID: 1545025889}
   m_Placeholder: {fileID: 0}
@@ -23435,9 +23435,9 @@ RectTransform:
   - {fileID: 379040333}
   - {fileID: 1365991875}
   m_Father: {fileID: 1361514562}
-  m_RootOrder: 4
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0.7845292}
+  m_AnchorMin: {x: 0, y: 0.77421016}
   m_AnchorMax: {x: 1, y: 0.86621016}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
@@ -23455,7 +23455,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.13333334, g: 0.13333334, b: 0.19607845, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -39259,7 +39259,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.2392157, g: 0.20000002, b: 0.20000002, a: 1}
+  m_Color: {r: 0.13725491, g: 0.14117648, b: 0.19215687, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -39946,9 +39946,9 @@ RectTransform:
   m_Children:
   - {fileID: 1874930690}
   - {fileID: 448854973}
+  - {fileID: 769902420}
   - {fileID: 315356666}
   - {fileID: 1884247118}
-  - {fileID: 769902420}
   - {fileID: 1336518224}
   m_Father: {fileID: 832354594}
   m_RootOrder: 24
@@ -40343,14 +40343,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.67058825, g: 0.34117648, b: 0.34117648, a: 1}
+  m_Color: {r: 0.27058825, g: 0.27058825, b: 0.3764706, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: 39b2855ecea4107419d8a32d10c90289, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -54581,7 +54581,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.16037738, g: 0.12784801, b: 0.12784801, a: 1}
+  m_Color: {r: 0.13725491, g: 0.14117648, b: 0.19215687, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -54854,7 +54854,7 @@ MonoBehaviour:
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
   m_Interactable: 1
-  m_TargetGraphic: {fileID: 0}
+  m_TargetGraphic: {fileID: 1880544959}
   m_TextViewport: {fileID: 712882507}
   m_TextComponent: {fileID: 1816665260}
   m_Placeholder: {fileID: 1283025479}
@@ -55160,7 +55160,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.6431373, g: 0.3254902, b: 0.3254902, a: 1}
+  m_Color: {r: 0.27058825, g: 0.27058825, b: 0.3764706, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -55199,7 +55199,7 @@ RectTransform:
   m_Children:
   - {fileID: 1607237734}
   m_Father: {fileID: 1361514562}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.101266995}
   m_AnchorMax: {x: 1, y: 0.7845292}
