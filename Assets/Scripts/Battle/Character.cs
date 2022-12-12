@@ -69,7 +69,7 @@ public abstract class Character : MonoBehaviour
         return (currentHealth > 0);
     }
 
-    public void TakeDamage(int damage)
+    public virtual void TakeDamage(int damage)
     {
         if (damage < 0)
             Debug.LogWarning("damage is negative");

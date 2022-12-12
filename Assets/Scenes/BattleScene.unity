@@ -6146,7 +6146,7 @@ MonoBehaviour:
     type: 3}
   daarunPrefab: {fileID: 2650298994664610122, guid: aa683589617e5f04e9e566a8730bc104,
     type: 3}
-  Items:
+  ItemSprites:
   - {fileID: 21300000, guid: 2c80f5f41d98a264e84fc927cb197814, type: 3}
   - {fileID: 21300000, guid: 3e0e868aa7f2ac24cb4b72011f279451, type: 3}
   Status:

@@ -100,7 +100,7 @@ public class CharacterProfileScript : MonoBehaviour
   private GameObject itemPrefab;
 
   private GameObject selectedFilterBackground;
-  private List<List<Equipment>> equipments;
+  public List<List<Equipment>> equipments { get; private set; }
 
   [Space(10)]
   [Header("PopUp")]
@@ -186,7 +186,7 @@ public class CharacterProfileScript : MonoBehaviour
         if (inventoryItem.equipmentId.HasValue)
         {
           var equipmentModel = await Requests.GETEquipmentById(inventoryItem.equipmentId.Value);
-          var equipment = new Equipment(equipmentModel);
+          var equipment = new Equipment(equipmentModel, inventoryItem.stackSize);
           tmpEquipment[equipment.type.GetIndex()].Add(equipment);
         }
         else if (inventoryItem.itemId != null)
@@ -435,7 +435,7 @@ public class CharacterProfileScript : MonoBehaviour
     };
   }
 
-  Equipment GetEquiped(EquipmentType type)
+  public Equipment GetEquiped(EquipmentType type)
   {
     return type switch
     {
@@ -448,7 +448,7 @@ public class CharacterProfileScript : MonoBehaviour
     };
   }
 
-  Color GetStatisticColor(int equipedValue, int itemValue)
+  public Color GetStatisticColor(int equipedValue, int itemValue)
   {
     if (equipedValue == itemValue)
       return Color.white;

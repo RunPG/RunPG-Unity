@@ -8,7 +8,6 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-
 public class CombatManager : MonoBehaviourPun
 {
   private static readonly Vector3[][] PlayerPositions = new Vector3[4][] { new Vector3[1] { new Vector3(0, 0, -0.175f) }, new Vector3[2] { new Vector3(-0.15f, 0, -0.175f), new Vector3(0.15f, 0, -0.175f) }, new Vector3[] { new Vector3(-0.2f, 0, -0.175f), new Vector3(0, 0, 0), new Vector3(0.2f, 0, -0.175f) }, new Vector3[4] { new Vector3(-0.3f, 0, 0), new Vector3(-0.15f, 0, -0.175f), new Vector3(0.15f, 0, -0.175f), new Vector3(0.3f, 0, 0) } };
@@ -38,7 +37,7 @@ public class CombatManager : MonoBehaviourPun
   private GameObject daarunPrefab;
 
   [SerializeField]
-  private List<Sprite> Items;
+  private List<Sprite> ItemSprites = new List<Sprite>();
 
   [SerializeField]
   private List<Sprite> Status;
@@ -53,6 +52,8 @@ public class CombatManager : MonoBehaviourPun
   private List<CombatAction> queue = new List<CombatAction>();
 
   private DungeonManager dungeonManager;
+
+  private Dictionary<string, int> monsterRewards = new Dictionary<string, int>();
 
   private void Awake()
   {
@@ -102,7 +103,6 @@ public class CombatManager : MonoBehaviourPun
   public void AddAction(CombatAction action)
   {
     Dictionary<string, string> dataToShare = new Dictionary<string, string>();
-    dataToShare.Add("ally", "true");
     dataToShare.Add("name", action.caster.characterName);
     dataToShare.Add("target", action.target.characterName);
     dataToShare.Add("action", action.name);
@@ -260,7 +260,6 @@ public class CombatManager : MonoBehaviourPun
             || action.possibleTarget == CombatAction.PossibleTarget.All))
         {
           TauntStatus taunt = (TauntStatus)action.caster.GetStatus().Find(x => x.name == "Provocation");
-          print(taunt.remainingTurns);
           if (taunt != null)
           {
             action.target = taunt.GetTaunter();
@@ -445,7 +444,7 @@ public class CombatManager : MonoBehaviourPun
 
   public Sprite GetItemSprite(string itemName)
   {
-    foreach (var elt in Items)
+    foreach (var elt in ItemSprites)
     {
       if (elt.name == itemName)
       {
@@ -509,6 +508,21 @@ public class CombatManager : MonoBehaviourPun
       monster.Add("length", dungeonManager.enemies.Length.ToString());
       monster.Add("level", dungeonManager.enemies[index].level.ToString());
       photonView.RPC("AddMonster", RpcTarget.All, monster);
+    }
+  }
+
+  public void AddReward(Tuple<string, int> reward)
+  {
+    if (reward.Item2 == 0)
+      return;
+
+    if (monsterRewards.ContainsKey(reward.Item1))
+    {
+      monsterRewards[reward.Item1] += reward.Item2;
+    }
+    else
+    {
+      monsterRewards.Add(reward.Item1, reward.Item2);
     }
   }
 
