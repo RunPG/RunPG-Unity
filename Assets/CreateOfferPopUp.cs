@@ -1,3 +1,5 @@
+using RunPG.Multi;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -14,15 +16,68 @@ public class CreateOfferPopUp : MonoBehaviour
     [SerializeField]
     private GameObject offerCreationPopUp;
     
+    [Space(10)]
+    [Header("Inputs")]
+    [SerializeField]
+    private TMP_InputField goldPriceInput;
+    [SerializeField]
+    private TMP_InputField StackSizeInput;
+    [SerializeField]
+    private Button postOfferButton;
     
+    [Space(10)]
+    [Header("Error")]
+    [SerializeField]
+    private TextMeshProUGUI errorText;
+    [Space(10)]
+    [Header("Canvas Group")]
+    [SerializeField]
+    private CanvasGroup marketPlaceCanvasGroup;
+    private MarketPlace marketPlace;
+
+    private Equipment selectedEquipment;
     CharacterProfileScript characterProfileScript;
     
     // Start is called before the first frame update
     void Start()
     {
         characterProfileScript = CharacterProfileScript.instance;
+        postOfferButton.onClick.AddListener(PostOffer);
+        GetComponent<Button>().onClick.AddListener(ClosePopUp);
+    }
+    public void ClosePopUp()
+    {
+        Debug.Log("CLOSE");
+        selectedEquipment = null;
+        var canvasGroup = GetComponent<CanvasGroup>();
+        canvasGroup.alpha = 0;
+        canvasGroup.interactable = false;
+        canvasGroup.blocksRaycasts = false;
+        marketPlaceCanvasGroup.interactable = true;
+        marketPlaceCanvasGroup.blocksRaycasts = true;
     }
 
+    public async void PostOffer()
+    {
+        if (selectedEquipment == null)
+        {
+            errorText.text = "Pas d'équipement séléctionné";
+            return;
+        }
+
+        InventoryModel[] inventory = await Requests.GETUserInventory(PlayerProfile.id);
+        foreach (var inv in inventory)
+        {
+            if (inv.equipmentId == selectedEquipment.id)
+            {              
+                var newMarket = await Requests.POSTCreateItem(inv.id, Int16.Parse(goldPriceInput.text), Int16.Parse(StackSizeInput.text));
+                marketPlace.InstantiateOfferDisplay(newMarket, selectedEquipment);
+                ClosePopUp();
+                return;
+            }
+        }
+        Debug.Log("ERROR GET INVENTORY ID");    
+    }
     public void LoadInventoryOfferCreator(int filterIndex)
     {
         Debug.Log("LOAD INVENTORY");
@@ -39,7 +94,7 @@ public class CreateOfferPopUp : MonoBehaviour
             offerCreationPopUp.GetComponent<VerticalLayoutGroup>().padding.bottom = 8;
 
         for (int equipmentIndex = 0; equipmentIndex < filterList.Count; equipmentIndex++)
-        {
+        {           
             var equipment = filterList[equipmentIndex];
 
             if (equipment.isItem)
@@ -86,7 +141,26 @@ public class CreateOfferPopUp : MonoBehaviour
             var isEquiped = equipedItem.id == equipment.id;
 
             Button button = newEquipment.Find("Button").GetComponent<Button>();
-            button.GetComponentInChildren<TextMeshProUGUI>().text = "Vendre";
+            button.GetComponentInChildren<TextMeshProUGUI>().text = "Sélectionner";
+            button.onClick.AddListener(() => SelectEquipment(button,equipment)
+            );       
+            
+        }
+    }
+    public void SelectEquipment(Button button,Equipment equipment)
+    {
+        //Unequip
+        if (selectedEquipment == null)
+        {
+            Debug.Log("CHOISI");
+            button.GetComponentInChildren<TextMeshProUGUI>().text = "Choisi";
+            selectedEquipment = equipment;
+        }
+        else if (selectedEquipment == equipment)
+        {
+            Debug.Log("DESEQUIPER");
+            button.GetComponentInChildren<TextMeshProUGUI>().text = "Sélectionner";
+            selectedEquipment = null;
         }
     }
 }

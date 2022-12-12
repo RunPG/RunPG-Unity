@@ -635,6 +635,7 @@ namespace RunPG.Multi
 
         public static async Task<bool> DELETEItem(int itemId)
         {
+            Debug.Log("CALLED DELETEITEM");
             var url = rootUrl + "market/" + itemId;
 
             using UnityWebRequest request = UnityWebRequest.Delete(url);
@@ -651,13 +652,13 @@ namespace RunPG.Multi
             }
             return true;
         }
-        public static async Task<bool> POSTCreateItem(int inventoryId, int price, int stackSize)
+        public static async Task<MarketModel> POSTCreateItem(int inventoryId, int price, int stackSize)
         {
             var url = rootUrl + "market/";
 
             using UnityWebRequest request = UnityWebRequest.Post(url, "POST");
             request.SetRequestHeader("Content-Type", "application/json");
-            NewItemModel newItem = new NewItemModel(inventoryId, price, stackSize);
+            NewItemModel newItem = new NewItemModel(inventoryId, stackSize, price);
             var content = JsonConvert.SerializeObject(newItem);
 
             request.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(content));
@@ -671,9 +672,10 @@ namespace RunPG.Multi
             if (request.result != UnityWebRequest.Result.Success)
             {
                 Debug.LogError(string.Format("Error in request:{0}\nError Message: {1}", url, request.error));
-                return false;
+                return null;
             }
-            return true;
+            var marketModel = JsonConvert.DeserializeObject<MarketModel>(request.downloadHandler.text);
+            return marketModel;
         }
         public static async Task<bool> POSTBuyItem(int itemId, int buyerId)
         {

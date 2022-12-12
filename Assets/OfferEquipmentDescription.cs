@@ -50,7 +50,7 @@ public class OfferEquipmentDescription : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI errorMessage;
     private MarketModel market;
-    private MarketPlace marketPlace;
+    private OfferEquipmentDisplay offerEquipmentDisplay;
     void Start()
     {
         canvasGroup = gameObject.GetComponent<CanvasGroup>();
@@ -60,6 +60,7 @@ public class OfferEquipmentDescription : MonoBehaviour
     public void LoadPopUp(CanvasGroup mainWindowCanvasGroup, OfferEquipmentDisplay offerEquipmentDisplay, MarketModel market)
     {
         this.market = market;
+        this.offerEquipmentDisplay = offerEquipmentDisplay;
         errorMessage.text = "";
         objectName.text = offerEquipmentDisplay.equipment.name;
         levelClass.text = string.Format("Nv. {0} - {1}", offerEquipmentDisplay.equipment.level, offerEquipmentDisplay.equipment.heroClass.ToString());
@@ -77,9 +78,6 @@ public class OfferEquipmentDescription : MonoBehaviour
             precision.text = offerEquipmentDisplay.equipment.precision.ToString();
         }
         
-        closeButton.onClick.RemoveAllListeners();
-        closeButton.onClick.AddListener(ClosePopUp);
-
         this.mainWindowCanvasGroup = mainWindowCanvasGroup;
         canvasGroup.alpha = 1;
         canvasGroup.interactable = true;
@@ -88,23 +86,30 @@ public class OfferEquipmentDescription : MonoBehaviour
         mainWindowCanvasGroup.blocksRaycasts = false;
 
         buyButton.onClick.RemoveAllListeners();
+        deleteButton.onClick.RemoveAllListeners();       
         closeButton.onClick.RemoveAllListeners();
+        
+        closeButton.onClick.AddListener(ClosePopUp);
 
-        closeButton.gameObject.SetActive(true);
-        buyButton.gameObject.SetActive(false);
+
 
         if (market.sellerId == PlayerProfile.id)
         {
-            closeButton.onClick.AddListener(() => DeleteMyOffer(offerEquipmentDisplay));
+            deleteButton.onClick.AddListener(DeleteMyOffer);
+            deleteButton.gameObject.SetActive(true);
+            buyButton.gameObject.SetActive(false);
         }
         else
         {
+            deleteButton.gameObject.SetActive(false);
+            buyButton.gameObject.SetActive(true);
             buyButton.GetComponentInChildren<TextMeshProUGUI>().text = market.goldPrice.ToString();
             buyButton.onClick.AddListener(BuyEquipment);
         }
     }
-    public async void DeleteMyOffer(OfferEquipmentDisplay offerEquipmentDisplay)
+    public async void DeleteMyOffer()
     {
+        Debug.Log("DELETE OFFER");
         await Requests.DELETEItem(market.id);
         offerEquipmentDisplay.gameObject.Destroy();
         ClosePopUp();
@@ -113,12 +118,12 @@ public class OfferEquipmentDescription : MonoBehaviour
     {
         bool res = await Requests.POSTBuyItem(market.id, PlayerProfile.id);
         if (res)
-        {
-            
+        {            
             ClosePopUp();
+            Destroy(offerEquipmentDisplay.gameObject);
         }
         else
-        {
+        {     
             errorMessage.text = "Achat impossible !";
             //error msg;
         }

@@ -66,41 +66,41 @@ public class MarketPlace : MonoBehaviour
         var allOffers = await Requests.GETallOpenItems();
         foreach (var marketModel in allOffers)
         {
+
+            Equipment equipment;
             if (marketModel.equipmentId.HasValue)
             {
 
                 var equipmentModel = await Requests.GETEquipmentById(marketModel.equipmentId.Value);
-                var equipment = new Equipment(equipmentModel);
-                InstantiateOfferDisplay(marketModel, equipment, OfferEquipmentDisplay);
+                equipment = new Equipment(equipmentModel);
             }
             else
             {
                 var itemModel = await Requests.GetItemById(marketModel.itemId.Value);
-                var equipment = new Equipment(itemModel[0], marketModel.stackSize);
-                InstantiateOfferDisplay(marketModel, equipment, OfferItemDisplay);
+                equipment = new Equipment(itemModel[0], marketModel.stackSize);
             }
             
+            InstantiateOfferDisplay(marketModel, equipment);
         }
-    }
-    public void PostOffer()
-    {
-        //Requests.POSTCreateItem( inventoryId,  price, stackSize);
     }
     
     public void OpenCreateOfferPopUp()
     {
         var canvasGroup = createOfferPopUp.GetComponent<CanvasGroup>();
+        createOfferPopUp.LoadInventoryOfferCreator(0);
         canvasGroup.alpha = 1;
         canvasGroup.interactable = true;
         canvasGroup.blocksRaycasts = true;
-        GetComponent<CanvasGroup>().interactable = false;
-
+        var marketPlaceCanvasGroup = GetComponent<CanvasGroup>();
+        marketPlaceCanvasGroup.interactable = false;
+        marketPlaceCanvasGroup.blocksRaycasts = false;
     }
-    public void InstantiateOfferDisplay(MarketModel market, Equipment equipment, OfferEquipmentDisplay offerDisplay)
+    public void InstantiateOfferDisplay(MarketModel market, Equipment equipment)
     {
+
         if (market.sellerId == PlayerProfile.id)
         {
-            var prefab = Instantiate(offerDisplay, MyOffersPrefabPos);
+            var prefab = Instantiate(market.equipmentId.HasValue ? OfferEquipmentDisplay : OfferItemDisplay, MyOffersPrefabPos);
             prefab.SetInformations(market, equipment);
             prefab.buyButton.onClick.AddListener(() =>
             {
@@ -111,7 +111,7 @@ public class MarketPlace : MonoBehaviour
         }
         else
         {
-            var prefab = Instantiate(offerDisplay, AllOffersPrefabPos);
+            var prefab = Instantiate(market.equipmentId.HasValue ? OfferEquipmentDisplay : OfferItemDisplay, AllOffersPrefabPos);
             prefab.SetInformations(market, equipment);
             prefab.buyButton.onClick.AddListener(() =>
             {
@@ -140,10 +140,5 @@ public class MarketPlace : MonoBehaviour
         MyOffers.alpha = 1;
         MyOffers.interactable = true;
         MyOffers.blocksRaycasts = true;
-    }
-    // Update is called once per frame
-    void Update()
-    {
-
     }
 }
