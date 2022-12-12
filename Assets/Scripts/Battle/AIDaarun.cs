@@ -33,7 +33,7 @@ public class AIDaarun : AICharacter
   protected override System.Tuple<string, int> GetMonsterReward()
   {
     int quantity = potentialReward[UnityEngine.Random.Range(0, potentialReward.Count)];
-    return new Tuple<string, int>("Bave de slime", quantity);
+    return new Tuple<string, int>("Oeil de Daarun", quantity);
   }
 
   protected override void InitStat(int level)

@@ -1,4 +1,5 @@
 using Photon.Pun;
+using RunPG.Multi;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -309,11 +310,40 @@ public class CombatManager : MonoBehaviourPun
     DungeonManager.instance.currentFloor += 1;
 
     var resultCanvasGroup = ResultScreen.GetComponent<CanvasGroup>();
-    var resultText = resultCanvasGroup.transform.Find("Background/Header/Title").GetComponent<TextMeshProUGUI>();
-    resultText.text = victory ? "Défaite" : "Victoire";
-    resultText.color = victory ? Color.red : Color.yellow;
+    var resultTitle = resultCanvasGroup.transform.Find("Background/Header/Title").GetComponent<TextMeshProUGUI>();
+    resultTitle.text = victory ? "Défaite" : "Victoire";
+    resultTitle.color = victory ? Color.red : Color.yellow;
 
-    //Object collected
+    var resultText = resultCanvasGroup.transform.Find("Background/Body/Text").GetComponent<TextMeshProUGUI>();
+    var rarity = resultCanvasGroup.transform.Find("Background/Body/Rarity").GetComponent<Image>();
+    var name = resultCanvasGroup.transform.Find("Background/Body/Name").GetComponent<TextMeshProUGUI>();
+    var description = resultCanvasGroup.transform.Find("Background/Body/Name").GetComponent<TextMeshProUGUI>();
+    if (monsterRewards.Count > 0)
+    {
+      resultText.gameObject.SetActive(true);
+      rarity.gameObject.SetActive(true);
+      name.gameObject.SetActive(true);
+      description.gameObject.SetActive(true);
+
+      var monsterReward = monsterRewards.Keys.ElementAt(0);
+      var quantity = monsterRewards[monsterReward];
+      var itemModel = CraftItemModel.GetFromName(monsterReward, quantity);
+      var newItem = new PostItemModel(itemModel.id, quantity);
+      Requests.POSTInventoryItem(PlayerProfile.id, newItem);
+
+      rarity.sprite = itemModel.rarity.GetItemSprite();
+      rarity.transform.Find("Image").GetComponent<Image>().sprite = itemModel.GetSprite();
+      rarity.transform.Find("Quantity").GetComponent<TextMeshProUGUI>().text = quantity.ToString();
+      name.text = itemModel.name;
+      description.text = itemModel.description;
+    }
+    else
+    {
+      resultText.gameObject.SetActive(false);
+      rarity.gameObject.SetActive(false);
+      name.gameObject.SetActive(false);
+      description.gameObject.SetActive(false);
+    }
 
     var resultObject = resultCanvasGroup.transform.Find("Background/Body/Button");
     var resultButton = resultObject.GetComponent<Button>();
