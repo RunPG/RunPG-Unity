@@ -144,6 +144,73 @@ public class CoupDeBouclier : Skill
     }
 }
 
+public class Chatiment : Skill
+{
+    public override string name => "Châtiment";
+    public override PossibleTarget possibleTarget => PossibleTarget.Enemy;
+    public override int speed => 50;
+    public override float duration => 1.5f;
+    public override int cooldown => 4;
+
+    private static GameObject divineSwordRessource = Resources.Load<GameObject>("DivineSword");
+
+
+    public override void PlayAction()
+    {
+        base.PlayAction();
+        caster.PlayAnimation("Chatiment");
+        CombatManager.Instance.StartCoroutine(DoAction());
+    }
+
+    private IEnumerator DoAction()
+    {
+        yield return new WaitForSeconds(0.3f);
+        Vector3 pos = target.transform.Find("Ground").transform.position;
+        GameObject sword = GameObject.Instantiate<GameObject>(divineSwordRessource, pos + new Vector3(0, 1.5f, 0), Quaternion.identity);
+
+        float duration = 0.7f;
+        float elapsedTime = 0;
+        while (elapsedTime < duration)
+        {
+            if (elapsedTime < duration / 2 && elapsedTime + Time.deltaTime >= duration / 2)
+            {
+                target.TakeDamage(GetDamage());
+            }
+            elapsedTime += Time.deltaTime;
+            sword.transform.position = Vector3.Lerp(pos + new Vector3(0, 1.5f, 0), pos, elapsedTime / duration);
+            yield return null;
+        }
+
+        yield return new WaitForSeconds(0.1f);
+
+        Material swordMaterial = sword.GetComponentInChildren<Renderer>().material;
+        duration = 0.3f;
+        elapsedTime = 0;
+        while (elapsedTime < duration)
+        {
+            elapsedTime += Time.deltaTime;
+            swordMaterial.SetFloat("_Alpha", 1 - (elapsedTime / duration));
+            yield return null;
+        }
+
+        swordMaterial.SetFloat("_Alpha", 1);
+        GameObject.Destroy(sword);
+    }
+
+    private int GetDamage()
+    {
+        float attackMultiplier = (float)caster.stats.strength / target.stats.defense;
+        float critMultiplier = 1f;
+
+        if (caster.stats.RollCrit())
+        {
+            critMultiplier = caster.stats.GetCritMultiplier();
+        }
+
+        return Mathf.RoundToInt((10 + 5 * caster.level) * attackMultiplier * critMultiplier);
+    }
+}
+
 public class BouleDeFeu : Skill
 {
     public override string name => "Boule de feu";
@@ -246,7 +313,7 @@ public class Embrasement : Skill
 
 public class Tempete : Skill
 {
-    public override string name => "Tempete";
+    public override string name => "Tempête";
     public override PossibleTarget possibleTarget => PossibleTarget.Enemy;
     public override int speed => 50;
     public override float duration => 3f;
