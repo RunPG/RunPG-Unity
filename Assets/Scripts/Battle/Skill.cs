@@ -85,7 +85,7 @@ public class Provocation : Skill
     private IEnumerator DoAction()
     {
         yield return new WaitForSeconds(0.8f);
-
+        CombatManager.Instance.AddStatus(new TauntStatus(caster), target);
         target.TakeDamage(GetDamage());
     }
 

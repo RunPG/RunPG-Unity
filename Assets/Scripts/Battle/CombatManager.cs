@@ -400,7 +400,8 @@ public class CombatManager : MonoBehaviourPun
         int i = statusList.FindIndex(x => x.name == status.name);
         if (i != -1)
         {
-          statusList[i].remainingTurns = status.remainingTurns;
+          status.StatusObject = statusList[i].StatusObject;
+          statusList[i] = status;
         }
         else
         {

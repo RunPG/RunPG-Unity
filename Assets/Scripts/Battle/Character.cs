@@ -99,7 +99,7 @@ public abstract class Character : MonoBehaviour
             Debug.LogWarning("heal is negative");
 
         currentHealth += heal;
-        Mathf.Clamp(currentHealth, 0, maxHealth);
+        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
         healthBar.SetHealth(currentHealth);
     }
 
