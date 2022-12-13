@@ -165,7 +165,7 @@ public class Embrasement : Skill
     public override PossibleTarget possibleTarget => PossibleTarget.Enemy;
     public override int speed => 100;
     public override float duration => 2f;
-    public override int cooldown => 3;
+    public override int cooldown => 2;
 
     private static GameObject igniteRessource = Resources.Load<GameObject>("Ignite");
 
@@ -209,7 +209,7 @@ public class Tempete : Skill
     public override PossibleTarget possibleTarget => PossibleTarget.Enemy;
     public override int speed => 50;
     public override float duration => 3f;
-    public override int cooldown => 0;
+    public override int cooldown => 3;
 
     private static GameObject lightningRessource = Resources.Load<GameObject>("Lightning");
 
@@ -252,6 +252,72 @@ public class Tempete : Skill
     private int GetDamage(Character actualTarget)
     {
         float attackMultiplier = (float)caster.stats.power / actualTarget.stats.resistance;
+        float critMultiplier = 1f;
+
+        if (caster.stats.RollCrit())
+        {
+            critMultiplier = caster.stats.GetCritMultiplier();
+        }
+
+        return Mathf.RoundToInt((20 + 10 * caster.level) * attackMultiplier * critMultiplier);
+    }
+}
+
+public class Stalactite : Skill
+{
+    public override string name => "Stalactite";
+    public override PossibleTarget possibleTarget => PossibleTarget.Enemy;
+    public override int speed => 300;
+    public override float duration => 1.5f;
+    public override int cooldown => 0;
+
+    private static GameObject stalactiteRessource = Resources.Load<GameObject>("Stalactite");
+
+    public override void PlayAction()
+    {
+        base.PlayAction();
+        caster.PlayAnimation("Stalactite");
+        CombatManager.Instance.StartCoroutine(DoAction());
+    }
+
+    private IEnumerator DoAction()
+    {
+        yield return new WaitForSeconds(0.2f);
+        Vector3 startPos = caster.transform.Find("StalactiteStart").position;
+        Vector3 endPos = target.transform.Find("Body").position;
+        var stalactite =  GameObject.Instantiate<GameObject>(stalactiteRessource, startPos, Quaternion.identity);
+        stalactite.transform.localScale = Vector3.zero;
+        stalactite.transform.LookAt(endPos, stalactite.transform.up);
+
+        float elapsedTime = 0;
+        float duration = 0.6f;
+        while (elapsedTime < duration)
+        {
+            stalactite.transform.localScale = Vector3.Lerp(Vector3.zero, Vector3.one, elapsedTime / duration);
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        elapsedTime = 0;
+        duration = 0.1f;
+        while (elapsedTime < duration)
+        {
+            stalactite.transform.position = Vector3.Lerp(startPos, endPos, elapsedTime / duration);
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        target.TakeDamage(GetDamage());
+        stalactite.transform.Find("Stalactite").gameObject.SetActive(false);
+        stalactite.GetComponentInChildren<VisualEffect>().Stop();
+        yield return new WaitForSeconds(0.2f);
+        GameObject.Destroy(stalactite);
+
+    }
+
+    private int GetDamage()
+    {
+        float attackMultiplier = (float)caster.stats.power / target.stats.resistance;
         float critMultiplier = 1f;
 
         if (caster.stats.RollCrit())
