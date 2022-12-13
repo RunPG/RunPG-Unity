@@ -311,8 +311,8 @@ public class CombatManager : MonoBehaviourPun
 
     var resultCanvasGroup = ResultScreen.GetComponent<CanvasGroup>();
     var resultTitle = resultCanvasGroup.transform.Find("Background/Header/Title").GetComponent<TextMeshProUGUI>();
-    resultTitle.text = victory ? "Défaite" : "Victoire";
-    resultTitle.color = victory ? Color.red : Color.yellow;
+    resultTitle.text = victory ? "Victoire" : "Défaite";
+    resultTitle.color = victory ? Color.yellow : Color.red;
 
     var resultText = resultCanvasGroup.transform.Find("Background/Body/Text").GetComponent<TextMeshProUGUI>();
     var rarity = resultCanvasGroup.transform.Find("Background/Body/Rarity").GetComponent<Image>();
