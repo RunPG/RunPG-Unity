@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028352, g: 0.22571376, b: 0.3069224, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1071,6 +1071,55 @@ Transform:
   m_Children: []
   m_Father: {fileID: 652088863}
   m_RootOrder: 22
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &202855120
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 202855122}
+  - component: {fileID: 202855121}
+  m_Layer: 0
+  m_Name: Global Volume
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &202855121
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 202855120}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 172515602e62fb746b5d573b38a5fe58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IsGlobal: 1
+  priority: 0
+  blendDistance: 0
+  weight: 1
+  sharedProfile: {fileID: 11400000, guid: 275092e6703680a4f9784438529b7310, type: 2}
+--- !u!4 &202855122
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 202855120}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -2.7739344, y: -1.2339381, z: 0.72443974}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &274202197 stripped
 Transform:
@@ -2678,7 +2727,7 @@ MonoBehaviour:
     m_Bits: 1
   m_VolumeTrigger: {fileID: 0}
   m_VolumeFrameworkUpdateModeOption: 2
-  m_RenderPostProcessing: 0
+  m_RenderPostProcessing: 1
   m_Antialiasing: 0
   m_AntialiasingQuality: 2
   m_StopNaN: 0
@@ -6146,17 +6195,13 @@ MonoBehaviour:
     type: 3}
   daarunPrefab: {fileID: 2650298994664610122, guid: aa683589617e5f04e9e566a8730bc104,
     type: 3}
-  ItemSprites:
-  - {fileID: 21300000, guid: 2c80f5f41d98a264e84fc927cb197814, type: 3}
-  - {fileID: 21300000, guid: 3e0e868aa7f2ac24cb4b72011f279451, type: 3}
+  Items: []
   Status:
   - {fileID: 21300000, guid: a8394b741139f1f43a20f238e80e106f, type: 3}
   - {fileID: 21300000, guid: abda633ed73468a4990e133994cf0b3a, type: 3}
   - {fileID: 21300000, guid: 513b408c54129d940962d8a7286641cc, type: 3}
   - {fileID: 21300000, guid: 33526b296bbfa4f4787e3fa377faa1d1, type: 3}
   ResultScreen: {fileID: 486151545}
-  LooseSprite: {fileID: 21300000, guid: 16ee6a6282f38b9439a962f4a743dfc8, type: 3}
-  WinSprite: {fileID: 21300000, guid: c75701a1fa89ad841b9460488310a49c, type: 3}
 --- !u!4 &1287583515
 Transform:
   m_ObjectHideFlags: 0
