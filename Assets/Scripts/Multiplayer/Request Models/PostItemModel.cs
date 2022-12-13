@@ -10,5 +10,11 @@ namespace RunPG.Multi
       this.itemId = itemId;
       this.stackSize = stackSize;
     }
+
+    public PostItemModel(string name, int stackSize)
+    {
+      this.itemId = name == "Bombe" ? 2 : 1;
+      this.stackSize = stackSize;
+    }
   }
 }

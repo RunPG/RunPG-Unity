@@ -1,176 +1,158 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using TMPro;
-using UnityEditor;
+using RunPG.Multi;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public abstract class Character : MonoBehaviour
 {
-    public int level { get; protected set; }
+  public int level { get; protected set; }
 
-    public int maxHealth { get; protected set; }
-    public int currentHealth { get; protected set; }
+  public int maxHealth { get; protected set; }
+  public int currentHealth { get; protected set; }
 
-    public string characterName { get; set; }
+  public string characterName { get; set; }
 
-    protected HealthBar healthBar;
+  protected HealthBar healthBar;
 
-    protected Image selector;
+  protected Image selector;
 
-    protected Dictionary<string, int> inventory = new Dictionary<string, int>();
+  protected List<Status> statusList = new List<Status>();
 
-    protected List<Status> statusList = new List<Status>();
+  public Statistics stats { get; protected set; }
 
-    public Statistics stats { get; protected set; }
+  [SerializeField]
+  protected Animator animator;
 
-    [SerializeField]
-    protected Animator animator;
+  private Transform statusUI;
 
-    private Transform statusUI;
+  [SerializeField]
+  private Transform healthBarPosition;
+  [SerializeField]
+  private Transform head;
 
-    [SerializeField]
-    private Transform healthBarPosition;
-    [SerializeField]
-    private Transform head;
+  [SerializeField]
+  private GameObject stunStars;
 
-    [SerializeField]
-    private GameObject stunStars;
+  [SerializeField]
+  private GameObject healthBarGameObject;
 
-    [SerializeField]
-    private GameObject healthBarGameObject;
-
-    protected GameObject healthBarInstance;
+  protected GameObject healthBarInstance;
 
 
-    protected virtual void Awake()
+  protected virtual void Awake()
+  {
+    GameObject HealthBarCanvas = GameObject.Find("UI/Canvas Healthbar");
+    healthBarInstance = Instantiate(healthBarGameObject, HealthBarCanvas.transform).gameObject;
+
+    healthBar = healthBarInstance.GetComponentInChildren<HealthBar>();
+    selector = healthBarInstance.transform.Find("Selector").GetComponent<Image>();
+    statusUI = healthBarInstance.transform.Find("StatusLayout");
+  }
+
+  private void Start()
+  {
+    GameObject HealthBarCanvas = GameObject.Find("Canvas Healthbar");
+    float x = RectTransformUtility.WorldToScreenPoint(Camera.main, head.position).x;
+    float y = RectTransformUtility.WorldToScreenPoint(Camera.main, healthBarPosition.position).y;
+
+    healthBarInstance.transform.position = new Vector2(x, y);
+  }
+
+  public GameObject GetStunStars()
+  {
+    return stunStars;
+  }
+
+  public bool isAlive()
+  {
+    return (currentHealth > 0);
+  }
+
+  public virtual void TakeDamage(int damage)
+  {
+    if (damage < 0)
+      Debug.LogWarning("damage is negative");
+
+    currentHealth -= damage;
+    Mathf.Clamp(currentHealth, 0, maxHealth);
+    if (currentHealth <= 0)
     {
-        
-        GameObject HealthBarCanvas = GameObject.Find("UI/Canvas Healthbar");
-        healthBarInstance = Instantiate(healthBarGameObject, HealthBarCanvas.transform).gameObject;
-
-        healthBar = healthBarInstance.GetComponentInChildren<HealthBar>();
-        selector = healthBarInstance.transform.Find("Selector").GetComponent<Image>();
-        statusUI = healthBarInstance.transform.Find("StatusLayout");
-
-        
+      gameObject.SetActive(false);
+      healthBarInstance.SetActive(false);
     }
+    PlayAnimation("Touchï¿½");
+    healthBar.SetHealth(currentHealth);
+  }
 
-    private void Start()
+  public void Heal(int heal)
+  {
+    if (heal < 0)
+      Debug.LogWarning("heal is negative");
+
+    currentHealth += heal;
+    currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
+    healthBar.SetHealth(currentHealth);
+  }
+
+  public void UseConsumable(string name)
+  {
+    try
     {
-        GameObject HealthBarCanvas = GameObject.Find("Canvas Healthbar");
-        float x = RectTransformUtility.WorldToScreenPoint(Camera.main, head.position).x;
-        float y = RectTransformUtility.WorldToScreenPoint(Camera.main, healthBarPosition.position).y;
+      var postItem = new PostItemModel(name, 1);
+      Requests.DELETEInventoryItem(PlayerProfile.id, postItem);
+      DungeonManager.instance.inventory[name]--;
 
-        healthBarInstance.transform.position = new Vector2(x, y);
+
+      if (DungeonManager.instance.inventory[name] == 0)
+        DungeonManager.instance.inventory.Remove(name);
     }
-
-    public GameObject GetStunStars()
+    catch (Exception)
     {
-        return stunStars;
+      Debug.LogError("Error while using item: " + name);
     }
+  }
 
-    public bool isAlive()
-    {
-        return (currentHealth > 0);
-    }
+  public bool HasConsumable(string name)
+  {
+    var inventory = DungeonManager.instance.inventory;
+    return inventory.ContainsKey(name) && inventory[name] > 0;
+  }
 
-    public virtual void TakeDamage(int damage)
-    {
-        if (damage < 0)
-            Debug.LogWarning("damage is negative");
+  public void ShowSelector(bool status)
+  {
+    selector.enabled = status;
+  }
 
-        currentHealth -= damage;
-        Mathf.Clamp(currentHealth, 0, maxHealth);
-        if (currentHealth <= 0)
-        {
-            gameObject.SetActive(false);
-            healthBarInstance.SetActive(false);
-        }
-        PlayAnimation("Touché");
-        healthBar.SetHealth(currentHealth);
-    }
+  public List<Status> GetStatus()
+  {
+    return statusList;
+  }
 
-    public void Heal(int heal)
-    {
-        if (heal < 0)
-            Debug.LogWarning("heal is negative");
+  public abstract void AskForAction();
 
-        currentHealth += heal;
-        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
-        healthBar.SetHealth(currentHealth);
-    }
+  public void PlayAnimation(string animation)
+  {
+    animator.SetTrigger(animation + "Trigger");
+  }
 
-    public void AddConsumable(string name, int quantity)
-    {
-        if (quantity < 1)
-            return;
+  public bool IsAffectedByStatus(string name)
+  {
+    return statusList.Find(s => s.name == name) != null;
+  }
 
-        if (CombatManager.Instance.GetCombatAction(name) == null)
-            return;
-        
+  public GameObject AddStatusIcon(string name)
+  {
+    GameObject newStatusGameObject = Instantiate(statusUI.Find("StatusExample").gameObject, statusUI, false);
+    newStatusGameObject.name = name;
+    newStatusGameObject.SetActive(true);
+    Image newStatusImage = newStatusGameObject.GetComponent<Image>();
+    newStatusImage.sprite = CombatManager.Instance.GetStatusSprite(name);
+    return newStatusGameObject;
+  }
 
-        if (inventory.ContainsKey(name))
-            inventory[name] += quantity;
-        else
-            inventory.Add(name, quantity);
-    }
-    public void UseConsumable(string name)
-    {
-        try
-        {
-            inventory[name]--;
-
-            if (inventory[name] == 0)
-                inventory.Remove(name);
-        }
-        catch (Exception)
-        {
-            Debug.LogError("Error while using item: " + name);
-        }
-    }
-
-    public bool HasConsumable(string name)
-    {
-        return inventory.ContainsKey(name) && inventory[name] > 0;
-    }
-
-    public void ShowSelector(bool status)
-    {
-        selector.enabled = status;
-    }
-
-    public List<Status> GetStatus()
-    {
-        return statusList;
-    }
-
-    public abstract void AskForAction();
-
-    public void PlayAnimation(string animation)
-    {
-        animator.SetTrigger(animation + "Trigger");
-    }
-
-    public bool IsAffectedByStatus(string name)
-    {
-        return statusList.Find(s => s.name == name) != null;
-    }
-
-    public GameObject AddStatusIcon(string name)
-    {
-        GameObject newStatusGameObject = Instantiate(statusUI.Find("StatusExample").gameObject, statusUI, false);
-        newStatusGameObject.name = name;
-        newStatusGameObject.SetActive(true);
-        Image newStatusImage = newStatusGameObject.GetComponent<Image>();
-        newStatusImage.sprite = CombatManager.Instance.GetStatusSprite(name);
-        return newStatusGameObject;
-    }
-
-    public void DeleteStatusIcon(Status status)
-    {
-        Destroy(status.StatusObject);
-    }
+  public void DeleteStatusIcon(Status status)
+  {
+    Destroy(status.StatusObject);
+  }
 }
