@@ -290,10 +290,7 @@ public class DungeonManager : MonoBehaviourPunCallbacks
 
   public void HideBonusMessage()
   {
-    if (PhotonNetwork.IsMasterClient)
-    {
-      photonView.RPC("HideBonusCanvas", RpcTarget.All);
-    }
+    HideBonusCanvas();
   }
   [PunRPC]
   public void HideBonusCanvas()

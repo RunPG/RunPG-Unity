@@ -25,6 +25,15 @@ namespace RunPG.Multi
         _ => Rarity.COMMON
       };
     }
+
+    public static CraftItemModel GetFromName(string name, int quantity)
+    {
+      return name switch
+      {
+        "Oeil de Daarun" => new CraftItemModel(12, "Oeil de Daarun", "L'avoir dans sa poche peut confèrer des pouvoirs surréels.", quantity),
+        _ => new CraftItemModel(13, "Bave de slime", "C'est visqueux ...", quantity),
+      };
+    }
   }
 
   static class CraftItemModelMethods
