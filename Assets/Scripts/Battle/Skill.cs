@@ -146,7 +146,7 @@ public class CoupDeBouclier : Skill
 
 public class Chatiment : Skill
 {
-    public override string name => "Châtiment";
+    public override string name => "Chatiment";
     public override PossibleTarget possibleTarget => PossibleTarget.Enemy;
     public override int speed => 50;
     public override float duration => 1.5f;
@@ -313,7 +313,7 @@ public class Embrasement : Skill
 
 public class Tempete : Skill
 {
-    public override string name => "Tempête";
+    public override string name => "Tempete";
     public override PossibleTarget possibleTarget => PossibleTarget.Enemy;
     public override int speed => 50;
     public override float duration => 3f;

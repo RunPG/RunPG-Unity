@@ -23,7 +23,7 @@ public class POIScript : MonoBehaviour
     async void Start()
     {
         id = long.Parse(transform.name);
-        if (id % 4 == 0)
+        if (true)
         {
             dungeon.gameObject.SetActive(true);
             activity = dungeon;
