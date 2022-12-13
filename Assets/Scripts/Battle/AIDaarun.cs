@@ -7,6 +7,8 @@ public class AIDaarun : AICharacter
 
   static readonly List<int> potentialReward = new List<int>() { 0, 1 };
 
+  private bool rewardDroped = false;
+
   public override void AskForAction()
   {
     turn++;
@@ -32,7 +34,8 @@ public class AIDaarun : AICharacter
 
   protected override System.Tuple<string, int> GetMonsterReward()
   {
-    int quantity = potentialReward[UnityEngine.Random.Range(0, potentialReward.Count)];
+    int quantity = rewardDroped ? 0 : potentialReward[UnityEngine.Random.Range(0, potentialReward.Count)];
+    rewardDroped = true;
     return new Tuple<string, int>("Oeil de Daarun", quantity);
   }
 

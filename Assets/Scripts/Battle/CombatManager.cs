@@ -317,7 +317,7 @@ public class CombatManager : MonoBehaviourPun
     var resultText = resultCanvasGroup.transform.Find("Background/Body/Text").GetComponent<TextMeshProUGUI>();
     var rarity = resultCanvasGroup.transform.Find("Background/Body/Rarity").GetComponent<Image>();
     var name = resultCanvasGroup.transform.Find("Background/Body/Name").GetComponent<TextMeshProUGUI>();
-    var description = resultCanvasGroup.transform.Find("Background/Body/Name").GetComponent<TextMeshProUGUI>();
+    var description = resultCanvasGroup.transform.Find("Background/Body/Description").GetComponent<TextMeshProUGUI>();
     if (monsterRewards.Count > 0)
     {
       resultText.gameObject.SetActive(true);
