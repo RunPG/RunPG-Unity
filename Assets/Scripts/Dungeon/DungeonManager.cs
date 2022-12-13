@@ -1,5 +1,6 @@
 using Photon.Pun;
 using RunPG.Multi;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -57,6 +58,19 @@ public class DungeonManager : MonoBehaviourPunCallbacks
   public List<List<Room>> map;
   public int dungeonLevel;
 
+  public Dictionary<string, int> inventory = new Dictionary<string, int>();
+
+  private async void LoadInventory()
+  {
+    var playerInventory = await Requests.GETUserInventory(PlayerProfile.id);
+    var potions = Array.Find(playerInventory, x => x.itemId == 1);
+    var bombs = Array.Find(playerInventory, x => x.itemId == 2);
+    if (potions != null)
+      inventory.Add("Potion de vie", potions.stackSize);
+    if (bombs != null)
+      inventory.Add("Bombe", bombs.stackSize);
+  }
+
   private void Awake()
   {
     if (instance == null)
@@ -67,6 +81,8 @@ public class DungeonManager : MonoBehaviourPunCallbacks
       phtnView.ViewID = 1;
 
       characters = new List<DungeonCharacterInfo>();
+
+      LoadInventory();
 
       Dictionary<string, string> dic = new Dictionary<string, string>();
       dic.Add("username", PlayerProfile.pseudo);
