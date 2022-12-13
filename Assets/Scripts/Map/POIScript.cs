@@ -23,15 +23,15 @@ public class POIScript : MonoBehaviour
     async void Start()
     {
         id = long.Parse(transform.name);
-        if (true)
+        if (id % 4 == 0)
         {
-            dungeon.gameObject.SetActive(true);
-            activity = dungeon;
+            mines.gameObject.SetActive(true);
+            activity = mines;
         }
         else if (id % 4 == 1)
         {
-            forest.gameObject.SetActive(true);
-            activity = forest;
+            dungeon.gameObject.SetActive(true);
+            activity = dungeon;
         }
         else if (id % 4 == 2)
         {
@@ -40,8 +40,8 @@ public class POIScript : MonoBehaviour
         }
         else
         {
-            mines.gameObject.SetActive(true);
-            activity = mines;
+            forest.gameObject.SetActive(true);
+            activity = forest;
         }
 
         ActivityModel availability = await Requests.GetActivityAvailability(PlayerProfile.id, id);
