@@ -26,7 +26,4 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/DemineurScene.unity
     guid: b05fa9e268cf1c0458a13e104f4dbc00
-  - enabled: 1
-    path: Assets/Scenes/MapScene 2.unity
-    guid: 59afc5bdefad1274c92b43ddc67f1992
   m_configObjects: {}

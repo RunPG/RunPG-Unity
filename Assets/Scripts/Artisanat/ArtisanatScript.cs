@@ -219,8 +219,10 @@ public class ArtisanatScript : MonoBehaviour
   {
     foreach (var material in craft.materials)
     {
+      inventory.Find(x => x.itemId == material.id).stackSize -= material.quantity * quantity;
       await Requests.DELETEInventoryItem(PlayerProfile.id, new PostItemModel(material.id, material.quantity * quantity));
     }
+    ReloadArtisanatList();
   }
 
   void showCraftedObject(Equipment equipment)

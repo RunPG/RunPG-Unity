@@ -10,7 +10,7 @@ public class AISlime : AICharacter
   {
     Bond bond = new Bond();
     bond.caster = this;
-    List<Character> enemies = CombatManager.Instance.GetMyEnemies(this);
+    List<Character> enemies = CombatManager.Instance.GetEnemies(this);
     bond.target = enemies[UnityEngine.Random.Range(0, enemies.Count)];
 
     CombatManager.Instance.AddAction(bond);

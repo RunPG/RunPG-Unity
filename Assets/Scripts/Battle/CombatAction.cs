@@ -61,7 +61,7 @@ public class Laser : CombatAction
     public override string name => "Laser";
     public override PossibleTarget possibleTarget => PossibleTarget.Enemy;
     public override int speed => 100;
-    public override float duration => 2f;
+    public override float duration => 3f;
 
     public override void PlayAction()
     {
@@ -75,7 +75,7 @@ public class Laser : CombatAction
         var laser = caster.transform.Find("Daarun/Armature/Bone/Bone.001/Laser/LaserEffect");
         laser.GetComponent<VisualEffect>().Play();
         yield return new WaitForSeconds(1.8f);
-        List<Character> targets = CombatManager.Instance.GetMyAllies(target);
+        List<Character> targets = CombatManager.Instance.GetAllies(target);
         foreach (var t in targets)
         {
             t.TakeDamage(GetDamage(t));

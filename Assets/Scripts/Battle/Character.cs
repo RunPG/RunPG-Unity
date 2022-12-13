@@ -37,6 +37,9 @@ public abstract class Character : MonoBehaviour
     private Transform head;
 
     [SerializeField]
+    private GameObject stunStars;
+
+    [SerializeField]
     private GameObject healthBarGameObject;
 
     protected GameObject healthBarInstance;
@@ -62,6 +65,11 @@ public abstract class Character : MonoBehaviour
         float y = RectTransformUtility.WorldToScreenPoint(Camera.main, healthBarPosition.position).y;
 
         healthBarInstance.transform.position = new Vector2(x, y);
+    }
+
+    public GameObject GetStunStars()
+    {
+        return stunStars;
     }
 
     public bool isAlive()
@@ -91,7 +99,7 @@ public abstract class Character : MonoBehaviour
             Debug.LogWarning("heal is negative");
 
         currentHealth += heal;
-        Mathf.Clamp(currentHealth, 0, maxHealth);
+        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
         healthBar.SetHealth(currentHealth);
     }
 
@@ -151,22 +159,18 @@ public abstract class Character : MonoBehaviour
         return statusList.Find(s => s.name == name) != null;
     }
 
-    public void CleanStun()
-    {
-        statusList.RemoveAll(s => s.GetType() == typeof(StunStatus));
-    }
-
-    public void AddStatusIcon(string name)
+    public GameObject AddStatusIcon(string name)
     {
         GameObject newStatusGameObject = Instantiate(statusUI.Find("StatusExample").gameObject, statusUI, false);
         newStatusGameObject.name = name;
         newStatusGameObject.SetActive(true);
         Image newStatusImage = newStatusGameObject.GetComponent<Image>();
         newStatusImage.sprite = CombatManager.Instance.GetStatusSprite(name);
+        return newStatusGameObject;
     }
 
-    public void DeleteStatusIcon(string name)
+    public void DeleteStatusIcon(Status status)
     {
-        Destroy(statusUI.Find(name).gameObject);
+        Destroy(status.StatusObject);
     }
 }

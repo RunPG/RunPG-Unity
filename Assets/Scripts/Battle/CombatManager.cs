@@ -70,8 +70,12 @@ public class CombatManager : MonoBehaviourPun
     RegisterCombatAction<Attendre>("Attendre");
     RegisterCombatAction<Entaille>("Entaille");
     RegisterCombatAction<Provocation>("Provocation");
+    RegisterCombatAction<CoupDeBouclier>("Coup de bouclier");
+    RegisterCombatAction<Chatiment>("Chatiment");
     RegisterCombatAction<BouleDeFeu>("Boule de feu");
     RegisterCombatAction<Embrasement>("Embrasement");
+    RegisterCombatAction<Tempete>("Tempete");
+    RegisterCombatAction<Stalactite>("Stalactite");
     RegisterCombatAction<HealthPotion>("Potion de vie");
     RegisterCombatAction<Bomb>("Bombe");
     RegisterCombatAction<Bond>("Bond");
@@ -129,23 +133,23 @@ public class CombatManager : MonoBehaviourPun
   }
 
 
-  public List<Character> GetMyAllies(Character myCharacter)
+  public List<Character> GetAllies(Character ofCharacter, bool included = true)
   {
     List<Character> allies = new List<Character>();
     foreach (var character in characters)
     {
-      if (character.CompareTag(myCharacter.tag) && character.isAlive())
+      if ((included || character != ofCharacter) && character.CompareTag(ofCharacter.tag) && character.isAlive())
         allies.Add(character);
     }
     return allies;
   }
 
-  public List<Character> GetMyEnemies(Character myCharacter)
+  public List<Character> GetEnemies(Character ofCharacter)
   {
     List<Character> enemies = new List<Character>();
     foreach (var character in characters)
     {
-      if (!character.CompareTag(myCharacter.tag) && character.isAlive())
+      if (!character.CompareTag(ofCharacter.tag) && character.isAlive())
         enemies.Add(character);
     }
     return enemies;
@@ -211,16 +215,6 @@ public class CombatManager : MonoBehaviourPun
           continue;
         }
 
-        if (characters[i].IsAffectedByStatus("etourdissement"))
-        {
-          characters[i].CleanStun();
-          Attendre idle = new Attendre();
-          idle.target = characters[i];
-          idle.caster = characters[i];
-          queue.Add(idle);
-          continue;
-        }
-
         logger.Log("asking character " + i);
         if (characters[i] as AICharacter && PhotonNetwork.IsMasterClient)
         {
@@ -247,7 +241,11 @@ public class CombatManager : MonoBehaviourPun
 
         if (action.caster.IsAffectedByStatus("Etourdissement"))
         {
-          action.caster.CleanStun();
+          Status status = action.caster.GetStatus().Find(s => s.name == "Etourdissement");
+          ((StunStatus)status).PlayFX(action.caster);
+          yield return new WaitForSeconds(1.5f);
+          action.caster.DeleteStatusIcon(status);
+          action.caster.GetStatus().Remove(status);
           continue;
         }
 
@@ -267,8 +265,8 @@ public class CombatManager : MonoBehaviourPun
             taunt.DecraseTurns();
             if (!taunt.IsAffected())
             {
+              action.caster.DeleteStatusIcon(taunt);
               action.caster.GetStatus().Remove(taunt);
-              action.caster.DeleteStatusIcon("Provocation");
             }
           }
 
@@ -280,7 +278,10 @@ public class CombatManager : MonoBehaviourPun
         yield return new WaitForSeconds(action.duration);
       }
 
-      ResolveBurnStatus();
+      if (ResolveBurnStatus())
+        yield return new WaitForSeconds(1f);
+      if (ResolveElectrifiedStatus())
+        yield return new WaitForSeconds(1f);
 
       if (characters.Where(c => c.isAlive() && c.CompareTag("Team1")).Count() == 0)
       {
@@ -399,12 +400,13 @@ public class CombatManager : MonoBehaviourPun
         int i = statusList.FindIndex(x => x.name == status.name);
         if (i != -1)
         {
+          status.StatusObject = statusList[i].StatusObject;
           statusList[i] = status;
         }
         else
         {
+          status.StatusObject = target.AddStatusIcon(status.name);
           statusList.Add(status);
-          target.AddStatusIcon(status.name);
         }
         break;
       case global::Status.StatusBehaviour.AddDuration:
@@ -415,62 +417,75 @@ public class CombatManager : MonoBehaviourPun
         }
         else
         {
+          status.StatusObject = target.AddStatusIcon(status.name);
           statusList.Add(status);
-          target.AddStatusIcon(status.name);
         }
         break;
       case global::Status.StatusBehaviour.Stack:
+        status.StatusObject = target.AddStatusIcon(status.name);
         statusList.Add(status);
-        target.AddStatusIcon(status.name);
         break;
     }
   }
 
-  private void ResolveBurnStatus()
+  private bool ResolveBurnStatus()
   {
+    bool result = false;
     foreach (var character in characters)
     {
+      if (!character.isAlive())
+        continue;
       List<Status> statusList = character.GetStatus();
       for (int i = statusList.Count - 1; i >= 0; i--)
       {
         if (statusList[i].name == "Brulure")
         {
-          character.TakeDamage(5);
+          result = true;
+          character.TakeDamage(10);
+          ((BurnStatus)statusList[i]).PlayFX(character);
           statusList[i].DecraseTurns();
           if (!statusList[i].IsAffected())
           {
+            character.DeleteStatusIcon(statusList[i]);
             statusList.RemoveAt(i);
-            character.DeleteStatusIcon("Brulure");
           }
         }
       }
     }
+    return result;
   }
 
-  private void ResolveElectrifiedStatus()
+  private bool ResolveElectrifiedStatus()
   {
+    bool result = false;
     foreach (var character in characters)
     {
+      if (!character.isAlive())
+        continue;
       List<Status> statusList = character.GetStatus();
       for (int i = statusList.Count - 1; i >= 0; i--)
       {
         if (statusList[i].name == "Electrocution")
         {
-          character.TakeDamage(5);
-          if (statusList[i].remainingTurns > 1)
+          List<Character> possibleTargets = GetAllies(character, false);
+          if (possibleTargets.Count() > 0)
           {
-            List<Character> possibleTargets = GetMyAllies(character);
-            if (possibleTargets.Count() > 0)
-            {
-              int x = UnityEngine.Random.Range(0, possibleTargets.Count);
-              CombatManager.Instance.AddStatus(new ElectrifiedStatus(statusList[i].remainingTurns - 1), possibleTargets[x]);
-            }
+            result = true;
+            int x = UnityEngine.Random.Range(0, possibleTargets.Count);
+            character.TakeDamage(5);
+            possibleTargets[x].TakeDamage(5);
+            ((ElectrifiedStatus)statusList[i]).PlayFX(character, possibleTargets[x]);
           }
-          statusList.RemoveAt(i);
-          character.DeleteStatusIcon("Electrocution");
+          statusList[i].DecraseTurns();
+          if (!statusList[i].IsAffected())
+          {
+            character.DeleteStatusIcon(statusList[i]);
+            statusList.RemoveAt(i);
+          }
         }
       }
     }
+    return result;
   }
 
   public Sprite GetItemSprite(string itemName)
@@ -529,19 +544,6 @@ public class CombatManager : MonoBehaviourPun
     characters.Add(playerCharacter);
   }
 
-  private void InitMonster(int index)
-  {
-    if (PhotonNetwork.IsMasterClient)
-    {
-      Dictionary<string, string> monster = new Dictionary<string, string>();
-      monster.Add("name", dungeonManager.enemies[index].name);
-      monster.Add("index", index.ToString());
-      monster.Add("length", dungeonManager.enemies.Length.ToString());
-      monster.Add("level", dungeonManager.enemies[index].level.ToString());
-      photonView.RPC("AddMonster", RpcTarget.All, monster);
-    }
-  }
-
   public void AddReward(Tuple<string, int> reward)
   {
     if (reward.Item2 == 0)
@@ -554,6 +556,19 @@ public class CombatManager : MonoBehaviourPun
     else
     {
       monsterRewards.Add(reward.Item1, reward.Item2);
+    }
+  }
+
+  private void InitMonster(int index)
+  {
+    if (PhotonNetwork.IsMasterClient)
+    {
+      Dictionary<string, string> monster = new Dictionary<string, string>();
+      monster.Add("name", dungeonManager.enemies[index].name);
+      monster.Add("index", index.ToString());
+      monster.Add("length", dungeonManager.enemies.Length.ToString());
+      monster.Add("level", dungeonManager.enemies[index].level.ToString());
+      photonView.RPC("AddMonster", RpcTarget.All, monster);
     }
   }
 
