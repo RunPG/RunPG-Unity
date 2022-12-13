@@ -1,9 +1,13 @@
+using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 public class AIDaarun : AICharacter
 {
   private int turn = 0;
+
+  static readonly List<int> potentialReward = new List<int>() { 0, 1 };
+
+  private bool rewardDroped = false;
 
   public override void AskForAction()
   {
@@ -22,10 +26,17 @@ public class AIDaarun : AICharacter
       QueueDeFer queueDeFer = new QueueDeFer();
       queueDeFer.caster = this;
       List<Character> enemies = CombatManager.Instance.GetEnemies(this);
-      queueDeFer.target = enemies[Random.Range(0, enemies.Count)];
+      queueDeFer.target = enemies[UnityEngine.Random.Range(0, enemies.Count)];
 
       CombatManager.Instance.AddAction(queueDeFer);
     }
+  }
+
+  protected override System.Tuple<string, int> GetMonsterReward()
+  {
+    int quantity = rewardDroped ? 0 : potentialReward[UnityEngine.Random.Range(0, potentialReward.Count)];
+    rewardDroped = true;
+    return new Tuple<string, int>("Oeil de Daarun", quantity);
   }
 
   protected override void InitStat(int level)

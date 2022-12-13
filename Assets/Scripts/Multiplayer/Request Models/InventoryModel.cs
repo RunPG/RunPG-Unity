@@ -11,15 +11,15 @@ namespace RunPG.Multi
         public int id;
         public int userId;
         public int stackSize;
-        public int? equipementId;
+        public int? equipmentId;
         public int? itemId;
 
-        public InventoryModel(int id, int userId, int stackSize, int? equipementId, int? itemId)
+        public InventoryModel(int id, int userId, int stackSize, int? equipmentId, int? itemId)
         {
             this.id = id;
             this.userId = userId;
             this.stackSize = stackSize;
-            this.equipementId = equipementId;
+            this.equipmentId = equipmentId;
             this.itemId = itemId;
         }
     }

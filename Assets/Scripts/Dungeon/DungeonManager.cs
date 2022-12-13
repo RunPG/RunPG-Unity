@@ -2,9 +2,11 @@ using Photon.Pun;
 using RunPG.Multi;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class DungeonManager : MonoBehaviourPunCallbacks
 {
@@ -156,23 +158,102 @@ public class DungeonManager : MonoBehaviourPunCallbacks
   {
     photonView.RPC("GiveAll", RpcTarget.All);
   }
+
+  private async Task<Equipment> PostEquipment(NewEquipementModel newEquipment)
+  {
+    var response = await Requests.POSTInventoryEquipement(PlayerProfile.id, newEquipment);
+
+    var equipmentModel = await Requests.GETEquipmentById((int)response.equipmentId);
+    return new Equipment(equipmentModel);
+  }
+
   [PunRPC]
   async void GiveAll()
   {
     this.currentFloor++;
 
-    var bonusCanvas = GameObject.Find("BonusPopUp");
-    DungeonMap.ActiveCanvasGroup(bonusCanvas.GetComponent<CanvasGroup>());
+    var bonusCanvas = GameObject.Find("BonusPopUp").transform;
+    var canvasGroup = bonusCanvas.GetComponent<CanvasGroup>();
+    canvasGroup.alpha = 1;
+    canvasGroup.blocksRaycasts = true;
+    canvasGroup.interactable = true;
 
-    var equipement = (await Requests.GETEquipements())[0];
+    var random = new System.Random();
+    var randomValue = random.Next(1, 21);
+    var equipmentId = randomValue < 16 ? randomValue : randomValue + 10;
+    var equipement = (await Requests.GETEquipements(equipmentId))[0];
+    NewEquipementModel newEquipment = new NewEquipementModel(equipement.id, StatisticsModel.GenerateStatistics(PlayerProfile.characterInfo.level, equipement.heroClass, equipement.rarity));
 
-    var text = bonusCanvas.transform.Find("Background/ResultText").GetComponent<TextMeshProUGUI>();
-    text.text = "Vous avez gagn�:\n" + equipement.name;
+    var postEquipment = PostEquipment(newEquipment);
 
-    var newEquipment = new NewEquipementModel(equipement.id.ToString(), new StatisticsModel(-1, 1, 1, 1, 1, 1, 1, 1));
+    var bodyCanvas = bonusCanvas.Find("Background/Body");
+    bodyCanvas.Find("Item/Rarity").GetComponent<Image>().sprite = equipement.rarity.GetItemSprite();
+    bodyCanvas.Find("Item/Rarity/Item").GetComponent<Image>().sprite = equipement.GetEquipmentSprite();
+    bodyCanvas.Find("Item/Name").GetComponent<TextMeshProUGUI>().text = equipement.name;
+    bodyCanvas.Find("Item/LevelClass").GetComponent<TextMeshProUGUI>().text = string.Format("Nv. {0} - {1}", newEquipment.statistics.level, equipement.heroClass.GetName());
+    bodyCanvas.Find("Item/Description").GetComponent<TextMeshProUGUI>().text = equipement.description;
 
-    await Requests.POSTInventoryEquipement(PlayerProfile.id, newEquipment);
+    var statsCanvas = bodyCanvas.Find("Statistics");
+    statsCanvas.Find("Vitality/Value").GetComponent<TextMeshProUGUI>().text = newEquipment.statistics.vitality.ToString();
+    statsCanvas.Find("Strength/Value").GetComponent<TextMeshProUGUI>().text = newEquipment.statistics.strength.ToString();
+    statsCanvas.Find("Defense/Value").GetComponent<TextMeshProUGUI>().text = newEquipment.statistics.defense.ToString();
+    statsCanvas.Find("Power/Value").GetComponent<TextMeshProUGUI>().text = newEquipment.statistics.power.ToString();
+    statsCanvas.Find("Resistance/Value").GetComponent<TextMeshProUGUI>().text = newEquipment.statistics.resistance.ToString();
+    statsCanvas.Find("Precision/Value").GetComponent<TextMeshProUGUI>().text = newEquipment.statistics.precision.ToString();
 
+    var buttonCanvas = bodyCanvas.Find("Buttons");
+    var closeButton = buttonCanvas.Find("Close").GetComponent<Button>();
+    closeButton.onClick.RemoveAllListeners();
+    closeButton.onClick.AddListener(() => { DungeonMap.HideBonus(); });
+
+    var equipButton = buttonCanvas.Find("Equip").GetComponent<Button>();
+    equipButton.onClick.RemoveAllListeners();
+    equipButton.interactable = equipement.heroClass == PlayerProfile.characterInfo.heroClass;
+    equipButton.onClick.AddListener(async () =>
+    {
+      var equipment = await postEquipment;
+      await Equip(equipment);
+      DungeonMap.HideBonus();
+    });
+  }
+
+  private async Task Equip(Equipment equipment)
+  {
+    PlayerEquipmentModel playerEquipment = new PlayerEquipmentModel(PlayerProfile.characterInfo.helmet.id, PlayerProfile.characterInfo.chestplate.id,
+    PlayerProfile.characterInfo.gloves.id, PlayerProfile.characterInfo.leggings.id, PlayerProfile.characterInfo.weapon.id);
+    switch (equipment.type)
+    {
+      case EquipmentType.WEAPON:
+        playerEquipment.weaponId = equipment.id;
+        if (!await Requests.POSTPlayerEquipment(PlayerProfile.id, playerEquipment))
+          return;
+        PlayerProfile.characterInfo.weapon = equipment;
+        break;
+      case EquipmentType.HELMET:
+        playerEquipment.helmetId = equipment.id;
+        if (!await Requests.POSTPlayerEquipment(PlayerProfile.id, playerEquipment))
+          return;
+        PlayerProfile.characterInfo.helmet = equipment;
+        break;
+      case EquipmentType.CHESTPLATE:
+        playerEquipment.chestplateId = equipment.id;
+        if (!await Requests.POSTPlayerEquipment(PlayerProfile.id, playerEquipment))
+          return;
+        PlayerProfile.characterInfo.chestplate = equipment;
+        break;
+      case EquipmentType.GLOVES:
+        playerEquipment.glovesId = equipment.id;
+        if (!await Requests.POSTPlayerEquipment(PlayerProfile.id, playerEquipment))
+          return;
+        PlayerProfile.characterInfo.gloves = equipment;
+        break;
+      case EquipmentType.LEGGINGS:
+        playerEquipment.leggingsId = equipment.id;
+        if (!await Requests.POSTPlayerEquipment(PlayerProfile.id, playerEquipment))
+          return;
+        PlayerProfile.characterInfo.leggings = equipment;
+        break;
+    }
   }
 
 
@@ -209,10 +290,7 @@ public class DungeonManager : MonoBehaviourPunCallbacks
 
   public void HideBonusMessage()
   {
-    if (PhotonNetwork.IsMasterClient)
-    {
-      photonView.RPC("HideBonusCanvas", RpcTarget.All);
-    }
+    HideBonusCanvas();
   }
   [PunRPC]
   public void HideBonusCanvas()

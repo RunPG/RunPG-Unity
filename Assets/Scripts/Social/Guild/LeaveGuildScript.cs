@@ -26,6 +26,7 @@ public class LeaveGuildScript : MonoBehaviour
         var guild = guildScript.guild; 
         guild.members = guild.members.Where(user => user.id != PlayerProfile.id).ToList();
         await Requests.DELETELeaveGuild(PlayerProfile.id);
+        await NotificationManagerScript.instance.ClearGuildNotification();
         PlayerProfile.guildId = 0;
         PlayerProfile.isGuildOwner = false;
 

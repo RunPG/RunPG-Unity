@@ -1,4 +1,5 @@
 using Photon.Pun;
+using RunPG.Multi;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -6,7 +7,6 @@ using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-
 
 public class CombatManager : MonoBehaviourPun
 {
@@ -37,17 +37,23 @@ public class CombatManager : MonoBehaviourPun
   private GameObject daarunPrefab;
 
   [SerializeField]
-  private List<Sprite> Items;
+  private List<Sprite> ItemSprites = new List<Sprite>();
 
   [SerializeField]
   private List<Sprite> Status;
 
   [SerializeField]
   private GameObject ResultScreen;
+  [SerializeField]
+  private Sprite LooseSprite;
+  [SerializeField]
+  private Sprite WinSprite;
 
   private List<CombatAction> queue = new List<CombatAction>();
 
   private DungeonManager dungeonManager;
+
+  private Dictionary<string, int> monsterRewards = new Dictionary<string, int>();
 
   private void Awake()
   {
@@ -101,7 +107,6 @@ public class CombatManager : MonoBehaviourPun
   public void AddAction(CombatAction action)
   {
     Dictionary<string, string> dataToShare = new Dictionary<string, string>();
-    dataToShare.Add("ally", "true");
     dataToShare.Add("name", action.caster.characterName);
     dataToShare.Add("target", action.target.characterName);
     dataToShare.Add("action", action.name);
@@ -194,6 +199,7 @@ public class CombatManager : MonoBehaviourPun
 
   private IEnumerator Combat()
   {
+    var victory = true;
     while (true)
     {
       queue.Clear();
@@ -252,7 +258,6 @@ public class CombatManager : MonoBehaviourPun
             || action.possibleTarget == CombatAction.PossibleTarget.All))
         {
           TauntStatus taunt = (TauntStatus)action.caster.GetStatus().Find(x => x.name == "Provocation");
-          print(taunt.remainingTurns);
           if (taunt != null)
           {
             action.target = taunt.GetTaunter();
@@ -279,16 +284,12 @@ public class CombatManager : MonoBehaviourPun
 
       if (characters.Where(c => c.isAlive() && c.CompareTag("Team1")).Count() == 0)
       {
-        ResultScreen.GetComponent<CanvasGroup>().alpha = 1;
-        ResultScreen.GetComponentInChildren<TextMeshProUGUI>().text = "D�faite";
-        ResultScreen.GetComponentInChildren<TextMeshProUGUI>().color = Color.red;
+        victory = false;
         break;
       }
       else if (characters.Where(c => c.isAlive() && c.CompareTag("Team2")).Count() == 0)
       {
-        ResultScreen.GetComponent<CanvasGroup>().alpha = 1;
-        ResultScreen.GetComponentInChildren<TextMeshProUGUI>().text = "Victoire";
-        ResultScreen.GetComponentInChildren<TextMeshProUGUI>().color = Color.yellow;
+        victory = true;
         break;
       }
     }
@@ -308,9 +309,61 @@ public class CombatManager : MonoBehaviourPun
 
     DungeonManager.instance.currentFloor += 1;
 
-    yield return new WaitForSeconds(1);
+    var resultCanvasGroup = ResultScreen.GetComponent<CanvasGroup>();
+    var resultTitle = resultCanvasGroup.transform.Find("Background/Header/Title").GetComponent<TextMeshProUGUI>();
+    resultTitle.text = victory ? "Victoire" : "Défaite";
+    resultTitle.color = victory ? Color.yellow : Color.red;
 
-    SceneManager.LoadScene("DungeonScene");
+    var resultText = resultCanvasGroup.transform.Find("Background/Body/Text").GetComponent<TextMeshProUGUI>();
+    var rarity = resultCanvasGroup.transform.Find("Background/Body/Rarity").GetComponent<Image>();
+    var name = resultCanvasGroup.transform.Find("Background/Body/Name").GetComponent<TextMeshProUGUI>();
+    var description = resultCanvasGroup.transform.Find("Background/Body/Description").GetComponent<TextMeshProUGUI>();
+    if (monsterRewards.Count > 0)
+    {
+      resultText.gameObject.SetActive(true);
+      rarity.gameObject.SetActive(true);
+      name.gameObject.SetActive(true);
+      description.gameObject.SetActive(true);
+
+      var monsterReward = monsterRewards.Keys.ElementAt(0);
+      var quantity = monsterRewards[monsterReward];
+      var itemModel = CraftItemModel.GetFromName(monsterReward, quantity);
+      var newItem = new PostItemModel(itemModel.id, quantity);
+
+      Requests.POSTInventoryItem(PlayerProfile.id, newItem);
+
+      rarity.sprite = itemModel.rarity.GetItemSprite();
+      rarity.transform.Find("Image").GetComponent<Image>().sprite = itemModel.GetSprite();
+      rarity.transform.Find("Quantity").GetComponent<TextMeshProUGUI>().text = quantity.ToString();
+      name.text = itemModel.name;
+      description.text = itemModel.description;
+    }
+    else
+    {
+      resultText.gameObject.SetActive(false);
+      rarity.gameObject.SetActive(false);
+      name.gameObject.SetActive(false);
+      description.gameObject.SetActive(false);
+    }
+
+    var resultObject = resultCanvasGroup.transform.Find("Background/Body/Button");
+    var resultButton = resultObject.GetComponent<Button>();
+    var resultButtonImage = resultObject.GetComponent<Image>();
+    var resultButtonText = resultObject.Find("Text").GetComponent<TextMeshProUGUI>();
+    resultButtonImage.sprite = victory ? WinSprite : LooseSprite;
+    resultButtonText.text = victory ? "Continuer" : "Quitter";
+    resultButton.onClick.RemoveAllListeners();
+    resultButton.onClick.AddListener(() =>
+    {
+      if (PhotonNetwork.IsMasterClient)
+        photonView.RPC("LeaveDungeon", RpcTarget.All);
+      else
+        LeaveDungeon();
+    });
+
+    resultCanvasGroup.alpha = 1;
+    resultCanvasGroup.blocksRaycasts = true;
+    resultCanvasGroup.interactable = true;
   }
 
   public bool VerifyTarget(CombatAction action)
@@ -489,6 +542,21 @@ public class CombatManager : MonoBehaviourPun
     characters.Add(playerCharacter);
   }
 
+  public void AddReward(Tuple<string, int> reward)
+  {
+    if (reward.Item2 == 0)
+      return;
+
+    if (monsterRewards.ContainsKey(reward.Item1))
+    {
+      monsterRewards[reward.Item1] += reward.Item2;
+    }
+    else
+    {
+      monsterRewards.Add(reward.Item1, reward.Item2);
+    }
+  }
+
   private void InitMonster(int index)
   {
     if (PhotonNetwork.IsMasterClient)
@@ -528,6 +596,12 @@ public class CombatManager : MonoBehaviourPun
     Debug.Log("InitMonster name ==> " + AICharacter.name);
 
     characters.Add(AICharacter);
+  }
+
+  [PunRPC]
+  void LeaveDungeon()
+  {
+    SceneManager.LoadScene("DungeonScene");
   }
 
 }

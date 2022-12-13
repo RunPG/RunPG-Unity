@@ -59,7 +59,7 @@ public class AddFriendScript : MonoBehaviour
             UserCharacterModel userCharacterModel = await Requests.GETUserCharacter(userModel.id);
             friendTransform.Find("Class").GetComponent<Image>().sprite = userCharacterModel.character.heroClass.GetSprite();
             friendTransform.Find("Name").GetComponent<TextMeshProUGUI>().text = userModel.name;
-            friendTransform.Find("Level").GetComponent<TextMeshProUGUI>().text = string.Format("Lv. {0}", userCharacterModel.statistics.level);
+            friendTransform.Find("Level/Value").GetComponent<TextMeshProUGUI>().text = userCharacterModel.statistics.level.ToString();
 
             NotificationModel notificationModel = await Requests.GETNotificationsByTypeBySender(userModel.id, NotificationType.FRIENDLIST, PlayerProfile.id);
             if (notificationModel != null)

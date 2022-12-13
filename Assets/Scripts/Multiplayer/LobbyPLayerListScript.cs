@@ -103,7 +103,7 @@ public class LobbyPLayerListScript : MonoBehaviour
             Transform friendObject = Instantiate(friendPrefab, playerListLayout.transform).transform;
             friendObject.Find("Class").GetComponent<Image>().sprite = friend.heroClass.GetSprite();
             friendObject.Find("Name").GetComponent<TextMeshProUGUI>().text = friend.name;
-            friendObject.Find("Level").GetComponent<TextMeshProUGUI>().text = string.Format("Lv. {0}", friend.level);
+            friendObject.Find("Level/Value").GetComponent<TextMeshProUGUI>().text = friend.level.ToString();
             friendObject.Find("Invite").GetComponent<Button>().onClick.AddListener(() => {
                 InviteFriend(friend);
                 friendObject.Find("Invite").GetComponent<Image>().sprite = Resources.Load<Sprite>("Social/Check");
