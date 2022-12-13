@@ -200,8 +200,9 @@ public class ArtisanatScript : MonoBehaviour
 
   async Task<Equipment> CraftNewEquipement(EquipmentBaseModel equipmentBase)
   {
-    StatisticsModel statistics = StatisticsModel.GenerateStatistics(PlayerProfile.characterInfo.level, equipmentBase.heroClass, equipmentBase.rarity);
-
+    StatisticsModel statistics = new StatisticsModel(0, 5, 0, 1, 2, 0, 2, 0);
+    if (PlayerProfile.characterInfo.heroClass == HeroClass.MAGE)
+      statistics = new StatisticsModel(0, 5, 0, 0, 0, 4, 0, 1);
     NewEquipementModel equipment = new NewEquipementModel(equipmentBase.id, statistics);
     var craftedEquipment = await Requests.POSTInventoryEquipement(PlayerProfile.id, equipment);
     var equipmentModel = await Requests.GETEquipmentById(craftedEquipment.equipmentId.Value);

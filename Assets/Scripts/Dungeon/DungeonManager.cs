@@ -336,7 +336,7 @@ public class DungeonManager : MonoBehaviourPunCallbacks
   public DungeonMonsterInfo[] generateBossEnemies()
   {
     DungeonManager.DungeonMonsterInfo[] bossEnemies = new DungeonManager.DungeonMonsterInfo[1];
-    bossEnemies[0] = new DungeonManager.DungeonMonsterInfo("Daarun", 5);
+    bossEnemies[0] = new DungeonManager.DungeonMonsterInfo("Daarun", 6);
     return bossEnemies;
   }
 
