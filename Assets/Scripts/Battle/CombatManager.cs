@@ -7,6 +7,7 @@ using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class CombatManager : MonoBehaviourPun
 {
@@ -488,7 +489,7 @@ public class CombatManager : MonoBehaviourPun
 
   public Sprite GetItemSprite(string itemName)
   {
-    foreach (var elt in Items)
+    foreach (var elt in ItemSprites)
     {
       if (elt.name == itemName)
       {

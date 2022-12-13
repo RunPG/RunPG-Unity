@@ -6195,13 +6195,15 @@ MonoBehaviour:
     type: 3}
   daarunPrefab: {fileID: 2650298994664610122, guid: aa683589617e5f04e9e566a8730bc104,
     type: 3}
-  Items: []
+  ItemSprites: []
   Status:
   - {fileID: 21300000, guid: a8394b741139f1f43a20f238e80e106f, type: 3}
   - {fileID: 21300000, guid: abda633ed73468a4990e133994cf0b3a, type: 3}
   - {fileID: 21300000, guid: 513b408c54129d940962d8a7286641cc, type: 3}
   - {fileID: 21300000, guid: 33526b296bbfa4f4787e3fa377faa1d1, type: 3}
   ResultScreen: {fileID: 486151545}
+  LooseSprite: {fileID: 21300000, guid: 16ee6a6282f38b9439a962f4a743dfc8, type: 3}
+  WinSprite: {fileID: 21300000, guid: c75701a1fa89ad841b9460488310a49c, type: 3}
 --- !u!4 &1287583515
 Transform:
   m_ObjectHideFlags: 0
