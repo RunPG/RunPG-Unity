@@ -312,7 +312,7 @@ public class DungeonManager : MonoBehaviourPunCallbacks
     DungeonManager.DungeonMonsterInfo[] roomEnemies = new DungeonManager.DungeonMonsterInfo[difficulty];
     for (int k = 0; k < difficulty; k++)
     {
-      roomEnemies[k] = new DungeonManager.DungeonMonsterInfo("Slime", dungeonLevel);
+      roomEnemies[k] = new DungeonManager.DungeonMonsterInfo("Slime", 5);
     }
     return roomEnemies;
   }
@@ -320,7 +320,7 @@ public class DungeonManager : MonoBehaviourPunCallbacks
   public DungeonMonsterInfo[] generateBossEnemies()
   {
     DungeonManager.DungeonMonsterInfo[] bossEnemies = new DungeonManager.DungeonMonsterInfo[1];
-    bossEnemies[0] = new DungeonManager.DungeonMonsterInfo("Daarun", dungeonLevel);
+    bossEnemies[0] = new DungeonManager.DungeonMonsterInfo("Daarun", 5);
     return bossEnemies;
   }
 
