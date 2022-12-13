@@ -103,6 +103,47 @@ public class Provocation : Skill
     }
 }
 
+public class CoupDeBouclier : Skill
+{
+    public override string name => "Coup de bouclier";
+    public override PossibleTarget possibleTarget => PossibleTarget.Enemy;
+    public override int speed => 200;
+    public override float duration => 1f;
+
+    public override int cooldown => 0;
+
+    public override void PlayAction()
+    {
+        base.PlayAction();
+        caster.PlayAnimation("CoupDeBouclier");
+        CombatManager.Instance.StartCoroutine(DoAction());
+    }
+
+    private IEnumerator DoAction()
+    {
+        yield return new WaitForSeconds(0.4f);
+
+        if (Random.Range(0, 100) < 100)
+        {
+            CombatManager.Instance.AddStatus(new StunStatus(), target);
+        }
+        target.TakeDamage(GetDamage());
+    }
+
+    private int GetDamage()
+    {
+        float attackMultiplier = (float)caster.stats.strength / target.stats.defense;
+        float critMultiplier = 1f;
+
+        if (caster.stats.RollCrit())
+        {
+            critMultiplier = caster.stats.GetCritMultiplier();
+        }
+
+        return Mathf.RoundToInt((10 + 5 * caster.level) * attackMultiplier * critMultiplier);
+    }
+}
+
 public class BouleDeFeu : Skill
 {
     public override string name => "Boule de feu";

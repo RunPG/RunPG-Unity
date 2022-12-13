@@ -37,6 +37,9 @@ public abstract class Character : MonoBehaviour
     private Transform head;
 
     [SerializeField]
+    private GameObject stunStars;
+
+    [SerializeField]
     private GameObject healthBarGameObject;
 
     protected GameObject healthBarInstance;
@@ -62,6 +65,11 @@ public abstract class Character : MonoBehaviour
         float y = RectTransformUtility.WorldToScreenPoint(Camera.main, healthBarPosition.position).y;
 
         healthBarInstance.transform.position = new Vector2(x, y);
+    }
+
+    public GameObject GetStunStars()
+    {
+        return stunStars;
     }
 
     public bool isAlive()
@@ -149,11 +157,6 @@ public abstract class Character : MonoBehaviour
     public bool IsAffectedByStatus(string name)
     {
         return statusList.Find(s => s.name == name) != null;
-    }
-
-    public void CleanStun()
-    {
-        statusList.RemoveAll(s => s.GetType() == typeof(StunStatus));
     }
 
     public GameObject AddStatusIcon(string name)

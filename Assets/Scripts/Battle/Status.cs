@@ -49,6 +49,28 @@ public class StunStatus : Status
     {
         remainingTurns = 1;
     }
+
+    public void PlayFX(Character target)
+    {
+        CombatManager.Instance.StartCoroutine(FXCoroutine(target));
+    }
+
+    private IEnumerator FXCoroutine(Character target)
+    {
+        yield return new WaitForSeconds(0.1f);
+        GameObject stunStars = target.GetStunStars();
+        stunStars.SetActive(true);
+        float duration = 1.3f;
+        float elapsedTime = 0f;
+        while (elapsedTime < duration)
+        {
+            elapsedTime += Time.deltaTime;
+            stunStars.transform.Rotate(0, Time.deltaTime * 360, 0);
+            yield return null;
+        }
+        stunStars.SetActive(false);
+        yield return new WaitForSeconds(0.1f);
+    }
 }
 
 public class TauntStatus : Status

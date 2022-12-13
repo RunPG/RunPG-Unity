@@ -64,6 +64,7 @@ public class CombatManager : MonoBehaviourPun
         RegisterCombatAction<Attendre>("Attendre");
         RegisterCombatAction<Entaille>("Entaille");
         RegisterCombatAction<Provocation>("Provocation");
+        RegisterCombatAction<CoupDeBouclier>("Coup de bouclier");
         RegisterCombatAction<BouleDeFeu>("Boule de feu");
         RegisterCombatAction<Embrasement>("Embrasement");
         RegisterCombatAction<Tempete>("Tempete");
@@ -207,16 +208,6 @@ public class CombatManager : MonoBehaviourPun
                     continue;
                 }
 
-                if (characters[i].IsAffectedByStatus("etourdissement"))
-                {
-                    characters[i].CleanStun();
-                    Attendre idle = new Attendre();
-                    idle.target = characters[i];
-                    idle.caster = characters[i];
-                    queue.Add(idle);
-                    continue;
-                }
-
                 logger.Log("asking character " + i);
                 if (characters[i] as AICharacter && PhotonNetwork.IsMasterClient)
                 {
@@ -243,7 +234,11 @@ public class CombatManager : MonoBehaviourPun
 
                 if (action.caster.IsAffectedByStatus("Etourdissement"))
                 {
-                    action.caster.CleanStun();
+                    Status status = action.caster.GetStatus().Find(s => s.name == "Etourdissement");
+                    ((StunStatus)status).PlayFX(action.caster);
+                    yield return new WaitForSeconds(1.5f);
+                    action.caster.DeleteStatusIcon(status);
+                    action.caster.GetStatus().Remove(status);
                     continue;
                 }
 
@@ -351,13 +346,12 @@ public class CombatManager : MonoBehaviourPun
                 int i = statusList.FindIndex(x => x.name == status.name);
                 if (i != -1)
                 {
-                    statusList[i] = status;
+                    statusList[i].remainingTurns = status.remainingTurns;
                 }
                 else
                 {
                     status.StatusObject = target.AddStatusIcon(status.name);
                     statusList.Add(status);
-
                 }
                 break;
             case global::Status.StatusBehaviour.AddDuration:

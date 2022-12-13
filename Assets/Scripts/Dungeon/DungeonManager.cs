@@ -140,7 +140,7 @@ public class DungeonManager : MonoBehaviourPunCallbacks
         Dictionary<string, string> dic = (Dictionary<string, string>)obj;
 
         if (dic["heroClass"] == "Paladin")
-            characters.Add(new DungeonCharacterInfo(dic["username"], int.Parse(dic["level"]) , "Paladin", new string[4] { "Entaille", "Provocation", "Attendre", "Attendre" },
+            characters.Add(new DungeonCharacterInfo(dic["username"], int.Parse(dic["level"]) , "Paladin", new string[4] { "Entaille", "Provocation", "Coup de bouclier", "Attendre" },
                 new Statistics(int.Parse(dic["vitality"]), int.Parse(dic["strength"]), int.Parse(dic["defense"]), int.Parse(dic["power"]), int.Parse(dic["resistance"]), int.Parse(dic["precision"]))));
         else
             characters.Add(new DungeonCharacterInfo(dic["username"], int.Parse(dic["level"]), "Sorcier", new string[4] { "Boule de feu", "Stalactite", "Embrasement", "Tempete" },
