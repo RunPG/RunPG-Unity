@@ -235,7 +235,16 @@ public class CreateOfferPopUp : MonoBehaviour
         newItem.Find("Quantity").GetComponent<TextMeshProUGUI>().text = equipment.stackSize.ToString();
         Button itemButton = newItem.Find("Button").GetComponent<Button>();
         itemButton.gameObject.SetActive(true);
-        itemButton.GetComponentInChildren<TextMeshProUGUI>().text = "Sélectionner";
+        if (selectedEquipment.id == equipment.id)
+        {
+          itemButton.GetComponentInChildren<TextMeshProUGUI>().text = "Choisi";
+          itemButton.GetComponent<Image>().sprite = choosedButtonSprite;
+        }
+        else
+        {
+          itemButton.GetComponentInChildren<TextMeshProUGUI>().text = "Sélectionner";
+          itemButton.GetComponent<Image>().sprite = selectButtonSprite;
+        }
         itemButton.onClick.AddListener(() => SelectEquipment(itemButton, equipment));
         continue;
       }
@@ -275,7 +284,16 @@ public class CreateOfferPopUp : MonoBehaviour
       var isEquiped = equipedItem.id == equipment.id;
 
       Button button = newEquipment.Find("Button").GetComponent<Button>();
-      button.GetComponentInChildren<TextMeshProUGUI>().text = "Sélectionner";
+      if (selectedEquipment != null && selectedEquipment.id == equipment.id)
+      {
+        button.GetComponentInChildren<TextMeshProUGUI>().text = "Choisi";
+        button.GetComponent<Image>().sprite = choosedButtonSprite;
+      }
+      else
+      {
+        button.GetComponentInChildren<TextMeshProUGUI>().text = "Sélectionner";
+        button.GetComponent<Image>().sprite = selectButtonSprite;
+      }
       button.onClick.AddListener(() => SelectEquipment(button, equipment)
       );
 
