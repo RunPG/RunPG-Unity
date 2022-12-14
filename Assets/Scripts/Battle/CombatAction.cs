@@ -52,7 +52,7 @@ public class Bond : CombatAction
         {
             critMultiplier = caster.stats.GetCritMultiplier();
         }
-        return Mathf.RoundToInt((10 + 4 * caster.level) * attackMultiplier * critMultiplier);
+        return Mathf.RoundToInt((3 * caster.level) * attackMultiplier * critMultiplier);
     }
 }
 
@@ -92,7 +92,7 @@ public class Laser : CombatAction
             critMultiplier = caster.stats.GetCritMultiplier();
         }
 
-        return Mathf.RoundToInt((10 + 4 * caster.level) * attackMultiplier * critMultiplier);
+        return Mathf.RoundToInt((4 * caster.level) * attackMultiplier * critMultiplier);
     }
 }
 
@@ -100,7 +100,7 @@ public class QueueDeFer : CombatAction
 {
     public override string name => "Queue de fer";
     public override PossibleTarget possibleTarget => PossibleTarget.Enemy;
-    public override int speed => 300;
+    public override int speed => 400;
     public override float duration => 1.2f;
 
     public override void PlayAction()
@@ -117,7 +117,7 @@ public class QueueDeFer : CombatAction
 
     private int GetDamage()
     {
-        float attackMultiplier = (float)caster.stats.power / target.stats.resistance;
+        float attackMultiplier = (float)caster.stats.strength / target.stats.defense;
         float critMultiplier = 1f;
 
         if (caster.stats.RollCrit())
@@ -125,6 +125,6 @@ public class QueueDeFer : CombatAction
             critMultiplier = caster.stats.GetCritMultiplier();
         }
 
-        return Mathf.RoundToInt((10 + 4 * caster.level) * attackMultiplier * critMultiplier);
+        return Mathf.RoundToInt((3 * caster.level) * attackMultiplier * critMultiplier);
     }
 }

@@ -41,6 +41,6 @@ public class AIDaarun : AICharacter
 
   protected override void InitStat(int level)
   {
-    stats = new Statistics(5, 5, 10 + level * 3, 5 + level * 3, 10 + level * 3, 10 + level * 3);
+    stats = new Statistics(12 + level * 3, 12 + level * 3, 12 + level * 3, 12 + level * 3, 12 + level * 3, 12 + level * 3);
   }
 }

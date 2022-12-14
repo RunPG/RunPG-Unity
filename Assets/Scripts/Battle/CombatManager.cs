@@ -472,8 +472,8 @@ public class CombatManager : MonoBehaviourPun
           {
             result = true;
             int x = UnityEngine.Random.Range(0, possibleTargets.Count);
-            character.TakeDamage(5);
-            possibleTargets[x].TakeDamage(5);
+            character.TakeDamage(10);
+            possibleTargets[x].TakeDamage(10);
             ((ElectrifiedStatus)statusList[i]).PlayFX(character, possibleTargets[x]);
           }
           statusList[i].DecraseTurns();
