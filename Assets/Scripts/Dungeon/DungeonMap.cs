@@ -48,7 +48,7 @@ public class DungeonMap : MonoBehaviourPun
         DisableCanvasGroup(MapCanvasGroup, false);
         LeaveButton.SetActive(false);
         StatusButton.SetActive(false);
-        ResultText.text = "D�faite";
+        ResultText.text = "Défaite";
         ResultText.color = Color.yellow;
         ActiveCanvasGroup(ResultCanvasGroup);
 
