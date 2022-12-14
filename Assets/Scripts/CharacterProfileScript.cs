@@ -201,6 +201,7 @@ public class CharacterProfileScript : MonoBehaviour
       SetLevelClass(PlayerProfile.characterInfo.level, PlayerProfile.characterInfo.heroClass);
       RefreshXp();
       RefreshStat();
+      ResetInventory();
     }
   }
 
