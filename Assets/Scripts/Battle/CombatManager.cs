@@ -278,6 +278,8 @@ public class CombatManager : MonoBehaviourPun
         yield return new WaitForSeconds(action.duration);
       }
 
+      RemoveUnusedTaunt();
+
       if (ResolveBurnStatus())
         yield return new WaitForSeconds(1f);
       if (ResolveElectrifiedStatus())
@@ -486,6 +488,28 @@ public class CombatManager : MonoBehaviourPun
       }
     }
     return result;
+  }
+
+  private void RemoveUnusedTaunt()
+  {
+    foreach (var character in characters)
+    {
+      if (!character.isAlive())
+        continue;
+      List<Status> statusList = character.GetStatus();
+      for (int i = statusList.Count - 1; i >= 0; i--)
+      {
+        if (statusList[i].name == "Provocation")
+        {
+          TauntStatus taunt = (TauntStatus)statusList[i];
+          if (!taunt.GetTaunter().isAlive())
+          {
+            character.DeleteStatusIcon(statusList[i]);
+            statusList.RemoveAt(i);
+          }
+        }
+      }
+    }
   }
 
   public Sprite GetItemSprite(string itemName)
