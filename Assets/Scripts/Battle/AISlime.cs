@@ -18,7 +18,7 @@ public class AISlime : AICharacter
 
   protected override void InitStat(int level)
   {
-    stats = new Statistics(5, 5, 10 + level * 3, 5 + level * 3, 10 + level * 3, 10 + level * 3);
+    stats = new Statistics(10 + level * 5, 5 + level * 3, 8 + level * 3, 4, 8 + level * 3, 5);
   }
 
   protected override Tuple<string, int> GetMonsterReward()

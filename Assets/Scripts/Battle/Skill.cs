@@ -62,7 +62,7 @@ public class Entaille : Skill
             critMultiplier = caster.stats.GetCritMultiplier();
         }
 
-        return Mathf.RoundToInt((30 + 10 * caster.level) * attackMultiplier * critMultiplier);
+        return Mathf.RoundToInt((12 * caster.level) * attackMultiplier * critMultiplier);
     }
 }
 
@@ -70,7 +70,7 @@ public class Provocation : Skill
 {
     public override string name => "Provocation";
     public override PossibleTarget possibleTarget => PossibleTarget.Enemy;
-    public override int speed => 300;
+    public override int speed => 400;
     public override float duration => 1.5f;
 
     public override int cooldown => 2;
@@ -140,7 +140,7 @@ public class CoupDeBouclier : Skill
             critMultiplier = caster.stats.GetCritMultiplier();
         }
 
-        return Mathf.RoundToInt((10 + 5 * caster.level) * attackMultiplier * critMultiplier);
+        return Mathf.RoundToInt((6 * caster.level) * attackMultiplier * critMultiplier);
     }
 }
 
@@ -199,7 +199,7 @@ public class Chatiment : Skill
 
     private int GetDamage()
     {
-        float attackMultiplier = (float)caster.stats.strength / target.stats.defense;
+        float attackMultiplier = (float)caster.stats.power / target.stats.resistance;
         float critMultiplier = 1f;
 
         if (caster.stats.RollCrit())
@@ -207,7 +207,7 @@ public class Chatiment : Skill
             critMultiplier = caster.stats.GetCritMultiplier();
         }
 
-        return Mathf.RoundToInt((10 + 5 * caster.level) * attackMultiplier * critMultiplier);
+        return Mathf.RoundToInt((24 * caster.level) * attackMultiplier * critMultiplier);
     }
 }
 
@@ -263,7 +263,7 @@ public class BouleDeFeu : Skill
             critMultiplier = caster.stats.GetCritMultiplier();
         }
 
-        return Mathf.RoundToInt((25 + 10 * caster.level) * attackMultiplier * critMultiplier);
+        return Mathf.RoundToInt((9 * caster.level) * attackMultiplier * critMultiplier);
     }
 }
 
@@ -307,7 +307,7 @@ public class Embrasement : Skill
             critMultiplier = caster.stats.GetCritMultiplier();
         }
 
-        return Mathf.RoundToInt((20 + 10 * caster.level) * attackMultiplier * critMultiplier * burnMultiplier);
+        return Mathf.RoundToInt((12 * caster.level) * attackMultiplier * critMultiplier * burnMultiplier);
     }
 }
 
@@ -317,7 +317,7 @@ public class Tempete : Skill
     public override PossibleTarget possibleTarget => PossibleTarget.Enemy;
     public override int speed => 50;
     public override float duration => 3f;
-    public override int cooldown => 3;
+    public override int cooldown => 4;
 
     private static GameObject lightningRessource = Resources.Load<GameObject>("Lightning");
 
@@ -367,7 +367,7 @@ public class Tempete : Skill
             critMultiplier = caster.stats.GetCritMultiplier();
         }
 
-        return Mathf.RoundToInt((20 + 10 * caster.level) * attackMultiplier * critMultiplier);
+        return Mathf.RoundToInt((4 * caster.level) * attackMultiplier * critMultiplier);
     }
 }
 
@@ -433,6 +433,6 @@ public class Stalactite : Skill
             critMultiplier = caster.stats.GetCritMultiplier();
         }
 
-        return Mathf.RoundToInt((20 + 10 * caster.level) * attackMultiplier * critMultiplier);
+        return Mathf.RoundToInt((11 * caster.level) * attackMultiplier * critMultiplier);
     }
 }
