@@ -338,11 +338,23 @@ public class Tempete : Skill
             Character actualTarget;
             if (i == 0)
             {
-                actualTarget = target;
+                actualTarget = targets[0];
+            }
+            else if (i == 1)
+            {
+                actualTarget = targets[1];
+            }
+            else if (i == 2)
+            {
+                actualTarget = targets[1];
+            }
+            else if (i == 3)
+            {
+                actualTarget = targets[0];
             }
             else
             {
-                actualTarget = targets[Random.Range(0, targets.Count)];
+                actualTarget = targets[1];
             }
             var pos = actualTarget.transform.Find("Ground").transform.position;
             GameObject lightning = GameObject.Instantiate(lightningRessource, pos, Quaternion.identity);
