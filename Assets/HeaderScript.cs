@@ -47,7 +47,7 @@ public class HeaderScript : MonoBehaviour
         caloriesText.text = PlayerProfile.characterInfo.calories.ToString();
         if (currentXP > maxXP)
         {
-            xpBarSlider.transform.Find("Fill").GetComponent<Image>().color = new Color32(244,176,0, 255);
+            xpBarSlider.transform.Find("Fill").GetComponent<Image>().color = new Color32(244,139,0, 255);
         }
         else
         {
