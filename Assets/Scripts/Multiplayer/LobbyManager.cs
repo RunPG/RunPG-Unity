@@ -256,6 +256,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     if (index == -1)
     {
       PlayerDisplay newPlayerText = Instantiate(playerDisplayPrefab, playerPrefabPos);
+      Debug.Log("player added ==> " + player.CustomProperties["level"]);
       newPlayerText.SetPlayerInfo(player);
       playersList.Add(newPlayerText);
     }
