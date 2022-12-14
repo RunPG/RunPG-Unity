@@ -1,366 +1,363 @@
 using Photon.Pun;
 using Photon.Realtime;
 using RunPG.Multi;
-using System.Linq;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Networking;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 public class LobbyManager : MonoBehaviourPunCallbacks
 {
-    [SerializeField] RoomDisplay roomDisplayPrefab;
-    [SerializeField] private Button createButton;
-    [SerializeField] private Button leaveButtonRoom;
-    [SerializeField] private Button closeButton;
-    [SerializeField] private Button startButton;
+  [SerializeField] RoomDisplay roomDisplayPrefab;
+  [SerializeField] private Button createButton;
+  [SerializeField] private Button leaveButtonRoom;
+  [SerializeField] private Button closeButton;
+  [SerializeField] private Button startButton;
 
-    [SerializeField] private CanvasGroup lobbyList;
-    [SerializeField] private CanvasGroup lobby;
-    [SerializeField] private CanvasGroup portalDescription;
-    [SerializeField] private CanvasGroup InventoryCanvas;
-    [SerializeField] private CanvasGroup canvas;
-    [SerializeField] private CanvasGroup lobbyPlayerList;
+  [SerializeField] private CanvasGroup lobbyList;
+  [SerializeField] private CanvasGroup lobby;
+  [SerializeField] private CanvasGroup portalDescription;
+  [SerializeField] private CanvasGroup InventoryCanvas;
+  [SerializeField] private CanvasGroup canvas;
+  [SerializeField] private CanvasGroup lobbyPlayerList;
 
-    [SerializeField]
-    private Transform lobbyPrefabPos;
-    [SerializeField]
-    private Transform playerPrefabPos;
-    [SerializeField]
-    private PlayerDisplay playerDisplayPrefab;
+  [SerializeField]
+  private Transform lobbyPrefabPos;
+  [SerializeField]
+  private Transform playerPrefabPos;
+  [SerializeField]
+  private PlayerDisplay playerDisplayPrefab;
 
-    [SerializeField]
-    private PlayerMovement playerMovement;
+  [SerializeField]
+  private PlayerMovement playerMovement;
 
-    private List<PlayerDisplay> playersList = new List<PlayerDisplay>();
-    private List<RoomDisplay> roomDisplayListing = new List<RoomDisplay>();
+  private List<PlayerDisplay> playersList = new List<PlayerDisplay>();
+  private List<RoomDisplay> roomDisplayListing = new List<RoomDisplay>();
 
-    private HashSet<string> roomNameList = new HashSet<string>();
+  private HashSet<string> roomNameList = new HashSet<string>();
 
-    [SerializeField]
-    private Button invitePlayerButton;
+  [SerializeField]
+  private Button invitePlayerButton;
 
-    [SerializeField]
-    private LobbyPLayerListScript lobbyPlayerListScript;
+  [SerializeField]
+  private LobbyPLayerListScript lobbyPlayerListScript;
 
-    private long poiId;
+  private long poiId;
 
-    /// <summary>
-    /// Keep track of the current process. Since connection is asynchronous and is based on several callbacks from Photon,
-    /// we need to keep track of this to properly adjust the behavior when we receive call back by Photon.
-    /// Typically this is used for the OnConnectedToMaster() callback.
-    /// </summary>
-    bool isConnecting;
+  /// <summary>
+  /// Keep track of the current process. Since connection is asynchronous and is based on several callbacks from Photon,
+  /// we need to keep track of this to properly adjust the behavior when we receive call back by Photon.
+  /// Typically this is used for the OnConnectedToMaster() callback.
+  /// </summary>
+  bool isConnecting;
 
-    string gameVersion = "1";
+  string gameVersion = "1";
 
-    public static LobbyManager instance;
-    public void Awake()
+  public static LobbyManager instance;
+  public void Awake()
+  {
+    if (!instance)
+      instance = this;
+    else
+      Destroy(gameObject);
+
+    isConnecting = PhotonNetwork.ConnectUsingSettings();
+    PhotonNetwork.GameVersion = gameVersion;
+    var phtnView = gameObject.AddComponent<PhotonView>();
+    phtnView.ViewID = 2;
+    // #Critical
+    // this makes sure we can use PhotonNetwork.LoadLevel() on the master client and all clients in the same room sync their level automatically
+    PhotonNetwork.AutomaticallySyncScene = true;
+  }
+  public void FindDungeonLobbies(long poiId)
+  {
+    lobbyList.alpha = 1;
+    lobbyList.interactable = true;
+    lobbyList.blocksRaycasts = true;
+    lobby.alpha = 0;
+    lobby.interactable = false;
+    lobby.blocksRaycasts = false;
+    portalDescription.alpha = 0;
+    portalDescription.interactable = false;
+    portalDescription.blocksRaycasts = false;
+    canvas.alpha = 0;
+    canvas.interactable = false;
+    canvas.blocksRaycasts = false;
+    playerMovement.SetUIState(true);
+    this.poiId = poiId;
+  }
+
+  public void Start()
+  {
+    leaveButtonRoom.onClick.AddListener(LeaveRoom);
+    closeButton.onClick.AddListener(Close);
+    createButton.onClick.AddListener(CreateRoom);
+    startButton.onClick.AddListener(LoadDungeon);
+    invitePlayerButton.onClick.AddListener(async () =>
     {
-        if (!instance)
-            instance = this;
-        else
-            Destroy(gameObject);
-
-        isConnecting = PhotonNetwork.ConnectUsingSettings();
-        PhotonNetwork.GameVersion = gameVersion;
-        var phtnView = gameObject.AddComponent<PhotonView>();
-        phtnView.ViewID = 2;
-        // #Critical
-        // this makes sure we can use PhotonNetwork.LoadLevel() on the master client and all clients in the same room sync their level automatically
-        PhotonNetwork.AutomaticallySyncScene = true;
+      await lobbyPlayerListScript.LoasList(PhotonNetwork.CurrentRoom.Name);
+      lobby.interactable = false;
+      lobby.blocksRaycasts = false;
+      lobbyPlayerList.alpha = 1;
+      lobbyPlayerList.interactable = true;
+      lobbyPlayerList.blocksRaycasts = true;
+    });
+  }
+  public void LoadDungeon()
+  {
+    if (PhotonNetwork.IsMasterClient)
+    {
+      PhotonNetwork.CurrentRoom.IsVisible = false;
+      Debug.LogFormat("PhotonNetwork : Loading Dungeon");
+      photonView.RPC("UseActivity", RpcTarget.All, null);
+      PhotonNetwork.AutomaticallySyncScene = true;
+      PhotonNetwork.LoadLevel("DungeonScene");
     }
-    public void FindDungeonLobbies(long poiId)
+  }
+
+  [PunRPC]
+  async void UseActivity()
+  {
+    await Requests.POSTActivity(PlayerProfile.id, poiId);
+  }
+
+  public void Close()
+  {
+    lobbyList.alpha = 0;
+    lobbyList.interactable = false;
+    lobbyList.blocksRaycasts = false;
+
+    canvas.alpha = 1;
+    canvas.interactable = true;
+    canvas.blocksRaycasts = true;
+    playerMovement.SetUIState(false);
+  }
+  /*
+  [PunRPC]
+  public void LoadDungeonRPC()
+  {
+      Debug.LogFormat("PhotonNetwork : Loading Dungeon");
+      PhotonNetwork.AutomaticallySyncScene = true;
+      PhotonNetwork.LoadLevel("DungeonScene");
+
+  }
+  */
+  public void CreateRoom()
+  {
+    RoomOptions roomOptions = new RoomOptions();
+    roomOptions.IsVisible = true;
+    roomOptions.MaxPlayers = 4;
+    roomOptions.PlayerTtl = 0;
+    //todo change room name
+    PhotonNetwork.CreateRoom(PhotonNetwork.NickName, roomOptions, TypedLobby.Default);
+  }
+
+  public void Displaylobby()
+  {
+    lobbyList.alpha = 0;
+    lobbyList.interactable = false;
+    lobbyList.blocksRaycasts = false;
+
+    canvas.alpha = 0;
+    canvas.interactable = false;
+    canvas.blocksRaycasts = false;
+
+    lobby.alpha = 1;
+    lobby.interactable = true;
+    lobby.blocksRaycasts = true;
+  }
+
+  public bool ConnectToRoom(string roomName)
+  {
+    if (roomName == null)
     {
-        lobbyList.alpha = 1;
-        lobbyList.interactable = true;
-        lobbyList.blocksRaycasts = true;
-        lobby.alpha = 0;
-        lobby.interactable = false;
-        lobby.blocksRaycasts = false;
-        portalDescription.alpha = 0;
-        portalDescription.interactable = false;
-        portalDescription.blocksRaycasts = false;
-        canvas.alpha = 0;
-        canvas.interactable = false;
-        canvas.blocksRaycasts = false;
-        playerMovement.SetUIState(true);
-        this.poiId = poiId;
+      Debug.Log("Launcher: ConnectToRoom() roomName is null");
+      return false;
+    }
+    if (!roomNameList.Contains(roomName))
+    {
+      Debug.Log("Launcher: ConnectToRoom() room has been deleted");
+      return false;
+    }
+    if (!PhotonNetwork.JoinRoom(roomName))
+    {
+      Debug.Log("Launcher: ConnectToRoom() failed");
+      return false;
+    }
+    else
+    {
+      Debug.Log("Launcher: ConnectToRoom() worked");
+      startButton.interactable = false;
+    }
+    return true;
+  }
+  /// <summary>
+  /// Start the connection process.
+  /// - If already connected, we attempt joining a random room
+  /// - if not yet connected, Connect this application instance to Photon Cloud Network
+  /// </summary>
+  /// 
+  public override void OnConnectedToMaster()
+  {
+    Debug.Log("OnConnectedToMaster() was called by PUN");
+
+    if (PlayerProfile.pseudo != null)
+    {
+      PhotonNetwork.NickName = PlayerProfile.pseudo;
+      Hashtable hash = new Hashtable();
+      hash.Add("heroClass", PlayerProfile.characterInfo.heroClass);
+      hash.Add("level", PlayerProfile.characterInfo.level);
+      PhotonNetwork.LocalPlayer.SetCustomProperties(hash);
+    }
+    else
+      PhotonNetwork.NickName = "test dev";
+    PhotonNetwork.JoinLobby();
+    isConnecting = false;
+  }
+
+  public override void OnCreatedRoom()
+  {
+    Debug.Log("room created");
+
+    base.OnCreatedRoom();
+  }
+  public void Connect(RoomInfo roomInfo)
+  {
+    Debug.Log("Connect called");
+    // we check if we are connected or not, we join if we are , else we initiate the connection to the server.
+    if (PhotonNetwork.IsConnected)
+    {
+      // #Critical we need at this point to attempt joining a Random Room. If it fails, we'll get notified in OnJoinRandomFailed() and we'll create one.
+      PhotonNetwork.JoinRoom(roomInfo.Name);
+    }
+    else
+    {
+      // #Critical, we must first and foremost connect to Photon Online Server.
+      // keep track of the will to join a room, because when we come back from the game we will get a callback that we are connected, so we need to know what to do then
+      isConnecting = PhotonNetwork.ConnectUsingSettings();
+      PhotonNetwork.GameVersion = gameVersion;
+    }
+  }
+  private void GetPlayerList()
+  {
+    foreach (var player in PhotonNetwork.PlayerList)
+    {
+      PlayerDisplay newPlayerText = Instantiate(playerDisplayPrefab, playerPrefabPos);
+      newPlayerText.SetPlayerInfo(player);
+      playersList.Add(newPlayerText);
     }
 
-    public void Start()
+  }
+  #region Photon Callbacks
+  public override void OnPlayerEnteredRoom(Player player)
+  {
+    Debug.LogFormat("OnPlayerEnteredRoom() {0}", player.NickName); // not seen if you're the player connecting
+    int index = playersList.FindIndex(playerDisplay => playerDisplay.player == player);
+    if (index == -1)
     {
-        leaveButtonRoom.onClick.AddListener(LeaveRoom);
-        closeButton.onClick.AddListener(Close);
-        createButton.onClick.AddListener(CreateRoom);
-        startButton.onClick.AddListener(LoadDungeon);
-        invitePlayerButton.onClick.AddListener(async () => 
-        {
-            await lobbyPlayerListScript.LoasList(PhotonNetwork.CurrentRoom.Name);
-            lobby.interactable = false;
-            lobby.blocksRaycasts = false;
-            lobbyPlayerList.alpha = 1;
-            lobbyPlayerList.interactable = true;
-            lobbyPlayerList.blocksRaycasts = true;
-        });
+      PlayerDisplay newPlayerText = Instantiate(playerDisplayPrefab, playerPrefabPos);
+      newPlayerText.SetPlayerInfo(player);
+      playersList.Add(newPlayerText);
     }
-    public void LoadDungeon()
+  }
+  // not seen if you're the player connecting
+  /*layerDisplay newPlayerText = Instantiate(playerDisplayPrefab, prefabPos);
+   newPlayerText.SetPlayerInfo(player);
+   playersList.Add(newPlayerText);/*
+}*/
+  public override void OnPlayerLeftRoom(Player player)
+  {
+    Debug.LogFormat("OnPlayerLeftRoom() {0}", player.NickName); // seen when other disconnects
+
+    int index = playersList.FindIndex(playerDisplay => playerDisplay.player == player);
+    if (index != -1)
     {
-        if (PhotonNetwork.IsMasterClient)
-        {
-            Debug.LogFormat("PhotonNetwork : Loading Dungeon");
-            photonView.RPC("UseActivity", RpcTarget.All, null);
-            PhotonNetwork.AutomaticallySyncScene = true;
-            PhotonNetwork.LoadLevel("DungeonScene");
-        }
+      Destroy(playersList[index].gameObject);
+      playersList.RemoveAt(index);
     }
 
-    [PunRPC]
-    async void UseActivity()
+    if (PhotonNetwork.IsMasterClient)
     {
-        await Requests.POSTActivity(PlayerProfile.id, poiId);
+      Debug.LogFormat("OnPlayerLeftRoom IsMasterClient {0}", PhotonNetwork.IsMasterClient); // called before OnPlayerLeftRoom
     }
-
-    public void Close()
+    else
     {
-        lobbyList.alpha = 0;
-        lobbyList.interactable = false;
-        lobbyList.blocksRaycasts = false;
-
-        canvas.alpha = 1;
-        canvas.interactable = true;
-        canvas.blocksRaycasts = true;
-        playerMovement.SetUIState(false);
+      if (player.IsMasterClient)
+      {
+        LeaveRoom();
+      }
     }
-    /*
-    [PunRPC]
-    public void LoadDungeonRPC()
-    {
-        Debug.LogFormat("PhotonNetwork : Loading Dungeon");
-        PhotonNetwork.AutomaticallySyncScene = true;
-        PhotonNetwork.LoadLevel("DungeonScene");
-   
-    }
-    */
-    public void CreateRoom()
-    {
-        RoomOptions roomOptions = new RoomOptions();
-        roomOptions.IsVisible = true;
-        roomOptions.MaxPlayers = 4;
-        roomOptions.PlayerTtl = 0;
-        //todo change room name
-        PhotonNetwork.CreateRoom(PhotonNetwork.NickName, roomOptions, TypedLobby.Default);
-    }
+  }
+  #endregion
+  /// <summary>
+  /// Called when the local player left the room. We need to load the launcher scene.
+  /// </summary>
+  public override void OnLeftRoom()
+  {
+    Debug.Log("left room");
+    roomDisplayListing.ForEach(roomDisplay => roomDisplay.gameObject.Destroy());
+    roomDisplayListing.Clear();
+    playersList.ForEach(roomDisplay => roomDisplay.gameObject.Destroy());
+    playersList.Clear();
+    startButton.interactable = true;
+  }
+  #region Private Methods
 
-    public void Displaylobby()
-    {
-        lobbyList.alpha = 0;
-        lobbyList.interactable = false;
-        lobbyList.blocksRaycasts = false;
+  #endregion
+  #region Public Methods
 
-        canvas.alpha = 0;
-        canvas.interactable = false;
-        canvas.blocksRaycasts = false;
+  public override void OnRoomListUpdate(List<RoomInfo> roomList)
+  {
+    Debug.Log("OnRoomListUpdate");
 
-        lobby.alpha = 1;
-        lobby.interactable = true;
-        lobby.blocksRaycasts = true;
-    }
+    foreach (RoomInfo room in roomList)
+    {
+      if (room.RemovedFromList)
+      {
+        roomNameList.Remove(room.Name);
 
-    public bool ConnectToRoom(string roomName)
-    {
-        if (roomName == null)
-        {
-            Debug.Log("Launcher: ConnectToRoom() roomName is null");
-            return false;
-        }
-        if (!roomNameList.Contains(roomName))
-        {
-            Debug.Log("Launcher: ConnectToRoom() room has been deleted");
-            return false;
-        }
-        if (!PhotonNetwork.JoinRoom(roomName))
-        {
-            Debug.Log("Launcher: ConnectToRoom() failed");
-            return false;
-        }
-        else
-        {
-            Debug.Log("Launcher: ConnectToRoom() worked");
-            startButton.interactable = false;
-        }
-        return true;
-    }
-    /// <summary>
-    /// Start the connection process.
-    /// - If already connected, we attempt joining a random room
-    /// - if not yet connected, Connect this application instance to Photon Cloud Network
-    /// </summary>
-    /// 
-    public override void OnConnectedToMaster()
-    {
-        Debug.Log("OnConnectedToMaster() was called by PUN");
-
-        if (PlayerProfile.pseudo != null)
-        {
-            PhotonNetwork.NickName = PlayerProfile.pseudo;
-            Hashtable hash = new Hashtable();
-            hash.Add("heroClass", PlayerProfile.characterInfo.heroClass);
-            hash.Add("level", PlayerProfile.characterInfo.level);
-            PhotonNetwork.LocalPlayer.SetCustomProperties(hash);
-        }
-        else
-            PhotonNetwork.NickName = "test dev";
-        PhotonNetwork.JoinLobby();
-        isConnecting = false;
-    }
-
-    public override void OnCreatedRoom()
-    {
-        Debug.Log("room created");
-
-        base.OnCreatedRoom();
-    }
-    public void Connect(RoomInfo roomInfo)
-    {
-        Debug.Log("Connect called");
-        // we check if we are connected or not, we join if we are , else we initiate the connection to the server.
-        if (PhotonNetwork.IsConnected)
-        {
-            // #Critical we need at this point to attempt joining a Random Room. If it fails, we'll get notified in OnJoinRandomFailed() and we'll create one.
-            PhotonNetwork.JoinRoom(roomInfo.Name);
-        }
-        else
-        {
-            // #Critical, we must first and foremost connect to Photon Online Server.
-            // keep track of the will to join a room, because when we come back from the game we will get a callback that we are connected, so we need to know what to do then
-            isConnecting = PhotonNetwork.ConnectUsingSettings();
-            PhotonNetwork.GameVersion = gameVersion;
-        }
-    }
-    private void GetPlayerList()
-    {
-        foreach (var player in PhotonNetwork.PlayerList)
-        {
-            PlayerDisplay newPlayerText = Instantiate(playerDisplayPrefab, playerPrefabPos);
-            newPlayerText.SetPlayerInfo(player);
-            playersList.Add(newPlayerText);
-        }
-
-    }
-    #region Photon Callbacks
-    public override void OnPlayerEnteredRoom(Player player)
-    {
-        Debug.LogFormat("OnPlayerEnteredRoom() {0}", player.NickName); // not seen if you're the player connecting
-        int index = playersList.FindIndex(playerDisplay => playerDisplay.player == player);
-        if (index == -1)
-        {
-            PlayerDisplay newPlayerText = Instantiate(playerDisplayPrefab, playerPrefabPos);
-            newPlayerText.SetPlayerInfo(player);
-            playersList.Add(newPlayerText);
-        }
-    }
-    // not seen if you're the player connecting
-    /*layerDisplay newPlayerText = Instantiate(playerDisplayPrefab, prefabPos);
-     newPlayerText.SetPlayerInfo(player);
-     playersList.Add(newPlayerText);/*
- }*/
-    public override void OnPlayerLeftRoom(Player player)
-    {
-        Debug.LogFormat("OnPlayerLeftRoom() {0}", player.NickName); // seen when other disconnects
-
-        int index = playersList.FindIndex(playerDisplay => playerDisplay.player == player);
+        int index = roomDisplayListing.FindIndex(x => x.roomInfo.Name == room.Name);
         if (index != -1)
         {
-            Destroy(playersList[index].gameObject);
-            playersList.RemoveAt(index);
+          Destroy(roomDisplayListing[index].gameObject);
+          roomDisplayListing.RemoveAt(index);
         }
+      }
+      else
+      {
+        roomNameList.Add(room.Name);
 
-        if (PhotonNetwork.IsMasterClient)
+        if (!roomDisplayListing.Find(roomDisplay => roomDisplay.roomInfo.Name == room.Name))
         {
-            Debug.LogFormat("OnPlayerLeftRoom IsMasterClient {0}", PhotonNetwork.IsMasterClient); // called before OnPlayerLeftRoom
-        }
-        else
-        {
-            if (player.IsMasterClient)
+          RoomDisplay newRoomDisplay = Instantiate(roomDisplayPrefab, lobbyPrefabPos);
+          if (newRoomDisplay)
+          {
+            newRoomDisplay.SetRoomInfo(room);
+            newRoomDisplay.joinLobbyButton.onClick.AddListener(delegate
             {
-                LeaveRoom();
-            }
+              ConnectToRoom(room.Name);
+            });
+            roomDisplayListing.Add(newRoomDisplay);
+          }
         }
+      }
     }
-    #endregion
-    /// <summary>
-    /// Called when the local player left the room. We need to load the launcher scene.
-    /// </summary>
-    public override void OnLeftRoom()
-    {
-        Debug.Log("left room");
-        roomDisplayListing.ForEach(roomDisplay => roomDisplay.gameObject.Destroy());
-        roomDisplayListing.Clear();
-        playersList.ForEach(roomDisplay => roomDisplay.gameObject.Destroy());
-        playersList.Clear();
-        startButton.interactable = true;
-    }
-    #region Private Methods
+  }
+  public void LeaveRoom()
+  {
+    Debug.Log("Leave room");
+    PhotonNetwork.LeaveRoom();
 
-    #endregion
-    #region Public Methods
+    FindDungeonLobbies(poiId);
+  }
+  public override void OnJoinedRoom()
+  {
+    //GetPlayerList();
+    Displaylobby();
+    Debug.Log("Now this client is in a room.");
+    GetPlayerList();
+  }
 
-    public override void OnRoomListUpdate(List<RoomInfo> roomList)
-    {
-        Debug.Log("OnRoomListUpdate");
-
-        foreach (RoomInfo room in roomList)
-        {
-            if (room.RemovedFromList)
-            {
-                roomNameList.Remove(room.Name);
-
-                int index = roomDisplayListing.FindIndex(x => x.roomInfo.Name == room.Name);
-                if (index != -1)
-                {
-                    Destroy(roomDisplayListing[index].gameObject);
-                    roomDisplayListing.RemoveAt(index);
-                }
-            }
-            else
-            {
-                roomNameList.Add(room.Name);
-
-                if (!roomDisplayListing.Find(roomDisplay => roomDisplay.roomInfo.Name == room.Name))
-                {
-                    RoomDisplay newRoomDisplay = Instantiate(roomDisplayPrefab, lobbyPrefabPos);
-                    if (newRoomDisplay)
-                    {
-                        newRoomDisplay.SetRoomInfo(room);
-                        newRoomDisplay.joinLobbyButton.onClick.AddListener(delegate
-                        {
-                            ConnectToRoom(room.Name);
-                        });
-                        roomDisplayListing.Add(newRoomDisplay);
-                    }
-                }
-            }
-        }
-    }
-    public void LeaveRoom()
-    {
-        Debug.Log("Leave room");
-        PhotonNetwork.LeaveRoom();
-
-        FindDungeonLobbies(poiId);
-    }
-    public override void OnJoinedRoom()
-    {
-        //GetPlayerList();
-        Displaylobby();
-        Debug.Log("Now this client is in a room.");
-        GetPlayerList();
-    }
-
-    #endregion
+  #endregion
 }
 
