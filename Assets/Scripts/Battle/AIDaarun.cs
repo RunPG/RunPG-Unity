@@ -12,7 +12,7 @@ public class AIDaarun : AICharacter
   public override void AskForAction()
   {
     turn++;
-    if (turn % 3 == 0)
+    if (turn % 2 == 1)
     {
       Laser laser = new Laser();
       laser.caster = this;
@@ -36,7 +36,7 @@ public class AIDaarun : AICharacter
   {
     int quantity = rewardDroped ? 0 : potentialReward[UnityEngine.Random.Range(0, potentialReward.Count)];
     rewardDroped = true;
-    return new Tuple<string, int>("Oeil de Daarun", quantity);
+    return new Tuple<string, int>("Oeil de Daarun", 1);
   }
 
   protected override void InitStat(int level)
