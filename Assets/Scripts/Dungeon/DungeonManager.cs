@@ -328,7 +328,7 @@ public class DungeonManager : MonoBehaviourPunCallbacks
     DungeonManager.DungeonMonsterInfo[] roomEnemies = new DungeonManager.DungeonMonsterInfo[difficulty];
     for (int k = 0; k < difficulty; k++)
     {
-      roomEnemies[k] = new DungeonManager.DungeonMonsterInfo("Slime", 5);
+      roomEnemies[k] = new DungeonManager.DungeonMonsterInfo("Slime", PlayerProfile.characterInfo.level == 1 ? 50 : 5);
     }
     return roomEnemies;
   }
