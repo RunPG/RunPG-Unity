@@ -28,10 +28,11 @@ public class Statistics
 
     public bool RollCrit()
     {
-        float chance = Mathf.Min(1f, 0.004f * precision);
-        if (chance == 1f)
-            return true;
-        return Random.Range(0f, 1f) < chance;
+      return false;
+      float chance = Mathf.Min(1f, 0.004f * precision);
+      if (chance == 1f)
+          return true;
+      return Random.Range(0f, 1f) < chance;
     }
 
     public float GetCritMultiplier()
