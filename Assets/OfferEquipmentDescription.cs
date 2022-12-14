@@ -61,13 +61,13 @@ public class OfferEquipmentDescription : MonoBehaviour
     this.offerEquipmentDisplay = offerEquipmentDisplay;
     errorMessage.text = "";
     objectName.text = offerEquipmentDisplay.equipment.name;
-    levelClass.text = string.Format("Nv. {0} - {1}", offerEquipmentDisplay.equipment.level, offerEquipmentDisplay.equipment.heroClass.ToString());
     description.text = offerEquipmentDisplay.equipment.description;
     backgroundImage.sprite = offerEquipmentDisplay.equipment.rarity.GetItemSprite();
     itemImage.sprite = offerEquipmentDisplay.equipment.GetEquipmentSprite();
 
     if (!offerEquipmentDisplay.equipment.isItem)
     {
+      levelClass.text = string.Format("Nv. {0} - {1}", offerEquipmentDisplay.equipment.level, offerEquipmentDisplay.equipment.heroClass.ToString());
       vitality.text = offerEquipmentDisplay.equipment.vitality.ToString();
       strength.text = offerEquipmentDisplay.equipment.strength.ToString();
       defense.text = offerEquipmentDisplay.equipment.defense.ToString();
