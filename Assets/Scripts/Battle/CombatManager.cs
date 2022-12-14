@@ -259,7 +259,7 @@ public class CombatManager : MonoBehaviourPun
             || action.possibleTarget == CombatAction.PossibleTarget.All))
         {
           TauntStatus taunt = (TauntStatus)action.caster.GetStatus().Find(x => x.name == "Provocation");
-          if (taunt != null)
+          if (taunt != null && taunt.GetTaunter().isAlive())
           {
             action.target = taunt.GetTaunter();
             taunt.DecraseTurns();
