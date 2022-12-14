@@ -49,7 +49,7 @@ public class DungeonMap : MonoBehaviourPun
         LeaveButton.SetActive(false);
         StatusButton.SetActive(false);
         ResultText.text = "Défaite";
-        ResultText.color = Color.yellow;
+        ResultText.color = Color.red;
         ActiveCanvasGroup(ResultCanvasGroup);
 
         StartCoroutine(flexibleGrid.AutoScroll(2f));
