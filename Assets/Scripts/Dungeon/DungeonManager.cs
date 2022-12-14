@@ -361,8 +361,23 @@ public class DungeonManager : MonoBehaviourPunCallbacks
   [PunRPC]
   public void Leave()
   {
-    LeaveRoom();
-    Destroy(gameObject);
+    Debug.Log("Leave");
+    try
+    {
+      LeaveRoom();
+    }
+    catch (Exception e)
+    {
+      Debug.Log(e);
+    }
+    try
+    {
+      Destroy(gameObject);
+    }
+    catch (Exception e)
+    {
+      Debug.Log(e);
+    }
     SceneManager.LoadScene("MapScene");
   }
 }
