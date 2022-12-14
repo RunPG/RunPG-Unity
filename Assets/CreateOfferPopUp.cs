@@ -242,6 +242,7 @@ public class CreateOfferPopUp : MonoBehaviour
       var newEquipment = Instantiate(equipmentPrefab, offerCreationPopUp.transform).transform;
 
       newEquipment.Find("Image").GetComponent<Image>().sprite = equipment.GetEquipmentSprite();
+      newEquipment.Find("Level").GetComponent<TextMeshProUGUI>().text = "Lv. " + equipment.level.ToString();
       newEquipment.Find("Name").GetComponent<TextMeshProUGUI>().text = equipment.name;
 
       newEquipment.GetComponent<Image>().sprite = equipment.rarity.GetSprite();
