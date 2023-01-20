@@ -197,16 +197,16 @@ public class LobbyManager : MonoBehaviourPunCallbacks
   /// - if not yet connected, Connect this application instance to Photon Cloud Network
   /// </summary>
   /// 
-  public override void OnConnectedToMaster()
+  public override async void OnConnectedToMaster()
   {
     Debug.Log("OnConnectedToMaster() was called by PUN");
-
+    Debug.Log("Pseudo : " + PlayerProfile.pseudo);
     if (PlayerProfile.pseudo != null)
     {
       PhotonNetwork.NickName = PlayerProfile.pseudo;
       Hashtable hash = new Hashtable();
       hash.Add("heroClass", PlayerProfile.characterInfo.heroClass);
-      hash.Add("level", PlayerProfile.characterInfo.level);
+      hash.Add("level", PlayerProfile.characterInfo.level.ToString());
       PhotonNetwork.LocalPlayer.SetCustomProperties(hash);
     }
     else

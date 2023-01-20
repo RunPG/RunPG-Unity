@@ -23,7 +23,7 @@ public class AISlime : AICharacter
 
   protected override Tuple<string, int> GetMonsterReward()
   {
-    int quantity = 1;
+    int quantity = rewardDroped ? 0 : potentialReward[UnityEngine.Random.Range(0, potentialReward.Count)];
     rewardDroped = true;
     return new Tuple<string, int>("Bave de slime", quantity);
   }
