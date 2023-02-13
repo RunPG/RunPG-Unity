@@ -1,71 +1,70 @@
 using Mapbox.Unity.Map;
 using Mapbox.Unity.MeshGeneration.Data;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class MapLoader : MonoBehaviour
 {
-    [SerializeField]
-    private AbstractMap map;
+  [SerializeField]
+  private AbstractMap map;
 
-    [SerializeField]
-    private Sprite[] sprites;
+  [SerializeField]
+  private Sprite[] sprites;
 
-    [SerializeField]
-    private Image spriteImage;
+  [SerializeField]
+  private Image spriteImage;
 
-    [SerializeField]
-    private int fps;
+  [SerializeField]
+  private int fps;
 
-    [SerializeField]
-    private Animator animator;
+  [SerializeField]
+  private Animator animator;
 
-    int spriteIndex = 0;
+  int spriteIndex = 0;
 
-    int finishedTile = 0;
-    int totalTiles = 81;
+  int finishedTile = 0;
+  int totalTiles = 81;
 
-    float step;
+  float step;
 
-    bool isLoaded = false;
+  bool isLoaded = false;
 
-    private void Awake()
+  private void Awake()
+  {
+    map.OnTileFinished += CountTile;
+    step = 1.0f / fps;
+    StartCoroutine(Anim());
+  }
+
+  private void CountTile(UnityTile tile)
+  {
+    finishedTile++;
+    if (finishedTile == totalTiles)
     {
-        map.OnTileFinished += CountTile;
-        step = 1.0f / fps;
-        StartCoroutine(Anim());
+      map.OnTileFinished -= CountTile;
+      isLoaded = true;
     }
+  }
 
-    private void CountTile(UnityTile tile)
+  private IEnumerator Anim()
+  {
+    int i = 0;
+    while (true)
     {
-        finishedTile++;
-        if (finishedTile == totalTiles)
-        {
-            map.OnTileFinished -= CountTile;
-            isLoaded = true;
-        }
+      if (i == 80)
+      {
+        animator.SetTrigger("Start");
+      }
+      yield return new WaitForSeconds(step);
+      spriteIndex = (spriteIndex + 1) % sprites.Length;
+      spriteImage.sprite = sprites[spriteIndex];
+      i++;
     }
+  }
 
-    private IEnumerator Anim()
-    {
-        int i = 0;
-        while (true)
-        {
-            if (i == 160)
-            {
-                animator.SetTrigger("Start");
-            }
-            yield return new WaitForSeconds(step);
-            spriteIndex = (spriteIndex + 1) % sprites.Length;
-            spriteImage.sprite = sprites[spriteIndex];
-            i++;
-        }
-    }
-
-    private void FinishLoad()
-    {
-        Destroy(gameObject);
-    }
+  private void FinishLoad()
+  {
+    Destroy(gameObject);
+  }
 }

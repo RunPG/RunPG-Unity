@@ -1,5 +1,47 @@
 [
   {
+    "id": 29,
+    "equipementBase": {
+      "id": 5,
+      "name": "Hache en pierre",
+      "description": "Coupe difficilement du bois, reste relativement efficace contre les agresseurs.",
+      "rarity": "COMMON",
+      "heroClass": "PALADIN",
+      "equipmentType": "WEAPON"
+    },
+    "item": null,
+    "materials":[
+      {
+        "id": 3,
+        "name": "Bois brut",
+        "description": "Petit morceau de bois, utile pour se faire une cabane ou une arme.",
+        "quantity": 5
+      }
+    ],
+    "golds": 500
+  },
+  {
+    "id": 30,
+    "equipementBase": {
+      "id": 10,
+      "name": "Petit baton en bois",
+      "description": "J'ai trouvé ce bâton dans mon jardin, il avait une forme d'arme donc je l'ai gardé.",
+      "rarity": "COMMON",
+      "heroClass": "MAGE",
+      "equipmentType": "WEAPON"
+    },
+    "item": null,
+    "materials":[
+      {
+        "id": 3,
+        "name": "Bois brut",
+        "description": "Petit morceau de bois, utile pour se faire une cabane ou une arme.",
+        "quantity": 5
+      }
+    ],
+    "golds": 500
+  },
+  {
     "id": 1,
     "equipementBase": {
       "id": 12,

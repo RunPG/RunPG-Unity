@@ -1,11 +1,11 @@
 using System.Collections.Generic;
-using UnityEngine;
-using TMPro;
 using System.Threading.Tasks;
 using System.Linq;
 using RunPG.Multi;
+using UnityEngine;
+using Newtonsoft.Json;
+using TMPro;
 using UnityEngine.UI;
-using Mapbox.Json;
 
 public class ArtisanatScript : MonoBehaviour
 {
@@ -201,7 +201,6 @@ public class ArtisanatScript : MonoBehaviour
   async Task<Equipment> CraftNewEquipement(EquipmentBaseModel equipmentBase)
   {
     StatisticsModel statistics = StatisticsModel.GenerateStatistics(PlayerProfile.characterInfo.level, equipmentBase.heroClass, equipmentBase.rarity);
-
     NewEquipementModel equipment = new NewEquipementModel(equipmentBase.id, statistics);
     var craftedEquipment = await Requests.POSTInventoryEquipement(PlayerProfile.id, equipment);
     var equipmentModel = await Requests.GETEquipmentById(craftedEquipment.equipmentId.Value);

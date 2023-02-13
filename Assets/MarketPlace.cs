@@ -101,7 +101,15 @@ public class MarketPlace : MonoBehaviour
       prefab.SetInformations(market, equipment);
       prefab.buyButton.onClick.AddListener(() =>
       {
-        offerEquipmentDescription.LoadPopUp(GetComponent<CanvasGroup>(), prefab, market);
+        if (market.equipmentId.HasValue)
+        {
+          offerEquipmentDescription.LoadPopUp(GetComponent<CanvasGroup>(), prefab, market);
+        }
+        else
+        {
+          offerItemDescription.LoadPopUp(GetComponent<CanvasGroup>(), prefab, market);
+        }
+        
         // MyofferDisplays.Remove(prefab);
       });
       MyofferDisplays.Add(prefab);
@@ -112,7 +120,14 @@ public class MarketPlace : MonoBehaviour
       prefab.SetInformations(market, equipment);
       prefab.buyButton.onClick.AddListener(() =>
       {
-        offerEquipmentDescription.LoadPopUp(GetComponent<CanvasGroup>(), prefab, market);
+        if (market.equipmentId.HasValue)
+        {
+          offerEquipmentDescription.LoadPopUp(GetComponent<CanvasGroup>(), prefab, market);
+        }
+        else
+        {
+          offerItemDescription.LoadPopUp(GetComponent<CanvasGroup>(), prefab, market);
+        }
       });
       AllofferDisplays.Add(prefab);
     }
